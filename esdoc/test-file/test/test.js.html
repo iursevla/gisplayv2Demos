@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/test.js | Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { GisplayOptions } from &apos;../src/Gisplay/GisplayOptions&apos;;
+var expect = require(&apos;chai&apos;).expect;
+
+/** @test {GisplayOptions} */
+describe(&apos;Test GisplayOptions. User options are empty so all defaults should be used.&apos;, function () {
+    let gisplayOptions = new GisplayOptions({});
+
+    /**@test {GisplayOptions#attr} */
+    it(&apos;Attr value is undefined&apos;, function () {
+        expect(gisplayOptions.attr).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#colorScheme} */
+    it(&apos;Color Shceme is undefined&apos;, function () {
+        expect(gisplayOptions.colorScheme).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#numberOfClasses} */
+    it(&apos;numberOfClasses is undefined&apos;, function () {
+        expect(gisplayOptions.numberOfClasses).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#classBreaksMethod} */
+    it(&apos;classBreaksMethod is quantile&apos;, function () {
+        expect(gisplayOptions.classBreaksMethod).to.equal(&apos;quantile&apos;);
+    });
+
+    /**@test {GisplayOptions#classBreaks} */
+    it(&apos;classBreaks are undefined&apos;, function () {
+        expect(gisplayOptions.classBreaks).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#interactive} */
+    it(&apos;interactive is true &apos;, function () {
+        expect(gisplayOptions.interactive).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#showPropertiesOnClick} */
+    it(&apos;showPropertiesOnClick is null &apos;, function () {
+        expect(gisplayOptions.showPropertiesOnClick).to.equal(null);
+    });
+
+    /**@test {GisplayOptions#showLegend} */
+    it(&apos;showLegend is true&apos;, function () {
+        expect(gisplayOptions.showLegend).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#minuend} */
+    it(&apos;minuend is undefined &apos;, function () {
+        expect(gisplayOptions.minuend).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#subtrahend} */
+    it(&apos;subtrahend is undefined &apos;, function () {
+        expect(gisplayOptions.subtrahend).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#legendTitle} */
+    it(&apos;legendTitle is undefined - undefined&apos;, function () {
+        expect(gisplayOptions.legendTitle).to.equal(&apos;undefined - undefined&apos;);
+    });
+
+    /**@test {GisplayOptions#showLoader} */
+    it(&apos;showLoader is true&apos;, function () {
+        expect(gisplayOptions.showLoader).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#useCustomMapService} */
+    it(&apos;useCustomMapService is false &apos;, function () {
+        expect(gisplayOptions.useCustomMapService).to.equal(false);
+    });
+
+    /**@test {GisplayOptions#minPointSize} */
+    it(&apos;minPointSize is 1.0&apos;, function () {
+        expect(gisplayOptions.minPointSize).to.equal(1.0);
+    });
+
+    /**@test {GisplayOptions#maxPointSize} */
+    it(&apos;maxPointSize is 10.0&apos;, function () {
+        expect(gisplayOptions.maxPointSize).to.equal(10.0);
+    });
+
+    /**@test {GisplayOptions#sizeByClass} */
+    it(&apos;sizeByClass is false&apos;, function () {
+        expect(gisplayOptions.sizeByClass).to.equal(false);
+    });
+
+    /**@test {GisplayOptions#memorySaver} */
+    it(&apos;memorySaver is true&apos;, function () {
+        expect(gisplayOptions.memorySaver).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#colorSchemeId} */
+    it(&apos;colorSchemeId is 1&apos;, function () {
+        expect(gisplayOptions.colorSchemeId).to.equal(1);
+    });
+
+    /**@test {GisplayOptions#legendOnClickFunction} */
+    it(&apos;legendOnClickFunction is undefined&apos;, function () {
+        expect(gisplayOptions.legendOnClickFunction).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#mapOnClickFunction} */
+    it(&apos;mapOnClickFunction  is undefined&apos;, function () {
+        expect(gisplayOptions.mapOnClickFunction).to.equal(undefined);
+    });
+
+    //OTHER OPTIONS
+    /**@test {GisplayOptions#alpha} */
+    it(&apos;alpha is 0.8&apos;, function () {
+        expect(gisplayOptions.alpha).to.equal(0.8);
+    });
+
+    /**@test {GisplayOptions#maxFeatures} */
+    it(&apos;maxFeatures is equal to Number.MAX_VALUE&apos;, function () {
+        expect(gisplayOptions.maxFeatures).to.equal(Number.MAX_VALUE);
+    });
+
+    /**@test {GisplayOptions#numberOfLegendItems} */
+    it(&apos;numberOfLegendItems is 2&apos;, function () {
+        expect(gisplayOptions.numberOfLegendItems).to.equal(2);
+    });
+
+    //NON-USER OPTIONS
+    /**@test {GisplayOptions#isDynamic} */
+    it(&apos;isDynamic is !memorySaver(true)&apos;, function () {
+        expect(gisplayOptions.isDynamic).to.equal(!gisplayOptions.memorySaver);
+    });
+
+    /**@test {GisplayOptions#legendToggle} */
+    it(&apos;legendToggle is true&apos;, function () {
+        expect(gisplayOptions.legendToggle).to.equal(true);
+    });
+
+    //DEPRECATED OPTIONS
+    /**@test {GisplayOptions#intensity} */
+    it(&apos;intensity(deprecated) is 1.0&apos;, function () {
+        expect(gisplayOptions.intensity).to.equal(1.0);
+    });
+
+    /**@test {GisplayOptions#} */
+    it(&apos;legendPosition(deprecated) is equal to br&apos;, function () {
+        expect(gisplayOptions.legendPosition).to.equal(&apos;br&apos;);
+    });
+
+    /**@test {GisplayOptions#legendNumberFormat} */
+    it(&apos;legendNumberFormat(deprecated) is 0&apos;, function () {
+        expect(gisplayOptions.legendNumberFormat).to.equal(0);
+    });
+
+    /**@test {GisplayOptions#} */
+    it(&apos;profiling is true&apos;, function () {
+        expect(gisplayOptions.profiling).to.equal(true);
+    });
+});
+
+/** @test {GisplayOptions} */
+describe(&apos;Test GisplayOptions. Some user options are defined. TODO: More testing&apos;, function () {
+    let gisplayOptions = new GisplayOptions({
+        attr: &apos;f3&apos;,
+        numberOfClasses: 50
+    });
+
+    /**@test {GisplayOptions#attr} */
+    it(&apos;Attr value is undefined&apos;, function () {
+        expect(gisplayOptions.attr).to.equal(&apos;f3&apos;);
+    });
+
+    /**@test {GisplayOptions#colorScheme} */
+    it(&apos;Color Shceme is undefined&apos;, function () {
+        expect(gisplayOptions.colorScheme).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#numberOfClasses} */
+    it(&apos;numberOfClasses is undefined&apos;, function () {
+        expect(gisplayOptions.numberOfClasses).to.equal(50);
+    });
+
+    /**@test {GisplayOptions#classBreaksMethod} */
+    it(&apos;classBreaksMethod is quantile&apos;, function () {
+        expect(gisplayOptions.classBreaksMethod).to.equal(&apos;quantile&apos;);
+    });
+
+    /**@test {GisplayOptions#classBreaks} */
+    it(&apos;classBreaks are undefined&apos;, function () {
+        expect(gisplayOptions.classBreaks).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#interactive} */
+    it(&apos;interactive is true &apos;, function () {
+        expect(gisplayOptions.interactive).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#showPropertiesOnClick} */
+    it(&apos;showPropertiesOnClick is null &apos;, function () {
+        expect(gisplayOptions.showPropertiesOnClick).to.equal(null);
+    });
+
+    /**@test {GisplayOptions#showLegend} */
+    it(&apos;showLegend is true&apos;, function () {
+        expect(gisplayOptions.showLegend).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#minuend} */
+    it(&apos;minuend is undefined &apos;, function () {
+        expect(gisplayOptions.minuend).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#subtrahend} */
+    it(&apos;subtrahend is undefined &apos;, function () {
+        expect(gisplayOptions.subtrahend).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#legendTitle} */
+    it(&apos;legendTitle is undefined - undefined&apos;, function () {
+        expect(gisplayOptions.legendTitle).to.equal(&apos;f3&apos;);
+    });
+
+    /**@test {GisplayOptions#showLoader} */
+    it(&apos;showLoader is true&apos;, function () {
+        expect(gisplayOptions.showLoader).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#useCustomMapService} */
+    it(&apos;useCustomMapService is false &apos;, function () {
+        expect(gisplayOptions.useCustomMapService).to.equal(false);
+    });
+
+    /**@test {GisplayOptions#minPointSize} */
+    it(&apos;minPointSize is 1.0&apos;, function () {
+        expect(gisplayOptions.minPointSize).to.equal(1.0);
+    });
+
+    /**@test {GisplayOptions#maxPointSize} */
+    it(&apos;maxPointSize is 10.0&apos;, function () {
+        expect(gisplayOptions.maxPointSize).to.equal(10.0);
+    });
+
+    /**@test {GisplayOptions#sizeByClass} */
+    it(&apos;sizeByClass is false&apos;, function () {
+        expect(gisplayOptions.sizeByClass).to.equal(false);
+    });
+
+    /**@test {GisplayOptions#memorySaver} */
+    it(&apos;memorySaver is true&apos;, function () {
+        expect(gisplayOptions.memorySaver).to.equal(true);
+    });
+
+    /**@test {GisplayOptions#colorSchemeId} */
+    it(&apos;colorSchemeId is 1&apos;, function () {
+        expect(gisplayOptions.colorSchemeId).to.equal(1);
+    });
+
+    /**@test {GisplayOptions#legendOnClickFunction} */
+    it(&apos;legendOnClickFunction is undefined&apos;, function () {
+        expect(gisplayOptions.legendOnClickFunction).to.equal(undefined);
+    });
+
+    /**@test {GisplayOptions#mapOnClickFunction} */
+    it(&apos;mapOnClickFunction  is undefined&apos;, function () {
+        expect(gisplayOptions.mapOnClickFunction).to.equal(undefined);
+    });
+
+    //OTHER OPTIONS
+    /**@test {GisplayOptions#alpha} */
+    it(&apos;alpha is 0.8&apos;, function () {
+        expect(gisplayOptions.alpha).to.equal(0.8);
+    });
+
+    /**@test {GisplayOptions#maxFeatures} */
+    it(&apos;maxFeatures is equal to Number.MAX_VALUE&apos;, function () {
+        expect(gisplayOptions.maxFeatures).to.equal(Number.MAX_VALUE);
+    });
+
+    /**@test {GisplayOptions#numberOfLegendItems} */
+    it(&apos;numberOfLegendItems is 2&apos;, function () {
+        expect(gisplayOptions.numberOfLegendItems).to.equal(2);
+    });
+
+    //NON-USER OPTIONS
+    /**@test {GisplayOptions#isDynamic} */
+    it(&apos;isDynamic is !memorySaver(true)&apos;, function () {
+        expect(gisplayOptions.isDynamic).to.equal(!gisplayOptions.memorySaver);
+    });
+
+    /**@test {GisplayOptions#legendToggle} */
+    it(&apos;legendToggle is true&apos;, function () {
+        expect(gisplayOptions.legendToggle).to.equal(true);
+    });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

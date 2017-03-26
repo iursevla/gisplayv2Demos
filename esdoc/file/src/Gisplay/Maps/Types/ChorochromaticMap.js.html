@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/Gisplay/Maps/Types/ChorochromaticMap.js | Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Gisplay/Maps/Types/ChorochromaticMap.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Choropleth } from &apos;./Choropleth&apos;;
+
+/**
+ * Chorochormatic Map implemenetation.
+ */
+export class ChorochromaticMap extends Choropleth {
+
+    /**
+     * Creates an instance of ChorochromaticMap.
+     * @param {BGMapWrapper} bgmap - Background map object.
+     * @param {JSON} geometry - JSON object with the geometry that was read from the file.
+     * @param {Object} options - User options to be used. 
+     * @memberOf ChorochromaticMap
+     */
+    constructor(bgmap, geometry, options) {
+        super(bgmap, geometry, options);
+    }
+
+    /**
+     * Returns the color scheme associated with the id given.
+     * @param {number} defaultColorSchemeId - The id of the color scheme to choose the colors.
+     * @returns {colorScheme: string[]} - The color scheme.
+     * @override
+     * @memberOf ChorochromaticMap
+     */
+    defaults(defaultColorSchemeId) {
+        const options = {};
+        switch (defaultColorSchemeId) {
+            case 1:
+                options.colorScheme = [&quot;#440154&quot;, &quot;#440256&quot;, &quot;#450457&quot;, &quot;#450559&quot;, &quot;#46075a&quot;, &quot;#46085c&quot;, &quot;#460a5d&quot;, &quot;#460b5e&quot;, &quot;#470d60&quot;, &quot;#470e61&quot;, &quot;#471063&quot;, &quot;#471164&quot;, &quot;#471365&quot;, &quot;#481467&quot;, &quot;#481668&quot;, &quot;#481769&quot;, &quot;#48186a&quot;, &quot;#481a6c&quot;, &quot;#481b6d&quot;, &quot;#481c6e&quot;, &quot;#481d6f&quot;, &quot;#481f70&quot;, &quot;#482071&quot;, &quot;#482173&quot;, &quot;#482374&quot;, &quot;#482475&quot;, &quot;#482576&quot;, &quot;#482677&quot;, &quot;#482878&quot;, &quot;#482979&quot;, &quot;#472a7a&quot;, &quot;#472c7a&quot;, &quot;#472d7b&quot;, &quot;#472e7c&quot;, &quot;#472f7d&quot;, &quot;#46307e&quot;, &quot;#46327e&quot;, &quot;#46337f&quot;, &quot;#463480&quot;, &quot;#453581&quot;, &quot;#453781&quot;, &quot;#453882&quot;, &quot;#443983&quot;, &quot;#443a83&quot;, &quot;#443b84&quot;, &quot;#433d84&quot;, &quot;#433e85&quot;, &quot;#423f85&quot;, &quot;#424086&quot;, &quot;#424186&quot;, &quot;#414287&quot;, &quot;#414487&quot;, &quot;#404588&quot;, &quot;#404688&quot;, &quot;#3f4788&quot;, &quot;#3f4889&quot;, &quot;#3e4989&quot;, &quot;#3e4a89&quot;, &quot;#3e4c8a&quot;, &quot;#3d4d8a&quot;, &quot;#3d4e8a&quot;, &quot;#3c4f8a&quot;, &quot;#3c508b&quot;, &quot;#3b518b&quot;, &quot;#3b528b&quot;, &quot;#3a538b&quot;, &quot;#3a548c&quot;, &quot;#39558c&quot;, &quot;#39568c&quot;, &quot;#38588c&quot;, &quot;#38598c&quot;, &quot;#375a8c&quot;, &quot;#375b8d&quot;, &quot;#365c8d&quot;, &quot;#365d8d&quot;, &quot;#355e8d&quot;, &quot;#355f8d&quot;, &quot;#34608d&quot;, &quot;#34618d&quot;, &quot;#33628d&quot;, &quot;#33638d&quot;, &quot;#32648e&quot;, &quot;#32658e&quot;, &quot;#31668e&quot;, &quot;#31678e&quot;, &quot;#31688e&quot;, &quot;#30698e&quot;, &quot;#306a8e&quot;, &quot;#2f6b8e&quot;, &quot;#2f6c8e&quot;, &quot;#2e6d8e&quot;, &quot;#2e6e8e&quot;, &quot;#2e6f8e&quot;, &quot;#2d708e&quot;, &quot;#2d718e&quot;, &quot;#2c718e&quot;, &quot;#2c728e&quot;, &quot;#2c738e&quot;, &quot;#2b748e&quot;, &quot;#2b758e&quot;, &quot;#2a768e&quot;, &quot;#2a778e&quot;, &quot;#2a788e&quot;, &quot;#29798e&quot;, &quot;#297a8e&quot;, &quot;#297b8e&quot;, &quot;#287c8e&quot;, &quot;#287d8e&quot;, &quot;#277e8e&quot;, &quot;#277f8e&quot;, &quot;#27808e&quot;, &quot;#26818e&quot;, &quot;#26828e&quot;, &quot;#26828e&quot;, &quot;#25838e&quot;, &quot;#25848e&quot;, &quot;#25858e&quot;, &quot;#24868e&quot;, &quot;#24878e&quot;, &quot;#23888e&quot;, &quot;#23898e&quot;, &quot;#238a8d&quot;, &quot;#228b8d&quot;, &quot;#228c8d&quot;, &quot;#228d8d&quot;, &quot;#218e8d&quot;, &quot;#218f8d&quot;, &quot;#21908d&quot;, &quot;#21918c&quot;, &quot;#20928c&quot;, &quot;#20928c&quot;, &quot;#20938c&quot;, &quot;#1f948c&quot;, &quot;#1f958b&quot;, &quot;#1f968b&quot;, &quot;#1f978b&quot;, &quot;#1f988b&quot;, &quot;#1f998a&quot;, &quot;#1f9a8a&quot;, &quot;#1e9b8a&quot;, &quot;#1e9c89&quot;, &quot;#1e9d89&quot;, &quot;#1f9e89&quot;, &quot;#1f9f88&quot;, &quot;#1fa088&quot;, &quot;#1fa188&quot;, &quot;#1fa187&quot;, &quot;#1fa287&quot;, &quot;#20a386&quot;, &quot;#20a486&quot;, &quot;#21a585&quot;, &quot;#21a685&quot;, &quot;#22a785&quot;, &quot;#22a884&quot;, &quot;#23a983&quot;, &quot;#24aa83&quot;, &quot;#25ab82&quot;, &quot;#25ac82&quot;, &quot;#26ad81&quot;, &quot;#27ad81&quot;, &quot;#28ae80&quot;, &quot;#29af7f&quot;, &quot;#2ab07f&quot;, &quot;#2cb17e&quot;, &quot;#2db27d&quot;, &quot;#2eb37c&quot;, &quot;#2fb47c&quot;, &quot;#31b57b&quot;, &quot;#32b67a&quot;, &quot;#34b679&quot;, &quot;#35b779&quot;, &quot;#37b878&quot;, &quot;#38b977&quot;, &quot;#3aba76&quot;, &quot;#3bbb75&quot;, &quot;#3dbc74&quot;, &quot;#3fbc73&quot;, &quot;#40bd72&quot;, &quot;#42be71&quot;, &quot;#44bf70&quot;, &quot;#46c06f&quot;, &quot;#48c16e&quot;, &quot;#4ac16d&quot;, &quot;#4cc26c&quot;, &quot;#4ec36b&quot;, &quot;#50c46a&quot;, &quot;#52c569&quot;, &quot;#54c568&quot;, &quot;#56c667&quot;, &quot;#58c765&quot;, &quot;#5ac864&quot;, &quot;#5cc863&quot;, &quot;#5ec962&quot;, &quot;#60ca60&quot;, &quot;#63cb5f&quot;, &quot;#65cb5e&quot;, &quot;#67cc5c&quot;, &quot;#69cd5b&quot;, &quot;#6ccd5a&quot;, &quot;#6ece58&quot;, &quot;#70cf57&quot;, &quot;#73d056&quot;, &quot;#75d054&quot;, &quot;#77d153&quot;, &quot;#7ad151&quot;, &quot;#7cd250&quot;, &quot;#7fd34e&quot;, &quot;#81d34d&quot;, &quot;#84d44b&quot;, &quot;#86d549&quot;, &quot;#89d548&quot;, &quot;#8bd646&quot;, &quot;#8ed645&quot;, &quot;#90d743&quot;, &quot;#93d741&quot;, &quot;#95d840&quot;, &quot;#98d83e&quot;, &quot;#9bd93c&quot;, &quot;#9dd93b&quot;, &quot;#a0da39&quot;, &quot;#a2da37&quot;, &quot;#a5db36&quot;, &quot;#a8db34&quot;, &quot;#aadc32&quot;, &quot;#addc30&quot;, &quot;#b0dd2f&quot;, &quot;#b2dd2d&quot;, &quot;#b5de2b&quot;, &quot;#b8de29&quot;, &quot;#bade28&quot;, &quot;#bddf26&quot;, &quot;#c0df25&quot;, &quot;#c2df23&quot;, &quot;#c5e021&quot;, &quot;#c8e020&quot;, &quot;#cae11f&quot;, &quot;#cde11d&quot;, &quot;#d0e11c&quot;, &quot;#d2e21b&quot;, &quot;#d5e21a&quot;, &quot;#d8e219&quot;, &quot;#dae319&quot;, &quot;#dde318&quot;, &quot;#dfe318&quot;, &quot;#e2e418&quot;, &quot;#e5e419&quot;, &quot;#e7e419&quot;, &quot;#eae51a&quot;, &quot;#ece51b&quot;, &quot;#efe51c&quot;, &quot;#f1e51d&quot;, &quot;#f4e61e&quot;, &quot;#f6e620&quot;, &quot;#f8e621&quot;, &quot;#fbe723&quot;, &quot;#fde725&quot;];
+                break;
+            case 2:
+                options.colorScheme = [&apos;purple&apos;, &apos;orange&apos;, &apos;blue&apos;, &apos;yellow&apos;, &apos;pink&apos;, &apos;green&apos;, &apos;red&apos;, &apos;navy&apos;];
+                break;
+            default:
+                options.colorScheme = [&quot;#440154&quot;, &quot;#440256&quot;, &quot;#450457&quot;, &quot;#450559&quot;, &quot;#46075a&quot;, &quot;#46085c&quot;, &quot;#460a5d&quot;, &quot;#460b5e&quot;, &quot;#470d60&quot;, &quot;#470e61&quot;, &quot;#471063&quot;, &quot;#471164&quot;, &quot;#471365&quot;, &quot;#481467&quot;, &quot;#481668&quot;, &quot;#481769&quot;, &quot;#48186a&quot;, &quot;#481a6c&quot;, &quot;#481b6d&quot;, &quot;#481c6e&quot;, &quot;#481d6f&quot;, &quot;#481f70&quot;, &quot;#482071&quot;, &quot;#482173&quot;, &quot;#482374&quot;, &quot;#482475&quot;, &quot;#482576&quot;, &quot;#482677&quot;, &quot;#482878&quot;, &quot;#482979&quot;, &quot;#472a7a&quot;, &quot;#472c7a&quot;, &quot;#472d7b&quot;, &quot;#472e7c&quot;, &quot;#472f7d&quot;, &quot;#46307e&quot;, &quot;#46327e&quot;, &quot;#46337f&quot;, &quot;#463480&quot;, &quot;#453581&quot;, &quot;#453781&quot;, &quot;#453882&quot;, &quot;#443983&quot;, &quot;#443a83&quot;, &quot;#443b84&quot;, &quot;#433d84&quot;, &quot;#433e85&quot;, &quot;#423f85&quot;, &quot;#424086&quot;, &quot;#424186&quot;, &quot;#414287&quot;, &quot;#414487&quot;, &quot;#404588&quot;, &quot;#404688&quot;, &quot;#3f4788&quot;, &quot;#3f4889&quot;, &quot;#3e4989&quot;, &quot;#3e4a89&quot;, &quot;#3e4c8a&quot;, &quot;#3d4d8a&quot;, &quot;#3d4e8a&quot;, &quot;#3c4f8a&quot;, &quot;#3c508b&quot;, &quot;#3b518b&quot;, &quot;#3b528b&quot;, &quot;#3a538b&quot;, &quot;#3a548c&quot;, &quot;#39558c&quot;, &quot;#39568c&quot;, &quot;#38588c&quot;, &quot;#38598c&quot;, &quot;#375a8c&quot;, &quot;#375b8d&quot;, &quot;#365c8d&quot;, &quot;#365d8d&quot;, &quot;#355e8d&quot;, &quot;#355f8d&quot;, &quot;#34608d&quot;, &quot;#34618d&quot;, &quot;#33628d&quot;, &quot;#33638d&quot;, &quot;#32648e&quot;, &quot;#32658e&quot;, &quot;#31668e&quot;, &quot;#31678e&quot;, &quot;#31688e&quot;, &quot;#30698e&quot;, &quot;#306a8e&quot;, &quot;#2f6b8e&quot;, &quot;#2f6c8e&quot;, &quot;#2e6d8e&quot;, &quot;#2e6e8e&quot;, &quot;#2e6f8e&quot;, &quot;#2d708e&quot;, &quot;#2d718e&quot;, &quot;#2c718e&quot;, &quot;#2c728e&quot;, &quot;#2c738e&quot;, &quot;#2b748e&quot;, &quot;#2b758e&quot;, &quot;#2a768e&quot;, &quot;#2a778e&quot;, &quot;#2a788e&quot;, &quot;#29798e&quot;, &quot;#297a8e&quot;, &quot;#297b8e&quot;, &quot;#287c8e&quot;, &quot;#287d8e&quot;, &quot;#277e8e&quot;, &quot;#277f8e&quot;, &quot;#27808e&quot;, &quot;#26818e&quot;, &quot;#26828e&quot;, &quot;#26828e&quot;, &quot;#25838e&quot;, &quot;#25848e&quot;, &quot;#25858e&quot;, &quot;#24868e&quot;, &quot;#24878e&quot;, &quot;#23888e&quot;, &quot;#23898e&quot;, &quot;#238a8d&quot;, &quot;#228b8d&quot;, &quot;#228c8d&quot;, &quot;#228d8d&quot;, &quot;#218e8d&quot;, &quot;#218f8d&quot;, &quot;#21908d&quot;, &quot;#21918c&quot;, &quot;#20928c&quot;, &quot;#20928c&quot;, &quot;#20938c&quot;, &quot;#1f948c&quot;, &quot;#1f958b&quot;, &quot;#1f968b&quot;, &quot;#1f978b&quot;, &quot;#1f988b&quot;, &quot;#1f998a&quot;, &quot;#1f9a8a&quot;, &quot;#1e9b8a&quot;, &quot;#1e9c89&quot;, &quot;#1e9d89&quot;, &quot;#1f9e89&quot;, &quot;#1f9f88&quot;, &quot;#1fa088&quot;, &quot;#1fa188&quot;, &quot;#1fa187&quot;, &quot;#1fa287&quot;, &quot;#20a386&quot;, &quot;#20a486&quot;, &quot;#21a585&quot;, &quot;#21a685&quot;, &quot;#22a785&quot;, &quot;#22a884&quot;, &quot;#23a983&quot;, &quot;#24aa83&quot;, &quot;#25ab82&quot;, &quot;#25ac82&quot;, &quot;#26ad81&quot;, &quot;#27ad81&quot;, &quot;#28ae80&quot;, &quot;#29af7f&quot;, &quot;#2ab07f&quot;, &quot;#2cb17e&quot;, &quot;#2db27d&quot;, &quot;#2eb37c&quot;, &quot;#2fb47c&quot;, &quot;#31b57b&quot;, &quot;#32b67a&quot;, &quot;#34b679&quot;, &quot;#35b779&quot;, &quot;#37b878&quot;, &quot;#38b977&quot;, &quot;#3aba76&quot;, &quot;#3bbb75&quot;, &quot;#3dbc74&quot;, &quot;#3fbc73&quot;, &quot;#40bd72&quot;, &quot;#42be71&quot;, &quot;#44bf70&quot;, &quot;#46c06f&quot;, &quot;#48c16e&quot;, &quot;#4ac16d&quot;, &quot;#4cc26c&quot;, &quot;#4ec36b&quot;, &quot;#50c46a&quot;, &quot;#52c569&quot;, &quot;#54c568&quot;, &quot;#56c667&quot;, &quot;#58c765&quot;, &quot;#5ac864&quot;, &quot;#5cc863&quot;, &quot;#5ec962&quot;, &quot;#60ca60&quot;, &quot;#63cb5f&quot;, &quot;#65cb5e&quot;, &quot;#67cc5c&quot;, &quot;#69cd5b&quot;, &quot;#6ccd5a&quot;, &quot;#6ece58&quot;, &quot;#70cf57&quot;, &quot;#73d056&quot;, &quot;#75d054&quot;, &quot;#77d153&quot;, &quot;#7ad151&quot;, &quot;#7cd250&quot;, &quot;#7fd34e&quot;, &quot;#81d34d&quot;, &quot;#84d44b&quot;, &quot;#86d549&quot;, &quot;#89d548&quot;, &quot;#8bd646&quot;, &quot;#8ed645&quot;, &quot;#90d743&quot;, &quot;#93d741&quot;, &quot;#95d840&quot;, &quot;#98d83e&quot;, &quot;#9bd93c&quot;, &quot;#9dd93b&quot;, &quot;#a0da39&quot;, &quot;#a2da37&quot;, &quot;#a5db36&quot;, &quot;#a8db34&quot;, &quot;#aadc32&quot;, &quot;#addc30&quot;, &quot;#b0dd2f&quot;, &quot;#b2dd2d&quot;, &quot;#b5de2b&quot;, &quot;#b8de29&quot;, &quot;#bade28&quot;, &quot;#bddf26&quot;, &quot;#c0df25&quot;, &quot;#c2df23&quot;, &quot;#c5e021&quot;, &quot;#c8e020&quot;, &quot;#cae11f&quot;, &quot;#cde11d&quot;, &quot;#d0e11c&quot;, &quot;#d2e21b&quot;, &quot;#d5e21a&quot;, &quot;#d8e219&quot;, &quot;#dae319&quot;, &quot;#dde318&quot;, &quot;#dfe318&quot;, &quot;#e2e418&quot;, &quot;#e5e419&quot;, &quot;#e7e419&quot;, &quot;#eae51a&quot;, &quot;#ece51b&quot;, &quot;#efe51c&quot;, &quot;#f1e51d&quot;, &quot;#f4e61e&quot;, &quot;#f6e620&quot;, &quot;#f8e621&quot;, &quot;#fbe723&quot;, &quot;#fde725&quot;];
+                break;
+        }
+        return options;
+    }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

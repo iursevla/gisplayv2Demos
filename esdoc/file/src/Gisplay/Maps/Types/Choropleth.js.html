@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../">
+  <title data-ice="title">src/Gisplay/Maps/Types/Choropleth.js | Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Gisplay/Maps/Types/Choropleth.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Map } from &apos;../Map&apos;;
+import { Legend } from &apos;../Legend&apos;;
+
+/**
+ * Choropleth implementation 06/03 - 23/03
+ */
+export class Choropleth extends Map {
+
+    /**
+     * Creates an instance of Choropleth.
+     * @param {BGMapWrapper} bgmap - Background map object.
+     * @param {JSON} geometry - JSON object with the geometry that was read from the file.
+     * @param {Object} userOptions - User options to be used.
+     * @memberOf Choropleth
+     */
+    constructor(bgmap, geometry, userOptions) {
+        super(bgmap, geometry, userOptions);
+        this.loadOptions(userOptions, bgmap);// this.type = &apos;CP&apos;; window.maps.push(this);
+        this.initialize();
+    }
+
+    /**
+     * Draw Choropleth map, at the beginning and when the map is moved.
+     * @see initialize() and makeMap() methods.
+     * @override  
+     * @memberOf Choropleth
+     */
+    draw() {
+        this.clear();
+        for (const aes of this.aesthetics) {
+            if (aes.isEnabled())
+                this.drawTriangles(aes);
+            this.drawBorders(aes);
+        }
+    }
+
+    /**
+     * Method called to build the Map Legend.
+     * For all Aesthethics that exist crate one polygon row and then insert the Legend to the map. 
+     * @override 
+     * @memberOf Choropleth
+     */
+    buildLegend() {
+        /**
+         * The Legend to be used through the life of the map.
+         * @type {Legend} 
+         */
+        this.legend = new Legend(this.id, this.gisplayOptions.legendTitle);
+        for (const aes of this.aesthetics)
+            this.legend.insertPolygonRow(aes, this);
+        this.legend.insertLegend(this.bGMap);
+    }
+
+    /**
+     * Returns the color scheme and number of classes associated with the id given.
+     * @param {number} defaultColorSchemeId - The id of the default color scheme to choose the colors.
+     * @returns {{colorScheme: string[], numberOfClasses: number}} - Color scheme and number of classes associated with the id given, empty object otherwise.
+     * @override 
+     * @memberOf Choropleth
+     */
+    defaults(defaultColorSchemeId) {
+        const options = {};
+        switch (defaultColorSchemeId) {
+            case 1:
+                options.colorScheme = [&apos;white&apos;, &apos;yellow&apos;, &apos;orange&apos;, &apos;red&apos;];
+                options.numberOfClasses = 4;
+                break;
+            default:
+                break;
+        }
+        return options;
+    }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

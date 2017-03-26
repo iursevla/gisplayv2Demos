@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p>Aqui vai estar o c&#xF3;digo para a API Gisplay v2. Esta vers&#xE3;o conter&#xE1; alguns melhoramentos da API anterior e ser&#xE1; adicionada a componente temporal &#xE0; mesma.</p>
+<hr>
+<h1 id="-instala-o-"><strong>Instala&#xE7;&#xE3;o</strong></h1>
+<ol>
+<li>Instalar <a href="https://nodejs.org/en/">node.js</a></li>
+<li>Ap&#xF3;s esta instala&#xE7;&#xE3;o fazer clone deste projeto com o git: <code>git clone https://rr_alves@bitbucket.org/Gisplay_Team/gisplayv2.git</code></li>
+<li>Navegar para a pasta do projeto (<code>cd gisplayv2</code>)</li>
+<li>Executar os seguintes comandos por esta ordem:<ul>
+<li><code>npm i</code></li>
+<li><code>npm start</code></li>
+</ul>
+</li>
+<li>Abrir o ficheiro index.html da pasta dist num browser atualizado(Opera, Chrome, Firefox).</li>
+</ol>
+<p>OU</p>
+<ol>
+<li>Instalar <a href="https://nodejs.org/en/">node.js</a></li>
+<li><p>Executar o seguinte comando</p>
+<blockquote>
+<p><strong>Windows</strong>: <code>git clone https://rr_alves@bitbucket.org/Gisplay_Team/gisplayv2.git; cd ./gisplayv2/ES6; npm i; npm start</code></p>
+<p><strong>OSX?/Linux</strong>: <code>git clone https://rr_alves@bitbucket.org/Gisplay_Team/gisplayv2.git &amp;&amp; cd ./gisplayv2/ES6 &amp;&amp; npm i &amp;&amp; npm start</code></p>
+</blockquote>
+</li>
+<li><p>Abrir o ficheiro index.html da pasta dist num browser atualizado(Opera, Chrome, Firefox).</p>
+</li>
+</ol>
+<h1 id="-demos-"><strong>Demos</strong></h1>
+<p>Demos podem ser vistos em: <a href="https://iursevla.github.io/gisplayv2Demos/"> Rui Alves GitHub Online page. </a></p>
+<p>Estes ser&#xE3;o atualizados automaticamente quando for corrido o comando </p>
+<pre><code><code class="source-code prettyprint">&gt; node shell.js</code>
+</code></pre><hr>
+<h1 id="-fases-"><strong>Fases</strong></h1>
+<ol>
+<li>Modificar API corrente de modo a resolver problemas pertinentes. <strong>06/03 - 03/04</strong> (Ver abaixo)  </li>
+<li>Reformula&#xE7;&#xE3;o da API tendo em conta a componente temporal</li>
+<li>Implementa&#xE7;&#xE3;o.</li>
+<li>Avalia&#xE7;&#xE3;o comparativa.</li>
+<li>Escrita do documento final.</li>
+</ol>
+<p>O que tiver sido feito em cada fase aparecer&#xE1; a <del>riscado</del> </p>
+<h2 id="-fase-1-corrente-06-03-03-04"><em>Fase 1 (Corrente)</em> 06/03 - 03/04</h2>
+<ol>
+<li>Acabar estudo WebGL.</li>
+<li>Documentar m&#xE9;todos e classes da API anterior com JSDoc.</li>
+<li>Testes &#xE0; vers&#xE3;o atual.</li>
+<li>Sele&#xE7;&#xE3;o de &#xE1;reas e popup associado.</li>
+<li>Sele&#xE7;&#xE3;o de ponto ou conjunto de pontos e popup associado.</li>
+<li>Mudan&#xE7;a do uso da cor.</li>
+<li>Adicionar formato de dados CSV.</li>
+<li>Adicionar outros fornecedores de Mapas de fundo.</li>
+<li>Possibilidade de adicionar m&#xFA;ltiplas proje&#xE7;&#xF5;es.</li>
+<li>Heat Map</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Tarefa</th>
+<th>Planeamento</th>
+<th style="text-align:left">Feito (&#x274C; ou &#x2705; )</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>1</code></td>
+<td>14/03 - 15/05</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>2</code></td>
+<td>16/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>3</code></td>
+<td>17/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>4</code></td>
+<td>18/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>5</code></td>
+<td>19/03 - 20/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>6</code></td>
+<td>21/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>7</code></td>
+<td>22/03 - 23/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>8</code></td>
+<td>24/03 - 25/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>9</code></td>
+<td>26/03 - 29/03</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>10</code></td>
+<td>30/03 - 03/04</td>
+<td style="text-align:left">&#x274C;</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-fase-2-futura-"><strong><del>Fase 2(Futura)</del></strong></h2>
+<hr>
+<hr>
+<h1 id="-tools-used-"><strong>Tools Used</strong></h1>
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Uso</th>
+<th>URLs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1.webpack2</code></td>
+<td><strong>Bundle de todo o c&#xF3;digo.</strong></td>
+<td><a href="https://webpack.js.org">webpack.js</a> + <a href="https://github.com/webpack/webpack">github</a></td>
+</tr>
+<tr>
+<td><code>2.shelljs</code></td>
+<td><strong>Executar comandos nativos c/ JS</strong></td>
+<td><a href="http://shelljs.org">shelljs.org</a> +   <a href="https://github.com/shelljs/shelljs">github</a></td>
+</tr>
+<tr>
+<td><code>3.VSCode</code></td>
+<td><strong>IDE utilizado</strong></td>
+<td><a href="https://code.visualstudio.com">vscode</a> + <a href="https://marketplace.visualstudio.com/VSCode">extensions</a></td>
+</tr>
+<tr>
+<td><code>4.Mocha Ou Karma</code></td>
+<td><strong>Test JS code</strong></td>
+<td><a href="https://mochajs.org">mochajs</a> + <a href="">Karma</a> ?</td>
+</tr>
+<tr>
+<td><code>5.Chrome Profiler for GPU and CPU</code></td>
+<td><strong>Profiling code</strong></td>
+<td><a href="https://chromium.googlesource.com/chromium/src/+/master/docs/memory-infra/probe-gpu.md">GPU Memory Tracing Chromium</a></td>
+</tr>
+<tr>
+<td><code>6.ESDoc</code></td>
+<td><strong>Document Code</strong></td>
+<td><a href="https://esdoc.org">ESDoc</a> + <a href="https://github.com/esdoc/esdoc">GitHub</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-1-webpack2-"><strong>1.webpack2</strong></h2>
+<pre><code><code class="source-code prettyprint">Fazer bundling do codigo e passar de ES2015 para o browser(criando um &#xFA;nico ficheiro gisplayv2.bundle.js)</code>
+</code></pre><blockquote>
+<ul>
+<li><p><a href="https://github.com/babel/babel-loader">babel-loader</a> - Load files ES2015 e transformar para o browser. </p>
+</li>
+<li><p><a href="https://www.npmjs.com/package/mocha-webpack">mocha-webpack</a> - Unit Test (Not used atm)</p>
+</li>
+</ul>
+<ul>
+<li><p><a href="https://medium.com/caffeine-and-testing/testing-es6-modules-with-mocha-using-babel-with-browserify-e6f5514f66d3#.sm859e5om">Tutorial Mocha</a> </p>
+</li>
+<li><p><a href="https://cafedev.org/article/2016/12/testing-with-wepack-2-inject-loader-karma-mocha-chai-and-sinon/">Testing with webpack2</a> - Como correr Unit Tests no webpack2.</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="-2-shelljs-"><strong>2. shelljs</strong></h2>
+<pre><code><code class="source-code prettyprint">Automaticamente correr comandos para fazer commit para o reposit&#xF3;rio github dos Demos
+
+Basicamente permite executar comandos nativos (e.g., ls, dir, rm) em qualquer SO(Windows, Linux, OSX) atrav&#xE9;s de javascript.
+
+No caso deste reposit&#xF3;rio, no ficheiro shell.js &#xE9; poss&#xED;vel ver que este faz a c&#xF3;pia do ficheiro index.html e do ficheiro gisplayv2.bundle.js para a pasta do reposit&#xF3;rio github pages que criei. Depois faz commit e push para esse mesmo repositorio online.
+
+Usando o github pages permite aceder online aos demos que forem sendo criados (O link est&#xE1; na pagina m&#xE3;e deste repositorio).</code>
+</code></pre><h2 id="-3-vscode-ide-"><strong>3. VSCode IDE</strong></h2>
+<pre><code><code class="source-code prettyprint">Bom IDE para JS, TS. Particularmente linguagens web funciona muito bem.</code>
+</code></pre><ul>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome">Debbuger for Chrome</a> - Debug your JavaScript code in the Chrome browser, or any other target that supports the Chrome Debugger protocol.</p>
+</li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=techer.open-in-browser">open in browser</a> - Open index.html file in any installed browser.</p>
+</li>
+<li><p><a href="https://marketplace.visualstudio.com/items?itemName=HookyQR.JSDocTagComplete">Complete JSDoc Tags</a> - Autocomplete JSDoc Tags.</p>
+<h2 id="-4-testing-"><strong>4. Testing</strong></h2>
+<pre><code><code class="source-code prettyprint">Mochajs</code>
+</code></pre><blockquote>
+<ul>
+<li><a href="http://krasimirtsonev.com/blog/article/using-mocha-with-es6-spec-files">Use ES6 files on Mocha</a></li>
+<li><a href="https://www.youtube.com/watch?v=oW8uHfe8Jyk">Write simple Tests with Mocha in JS</a></li>
+<li><a href="https://mochajs.org/#installation">Mocha instalation</a></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>Os passos abaixo n&#xE3;o necessitam de ser feitos se tiverem sido seguidos os passos iniciais de instala&#xE7;&#xE3;o.</p>
+<ol>
+<li><code>npm i -g mocha</code></li>
+<li><code>npm i -D mocha</code></li>
+<li><code>npm i -D chai</code></li>
+<li>Package.json add: <code>&quot;test&quot;: &quot;mocha --compilers js:babel-core/register ./test/**/*.js&quot;</code></li>
+<li>Criar babel.rc file com: <code>{ &quot;presets&quot;: [&quot;es2015&quot;] }</code></li>
+<li>Criar pasta test e la dentro colocar o(s) ficheiros(.js) de teste.</li>
+<li><code>npm test</code></li>
+</ol>
+<h2 id="-5-profiling-"><strong>5. Profiling</strong></h2>
+<ol>
+<li><a href="https://developers.google.com/web/updates/2016/12/devtools-javascript-cpu-profile-migration">
+Chrome DevTools: JavaScript CPU Profiling in Chrome 58</a> </li>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/master/docs/memory-infra/README.md">MemoryInfra</a> - Tool integrated in Chromium/Chrome/Opera</li>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/master/docs/memory-infra/probe-gpu.md">GPU</a></li>
+</ol>
+<h2 id="-6-documentation-"><strong>6. Documentation</strong></h2>
+<p>Usar <a href="https://esdoc.org">ESDoc</a>. Permite ainda usar Mocha para testes.</p>
+<p>Ver <a href="https://esdoc.org/manual/usage/feature.html#integration-test-codes">Integration Test Codes</a>.</p>
+<p>Ver resultado final <a href="https://doc.esdoc.org/github.com/esdoc/esdoc/test.html">ESDoc Test</a></p>
+<hr>
+<h1 id="-known-issues-"><strong>Known Issues</strong></h1>
+<ol>
+<li></li>
+</ol>
+<hr>
+<hr>
+<h2 id="-trash-zone-ignore-"><strong>TRASH ZONE(IGNORE)</strong></h2>
+<pre><code><code class="source-code prettyprint">Esta zona n&#xE3;o interessa de momento.</code>
+</code></pre><ol>
+<li>First, the API will be <strong>ported</strong> to ES6 or Typescript and an workflow will be added, something like webpack to automatically reload on changes, saving time later on.</li>
+<li>After that some things will be changed like the <strong>use of color</strong>, allow the use of <strong>multiple projections</strong>, <strong>CSV</strong> data format and implementation of <strong>Heat Map</strong>.</li>
+<li><strong>Reformulation</strong> of the API to deal with the temporal component.</li>
+<li><strong>Implementation</strong> of 3.</li>
+<li><strong>Benchmarking</strong> between Temporal Gisplay and other APIs (Leaflet, MapMap). </li>
+</ol>
+<p>If Typescript is used then the output can be either ES5 or ES6 allowing any future improvement upon this API to be done in Typescript or in any of those previously mentioned (ES5 or ES6). </p>
+<p><strong>Possible problems:</strong></p>
+<ol>
+<li><p>To use Typescript one must install:</p>
+<ul>
+<li>nodejs</li>
+<li>typescript</li>
+</ul>
+</li>
+<li><p>Some browsers may not fully support ES6 but the convertion is easy to do with babel.</p>
+</li>
+</ol>
+<h1 id="old">OLD</h1>
+<ol>
+<li>RTree not working due to call issue.<ul>
+<li>Usar <a href="https://github.com/leaflet-extras/RTree/blob/master/lib/rtree.js">Leaflet Rtree</a></li>
+<li>Usar <a href="https://github.com/mourner/rbush">rbush</a></li>
+<li>Last case scenario build our own </li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
