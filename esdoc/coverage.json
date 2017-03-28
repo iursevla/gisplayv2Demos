@@ -1,7 +1,7 @@
 {
-  "coverage": "98.9%",
-  "expectCount": 182,
-  "actualCount": 180,
+  "coverage": "98.97%",
+  "expectCount": 195,
+  "actualCount": 193,
   "files": {
     "src/Gisplay/Maps/Aesthetic.js": {
       "expectCount": 24,
@@ -31,6 +31,11 @@
       "actualCount": 6,
       "undocumentLines": []
     },
+    "src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
     "src/Gisplay/Maps/Types/DotMap.js": {
       "expectCount": 6,
       "actualCount": 6,
@@ -42,13 +47,18 @@
       "undocumentLines": []
     },
     "src/Gisplay/Gisplay.js": {
-      "expectCount": 8,
-      "actualCount": 8,
+      "expectCount": 9,
+      "actualCount": 9,
       "undocumentLines": []
     },
     "src/Gisplay/GisplayOptions.js": {
       "expectCount": 32,
       "actualCount": 32,
+      "undocumentLines": []
+    },
+    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js": {
+      "expectCount": 8,
+      "actualCount": 8,
       "undocumentLines": []
     },
     "src/Gisplay/Maps/Legend.js": {

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/gisplayv11.js | Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html">GoogleMapsBGMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/gisplayv11.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * This file is the entry point for the Gisplay API
+ */
+import { Gisplay } from &apos;./Gisplay/Gisplay&apos;;
+import { GoogleMapsBGMap } from &apos;./Gisplay/Maps/v11/GoogleMapsBGMap&apos;;
+
+module.exports = {
+
+    /** #############   Google Maps example   #############  */
+    createGoogleMapsBGMap: function () {
+        window.map = new google.maps.Map(document.getElementById(&apos;map&apos;), {
+            zoom: 4,
+            center: { lat: 49.36855556, lng: -81.66371667 },
+            minZoom: 3
+        });
+    },
+
+    startGoogleMapsChoropleth: function () {
+        let gm = new GoogleMapsBGMap(window.map);
+        let gisplay = new Gisplay();
+
+        let options = {
+            colorScheme: [&quot;white&quot;, &quot;yellow&quot;, &quot;orange&quot;, &quot;red&quot;],
+            numberOfClasses: 4,
+            attr: &apos;f3&apos;,
+            legendTitle: &apos;Fatals&apos;,
+            useCustomMapService: true
+        };
+        let time = Date.now();
+
+        let reader = new FileReader();
+        reader.onloadend = function () {
+            let data = JSON.parse(reader.result);
+            let datareadtimestamp = Date.now();
+            console.log(&quot;tempo de leitura do ficheiro: &quot; + (datareadtimestamp - time) / 1000 + &quot; segundos&quot;);
+
+            gisplay.makeChoroplethGoogleMaps(gm, data, options);
+            console.log(&quot;tempo gisplay: &quot; + (Date.now() - datareadtimestamp) / 1000 + &quot; segundos&quot;);
+            console.log(&quot;tempo total: &quot; + (Date.now() - time) / 1000 + &quot; segundos&quot;);
+        };
+        reader.readAsText(document.getElementById(&quot;file&quot;).files[0]);
+    },
+
+    /** ######################### HEAT MAP ################################# */
+};
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

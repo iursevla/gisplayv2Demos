@@ -44,6 +44,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html">GoogleMapsBGMap</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -54,6 +56,7 @@ import { DotMap } from &apos;./Maps/Types/DotMap&apos;;
 import { ChangeMap } from &apos;./Maps/Types/ChangeMap&apos;;
 import { ProportionalSymbolsMap } from &apos;./Maps/Types/ProportionalSymbolsMap&apos;;
 import { ChorochromaticMap } from &apos;./Maps/Types/ChorochromaticMap&apos;;
+import { ChoroplethGoogleMaps } from &apos;./Maps/v11/ChoroplethGoogleMaps&apos;;
 
 /**
  * Gisplay API entry point with one method for each map available.
@@ -161,53 +164,16 @@ export class Gisplay {
     }
 
     /**
-     * Function that executes all the process associated with the creation of thematic maps.
-     * todo Should clean up this removing profiling code?
-     * param {Map} gismap - The Gisplay Map to use (Choropleth, DotMap,etc).
-     * param {Object} options - Object that contains user personalization options.
-     * deprecated Used in Map.js instead
+     * Creates a map of type Choropleth with background map being from Google Maps.
+     * @param {Object} bgmap - Background map object be used(atm only MapBox being used).- Background map object be used(atm only MapBox being used).
+     * @param {JSON} geometry - The object that contains the data.
+     * @param {Object} options - Object that contains user personalization options.
      * @memberOf Gisplay
      */
-   /* makeMap(gismap, options) {
-        let defaultid = options.defaultid != null ? defaultid : 1; //@todo Change opts.defaultid to optscolorSchemeDefaultId
-        setTimeout(console =&gt; {
-            let start = 0;
-            if (window.profiling == true)
-                start = Date.now();
-            if (gismap.colorscheme == undefined)
-                gismap.colorscheme = gismap.defaults(defaultid).colorScheme;
-            if (gismap.classbreaks == undefined) {
-                if (gismap.numberofclasses == undefined) {
-                    gismap.numberofclasses = gismap.defaults(defaultid).numberOfClasses;
-                }
-                gismap.preProcessData(gismap.geometry, gismap.numberofclasses, gismap.algorithm, gismap.colorscheme);
-            }
-
-            //gismap.processData(gismap.geometry);
-            gismap.loadGeoJSON(gismap.geometry);
-            let start2 = 0;
-            if (window.profiling == true) {
-                start2 = Date.now();
-                window.console.log(`Tempo de processamento do dados (segundos): ${(start2 - start) / 1000}`);
-            }
-            gismap.draw();
-
-            let end = 0;
-            if (window.profiling == true) {
-                end = Date.now();
-                window.console.log(`Tempo de desenho do mapa (segundos): ${(end - start2) / 1000}`);
-            }
-            if (options.legend != false)
-                gismap.buildLegend();
-            if (options.loader != false) {
-                gismap.loader();
-            }
-            if (window.profiling == true) {
-                end = Date.now();
-                window.console.log(`Tempo total (segundos): ${(end - this.startTimeStamp) / 1000}`);
-            }
-        }, 1);
-    }*/
+    makeChoroplethGoogleMaps(bgmap, geometry, options) {
+        const gismap = new ChoroplethGoogleMaps(bgmap, geometry, options);
+        gismap.makeMap(); //this.makeMap(gismap, options);
+    }
 }</code></pre>
 
 </div>

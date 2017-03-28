@@ -44,6 +44,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html">GoogleMapsBGMap</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -646,30 +648,31 @@ export class Map {
     }
 
     /**
-     * M13) Deals with polygon triangulation.
-     * @param {{geometry: JSON, properties: JSON}} polygon - The geometry and properties of the polygon.
-     * @returns {{triangles: Array&lt;number&gt;, vertices: Array&lt;number&gt;}} - The triangles and vertices calculated by earcut triangulation. The vertices are the outside of the polygon, the triangles are the inside.
-     * @see http://www.macwright.org/2015/03/23/geojson-second-bite.html#polygons
-     * @memberOf Map
-     */
+    * M13) Deals with polygon triangulation.
+    * @param {{geometry: JSON, properties: JSON}} polygon - The geometry and properties of the polygon.
+    * @returns {{triangles: Array&lt;number&gt;, vertices: Array&lt;number&gt;}} - The triangles and vertices calculated by earcut triangulation. The vertices are the outside of the polygon, the triangles are the inside.
+    * @see http://www.macwright.org/2015/03/23/geojson-second-bite.html#polygons
+    * @memberOf Map
+    */
     processPolygon(polygon) {
         let polyarray = [];
         if (polygon.geometry.type === &quot;Polygon&quot;) { //@TODO: [Demos never use this if statement.]
-            let outsidepolygon = polygon.geometry.coordinates[0];
+            let outsidepolygon = polygon.geometry.coordinates[0]; //See: http://geojson.org/geojson-spec.html#polygon
             let tempVerts = new Array();
             for (let out = 0; out &lt; outsidepolygon.length - 1; out++)
                 tempVerts.push(outsidepolygon[out][0], outsidepolygon[out][1]);//_vertexcount += (outsidepolygon.length + 1) / 2;
             let triangles_vert = earcut(tempVerts); // _tricount += (triangles_vert.length / 3);
             polyarray.push({ triangles: triangles_vert, vertices: tempVerts });
         }
-        else if (polygon.geometry.type === &quot;MultiPolygon&quot;) {
-            let tempVerts = new Array(); //polygon.geometry.coordinates[0][0] -&gt;  [lat,long] , [lat,long], [lat,long] .... [lat,long]
-            for (const coord of polygon.geometry.coordinates[0][0])
-                tempVerts.push(coord[0], coord[1]);
-            let triangles_vert = earcut(tempVerts);
-            /* console.log(triangles_vert);
-             console.log(tempVerts)*/
-            polyarray.push({ triangles: triangles_vert, vertices: tempVerts });
+        else if (polygon.geometry.type == &quot;MultiPolygon&quot;) { //See http://geojson.org/geojson-spec.html#multipolygon
+            for (const cs of polygon.geometry.coordinates) {
+                let outsidepolygon = cs[0];
+                let tempVerts = new Array();
+                for (const c of outsidepolygon)
+                    tempVerts.push(c[0], c[1]);
+                let triangles_vert = earcut(tempVerts);
+                polyarray.push({ triangles: triangles_vert, vertices: tempVerts });
+            }
         }
         return polyarray;
     }
@@ -705,9 +708,12 @@ export class Map {
      * @memberOf Map
      */
     insertFeature(id, properties, triangles, borders, points) {
-        for (let i = 0; i &lt; this.aesthetics.length; i++)
+        for(const aes of this.aesthetics)
+            if(aes.checkProperty(properties[aes.getAttr()]))
+                aes.addFeature(id, properties, triangles, borders, points);
+       /* for (let i = 0; i &lt; this.aesthetics.length; i++)
             if (this.aesthetics[i].checkProperty(properties[this.aesthetics[i].getAttr()]))
-                this.aesthetics[i].addFeature(id, properties, triangles, borders, points);
+                this.aesthetics[i].addFeature(id, properties, triangles, borders, points);*/
     }
 
     /**
