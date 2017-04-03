@@ -39,13 +39,19 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html">WebGLUtils</a></span></span></li>
 <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
-<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html">GoogleMapsBGMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11/1_BackgroundMaps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html">BGMapBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html">BGMapGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html">BGMapHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps.html">ChoroplethBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps.html">ChoroplethHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps.html">DotMapGoogleMaps</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -69,7 +75,7 @@ export class DotMap extends Map {
     constructor(bgmap, geometry, options) {
         super(bgmap, geometry, options);
         this.loadOptions(options, bgmap);
-        this.initialize();
+        this.initializeCanvasAndEvents();
     }
 
     /**
@@ -80,9 +86,6 @@ export class DotMap extends Map {
      */
     draw() {
         this.clear();
-        /* for (let i = 0; i &lt; this.aesthetics.length; i++)
-             if (this.aesthetics[i].enabled == true)
-                 this.drawPoints(this.aesthetics[i]);*/
         for (const aes of this.aesthetics)
             if (aes.isEnabled())
                 this.drawPoints(aes);

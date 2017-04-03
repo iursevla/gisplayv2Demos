@@ -6,6 +6,24 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html",
+    "<span>BGMapBingMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js</span>",
+    "class"
+  ],
+  [
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html",
+    "<span>BGMapGoogleMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js</span>",
+    "class"
+  ],
+  [
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html",
+    "<span>BGMapHereMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js</span>",
+    "class"
+  ],
+  [
     "gisplay-es6-webpack/src/gisplay/maps/bgmapwrapper.js~bgmapwrapper",
     "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html",
     "<span>BGMapWrapper</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/BGMapWrapper.js</span>",
@@ -30,15 +48,33 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "gisplay-es6-webpack/src/gisplay/maps/v11/choroplethgooglemaps.js~choroplethgooglemaps",
-    "class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html",
-    "<span>ChoroplethGoogleMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js</span>",
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/choroplethbingmaps.js~choroplethbingmaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps.html",
+    "<span>ChoroplethBingMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js</span>",
+    "class"
+  ],
+  [
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/choroplethgooglemaps.js~choroplethgooglemaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html",
+    "<span>ChoroplethGoogleMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js</span>",
+    "class"
+  ],
+  [
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/choroplethheremaps.js~choroplethheremaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps.html",
+    "<span>ChoroplethHereMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js</span>",
     "class"
   ],
   [
     "gisplay-es6-webpack/src/gisplay/maps/types/dotmap.js~dotmap",
     "class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html",
     "<span>DotMap</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/Types/DotMap.js</span>",
+    "class"
+  ],
+  [
+    "gisplay-es6-webpack/src/gisplay/maps/v11/1_backgroundmaps/dotmapgooglemaps.js~dotmapgooglemaps",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps.html",
+    "<span>DotMapGoogleMaps</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js</span>",
     "class"
   ],
   [
@@ -60,12 +96,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "gisplay-es6-webpack/src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html",
-    "<span>GoogleMapsBGMap</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/v11/GoogleMapsBGMap.js</span>",
-    "class"
-  ],
-  [
     "gisplay-es6-webpack/src/gisplay/maps/legend.js~legend",
     "class/src/Gisplay/Maps/Legend.js~Legend.html",
     "<span>Legend</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/Legend.js</span>",
@@ -81,6 +111,12 @@ window.esdocSearchIndex = [
     "gisplay-es6-webpack/src/gisplay/maps/types/proportionalsymbolsmap.js~proportionalsymbolsmap",
     "class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html",
     "<span>ProportionalSymbolsMap</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js</span>",
+    "class"
+  ],
+  [
+    "gisplay-es6-webpack/src/gisplay/maps/webglutils.js~webglutils",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html",
+    "<span>WebGLUtils</span> <span class=\"search-result-import-path\">gisplay-es6-webpack/src/Gisplay/Maps/WebglUtils.js</span>",
     "class"
   ],
   [
@@ -780,15 +816,33 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/gisplay/gisplay.js~gisplay#makechoroplethbingmaps",
+    "class/src/Gisplay/Gisplay.js~Gisplay.html#instance-method-makeChoroplethBingMaps",
+    "src/Gisplay/Gisplay.js~Gisplay#makeChoroplethBingMaps",
+    "method"
+  ],
+  [
     "src/gisplay/gisplay.js~gisplay#makechoroplethgooglemaps",
     "class/src/Gisplay/Gisplay.js~Gisplay.html#instance-method-makeChoroplethGoogleMaps",
     "src/Gisplay/Gisplay.js~Gisplay#makeChoroplethGoogleMaps",
     "method"
   ],
   [
+    "src/gisplay/gisplay.js~gisplay#makechoroplethheremaps",
+    "class/src/Gisplay/Gisplay.js~Gisplay.html#instance-method-makeChoroplethHereMaps",
+    "src/Gisplay/Gisplay.js~Gisplay#makeChoroplethHereMaps",
+    "method"
+  ],
+  [
     "src/gisplay/gisplay.js~gisplay#makedotmap",
     "class/src/Gisplay/Gisplay.js~Gisplay.html#instance-method-makeDotMap",
     "src/Gisplay/Gisplay.js~Gisplay#makeDotMap",
+    "method"
+  ],
+  [
+    "src/gisplay/gisplay.js~gisplay#makedotmapgooglemaps",
+    "class/src/Gisplay/Gisplay.js~Gisplay.html#instance-method-makeDotMapGoogleMaps",
+    "src/Gisplay/Gisplay.js~Gisplay#makeDotMapGoogleMaps",
     "method"
   ],
   [
@@ -990,6 +1044,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/gisplay/gisplayoptions.js~gisplayoptions#tilesize",
+    "class/src/Gisplay/GisplayOptions.js~GisplayOptions.html#instance-member-tileSize",
+    "src/Gisplay/GisplayOptions.js~GisplayOptions#tileSize",
+    "member"
+  ],
+  [
     "src/gisplay/gisplayoptions.js~gisplayoptions#usecustommapservice",
     "class/src/Gisplay/GisplayOptions.js~GisplayOptions.html#instance-member-useCustomMapService",
     "src/Gisplay/GisplayOptions.js~GisplayOptions#useCustomMapService",
@@ -1146,6 +1206,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#addeventlistener",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-addEventListener",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#addEventListener",
+    "method"
+  ],
+  [
     "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#bgmapobject",
     "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-member-bgMapObject",
     "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#bgMapObject",
@@ -1170,21 +1236,45 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getbackgroundmapproviderobject",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getBackgroundMapProviderObject",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getBackgroundMapProviderObject",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getcenterlat",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getCenterLat",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getCenterLat",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getcenterlng",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getCenterLng",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getCenterLng",
+    "method"
+  ],
+  [
     "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getcontainer",
     "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getContainer",
     "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getContainer",
     "method"
   ],
   [
-    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getlatbound",
-    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getLatBound",
-    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getLatBound",
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getheight",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getHeight",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getHeight",
     "method"
   ],
   [
-    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getlngbound",
-    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getLngBound",
-    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getLngBound",
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getmapbounds",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getMapBounds",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getMapBounds",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#getwidth",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-getWidth",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#getWidth",
     "method"
   ],
   [
@@ -1194,16 +1284,16 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#isinmultiplemeridians",
+    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-isInMultipleMeridians",
+    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#isInMultipleMeridians",
+    "method"
+  ],
+  [
     "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#loaderdiv",
     "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-member-loaderDiv",
     "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#loaderDiv",
     "member"
-  ],
-  [
-    "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#onevent",
-    "class/src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper.html#instance-method-onEvent",
-    "src/Gisplay/Maps/BGMapWrapper.js~BGMapWrapper#onEvent",
-    "method"
   ],
   [
     "src/gisplay/maps/bgmapwrapper.js~bgmapwrapper#showloader",
@@ -1434,12 +1524,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/gisplay/maps/map.js~map#createandcompileshader",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-createAndCompileShader",
-    "src/Gisplay/Maps/Map.js~Map#createAndCompileShader",
-    "method"
-  ],
-  [
     "src/gisplay/maps/map.js~map#createandinsertfeature",
     "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-createAndInsertFeature",
     "src/Gisplay/Maps/Map.js~Map#createAndInsertFeature",
@@ -1500,12 +1584,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/gisplay/maps/map.js~map#generateshaderssourcecode",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-generateShadersSourceCode",
-    "src/Gisplay/Maps/Map.js~Map#generateShadersSourceCode",
-    "method"
-  ],
-  [
     "src/gisplay/maps/map.js~map#geometry",
     "class/src/Gisplay/Maps/Map.js~Map.html#instance-member-geometry",
     "src/Gisplay/Maps/Map.js~Map#geometry",
@@ -1530,9 +1608,9 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/gisplay/maps/map.js~map#initialize",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-initialize",
-    "src/Gisplay/Maps/Map.js~Map#initialize",
+    "src/gisplay/maps/map.js~map#initializecanvasandevents",
+    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-initializeCanvasAndEvents",
+    "src/Gisplay/Maps/Map.js~Map#initializeCanvasAndEvents",
     "method"
   ],
   [
@@ -1608,12 +1686,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/gisplay/maps/map.js~map#program",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-program",
-    "src/Gisplay/Maps/Map.js~Map#program",
-    "method"
-  ],
-  [
     "src/gisplay/maps/map.js~map#rtree",
     "class/src/Gisplay/Maps/Map.js~Map.html#instance-member-rtree",
     "src/Gisplay/Maps/Map.js~Map#rtree",
@@ -1626,9 +1698,27 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/gisplay/maps/map.js~map#setupfunctiononclick",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-setupFunctionOnclick",
-    "src/Gisplay/Maps/Map.js~Map#setupFunctionOnclick",
+    "src/gisplay/maps/map.js~map#searchkdtree",
+    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-searchKdTree",
+    "src/Gisplay/Maps/Map.js~Map#searchKdTree",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/map.js~map#searchrtree",
+    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-searchRTree",
+    "src/Gisplay/Maps/Map.js~Map#searchRTree",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/map.js~map#setmatrices",
+    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-setMatrices",
+    "src/Gisplay/Maps/Map.js~Map#setMatrices",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/map.js~map#setupevents",
+    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-setupEvents",
+    "src/Gisplay/Maps/Map.js~Map#setupEvents",
     "method"
   ],
   [
@@ -1848,75 +1938,261 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/gisplay/maps/v11/choroplethgooglemaps.js",
-    "file/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js.html",
-    "src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js",
+    "src/gisplay/maps/webglutils.js",
+    "file/src/Gisplay/Maps/WebglUtils.js.html",
+    "src/Gisplay/Maps/WebglUtils.js",
     "file"
   ],
   [
-    "src/gisplay/maps/v11/choroplethgooglemaps.js~choroplethgooglemaps#constructor",
-    "class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html#instance-constructor-constructor",
-    "src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps#constructor",
+    "src/gisplay/maps/webglutils.js~webglutils.createandcompileshader",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-createAndCompileShader",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.createAndCompileShader",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/choroplethgooglemaps.js~choroplethgooglemaps#initialize",
-    "class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html#instance-method-initialize",
-    "src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps#initialize",
+    "src/gisplay/maps/webglutils.js~webglutils.createm1",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-createM1",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.createM1",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/choroplethgooglemaps.js~choroplethgooglemaps#setupfunctiononclick",
-    "class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html#instance-method-setupFunctionOnclick",
-    "src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps#setupFunctionOnclick",
+    "src/gisplay/maps/webglutils.js~webglutils.createm2",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-createM2",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.createM2",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js",
-    "file/src/Gisplay/Maps/v11/GoogleMapsBGMap.js.html",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js",
+    "src/gisplay/maps/webglutils.js~webglutils.createm3",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-createM3",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.createM3",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/webglutils.js~webglutils.createwebglprogram",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-createWebGLProgram",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.createWebGLProgram",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/webglutils.js~webglutils.generateshaderssourcecode",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-generateShadersSourceCode",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.generateShadersSourceCode",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/webglutils.js~webglutils.webmercatorprojection",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-webMercatorProjection",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.webMercatorProjection",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js",
     "file"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#constructor",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-constructor-constructor",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#constructor",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps#constructor",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#createcanvas",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-method-createCanvas",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#createCanvas",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps#createcanvas",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html#instance-method-createCanvas",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps#createCanvas",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#getcontainer",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-method-getContainer",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#getContainer",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps#getcenterlat",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html#instance-method-getCenterLat",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps#getCenterLat",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#getlatbound",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-method-getLatBound",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#getLatBound",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps#getcenterlng",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html#instance-method-getCenterLng",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps#getCenterLng",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#getlngbound",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-method-getLngBound",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#getLngBound",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps#getcontainer",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html#instance-method-getContainer",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps#getContainer",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#getzoom",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-method-getZoom",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#getZoom",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapbingmaps.js~bgmapbingmaps#getzoom",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html#instance-method-getZoom",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps#getZoom",
     "method"
   ],
   [
-    "src/gisplay/maps/v11/googlemapsbgmap.js~googlemapsbgmap#onevent",
-    "class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html#instance-method-onEvent",
-    "src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap#onEvent",
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js",
+    "file"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#addeventlistener",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-method-addEventListener",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#addEventListener",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#constructor",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#createcanvas",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-method-createCanvas",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#createCanvas",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#getcenterlat",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-method-getCenterLat",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#getCenterLat",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#getcenterlng",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-method-getCenterLng",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#getCenterLng",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#getcontainer",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-method-getContainer",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#getContainer",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapgooglemaps.js~bgmapgooglemaps#getzoom",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html#instance-method-getZoom",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps#getZoom",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js",
+    "file"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#addeventlistener",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-method-addEventListener",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#addEventListener",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#constructor",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#createcanvas",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-method-createCanvas",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#createCanvas",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#getcenterlat",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-method-getCenterLat",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#getCenterLat",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#getcenterlng",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-method-getCenterLng",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#getCenterLng",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#getcontainer",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-method-getContainer",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#getContainer",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/bgmapheremaps.js~bgmapheremaps#getzoom",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html#instance-method-getZoom",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps#getZoom",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethbingmaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js",
+    "file"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethbingmaps.js~choroplethbingmaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps#constructor",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethbingmaps.js~choroplethbingmaps#setupevents",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps.html#instance-method-setupEvents",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps#setupEvents",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethgooglemaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js",
+    "file"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethgooglemaps.js~choroplethgooglemaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps#constructor",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethgooglemaps.js~choroplethgooglemaps#setupevents",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html#instance-method-setupEvents",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps#setupEvents",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethheremaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js",
+    "file"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethheremaps.js~choroplethheremaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps#constructor",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/choroplethheremaps.js~choroplethheremaps#setupevents",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps.html#instance-method-setupEvents",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps#setupEvents",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/dotmapgooglemaps.js",
+    "file/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js.html",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js",
+    "file"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/dotmapgooglemaps.js~dotmapgooglemaps#constructor",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps.html#instance-constructor-constructor",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps#constructor",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/v11/1_backgroundmaps/dotmapgooglemaps.js~dotmapgooglemaps#setupevents",
+    "class/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps.html#instance-method-setupEvents",
+    "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps#setupEvents",
     "method"
   ],
   [

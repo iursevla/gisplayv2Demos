@@ -39,13 +39,19 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html">WebGLUtils</a></span></span></li>
 <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
-<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html">GoogleMapsBGMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11/1_BackgroundMaps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html">BGMapBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html">BGMapGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html">BGMapHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps.html">ChoroplethBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps.html">ChoroplethHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps.html">DotMapGoogleMaps</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -56,7 +62,10 @@ import { DotMap } from &apos;./Maps/Types/DotMap&apos;;
 import { ChangeMap } from &apos;./Maps/Types/ChangeMap&apos;;
 import { ProportionalSymbolsMap } from &apos;./Maps/Types/ProportionalSymbolsMap&apos;;
 import { ChorochromaticMap } from &apos;./Maps/Types/ChorochromaticMap&apos;;
-import { ChoroplethGoogleMaps } from &apos;./Maps/v11/ChoroplethGoogleMaps&apos;;
+import { ChoroplethGoogleMaps } from &apos;./Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps&apos;;
+import { ChoroplethHereMaps } from &apos;./Maps/v11/1_BackgroundMaps/ChoroplethHereMaps&apos;;
+import { ChoroplethBingMaps } from &apos;./Maps/v11/1_BackgroundMaps/ChoroplethBingMaps&apos;;
+import { DotMapGoogleMaps } from &apos;./Maps/v11/1_BackgroundMaps/DotMapGoogleMaps&apos;;
 
 /**
  * Gisplay API entry point with one method for each map available.
@@ -68,7 +77,7 @@ export class Gisplay {
      * @memberOf Gisplay
      */
     constructor() {
-        console.log(&quot;Gisplay Class constructor&quot;);
+        // console.log(&quot;Gisplay Class constructor&quot;);
         /**
          * TimeStamp at the beginning.
          * @type {number} 
@@ -163,16 +172,53 @@ export class Gisplay {
         gismap.makeMap();
     }
 
+    /* ######################     Background Map Providers      ############### */
     /**
      * Creates a map of type Choropleth with background map being from Google Maps.
-     * @param {Object} bgmap - Background map object be used(atm only MapBox being used).- Background map object be used(atm only MapBox being used).
+     * @param {Object} bgmap - Background map object be used, in this case Google Maps.
      * @param {JSON} geometry - The object that contains the data.
      * @param {Object} options - Object that contains user personalization options.
      * @memberOf Gisplay
      */
     makeChoroplethGoogleMaps(bgmap, geometry, options) {
         const gismap = new ChoroplethGoogleMaps(bgmap, geometry, options);
-        gismap.makeMap(); //this.makeMap(gismap, options);
+        gismap.makeMap();
+    }
+
+    /**
+     * Creates a map of type Choropleth with background map being from Here Maps.
+     * @param {Object} bgmap - Background map object be used, in this case Here Maps.
+     * @param {JSON} geometry - The object that contains the data.
+     * @param {Object} options - Object that contains user personalization options.
+     * @memberOf Gisplay
+     */
+    makeChoroplethHereMaps(bgmap, geometry, options) {
+        const gismap = new ChoroplethHereMaps(bgmap, geometry, options);
+        gismap.makeMap();
+    }
+
+    /**
+     * Creates a map of type Choropleth with background map being from Bing Maps.
+     * @param {Object} bgmap - Background map object be used, in this case Bing Maps.
+     * @param {JSON} geometry - The object that contains the data.
+     * @param {Object} options - Object that contains user personalization options.
+     * @memberOf Gisplay
+     */
+    makeChoroplethBingMaps(bgmap, geometry, options) {
+        const gismap = new ChoroplethBingMaps(bgmap, geometry, options);
+        gismap.makeMap();
+    }
+
+    /**
+     * Creates a map of type Dot Map with background map being from Google Maps.
+     * @param {Object} bgmap - Background map object be used, in this case Google Maps.
+     * @param {JSON} geometry - The object that contains the data.
+     * @param {Object} options - Object that contains user personalization options.
+     * @memberOf Gisplay
+     */
+    makeDotMapGoogleMaps(bgmap, geometry, options) {
+        const gismap = new DotMapGoogleMaps(bgmap, geometry, options);
+        gismap.makeMap();
     }
 }</code></pre>
 

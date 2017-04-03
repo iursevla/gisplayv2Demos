@@ -39,13 +39,19 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Feature.js~Feature.html">Feature</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Legend.js~Legend.html">Legend</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html">WebGLUtils</a></span></span></li>
 <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Types</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap.html">ChorochromaticMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/DotMap.js~DotMap.html">DotMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
-<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/GoogleMapsBGMap.js~GoogleMapsBGMap.html">GoogleMapsBGMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/v11/1_BackgroundMaps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps.html">BGMapBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps.html">BGMapGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps.html">BGMapHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps.html">ChoroplethBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps.html">ChoroplethGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps.html">ChoroplethHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps.html">DotMapGoogleMaps</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -53,20 +59,21 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/Gisplay/Maps/BGMapWrapper.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
  * This class represents a background map wrapper. Used to be a &quot;middle-man&quot; between the 
- * background map provider and the API.
+ * background map provider and the Gisplay API.
  * @see https://www.mapbox.com/mapbox-gl-js/api/ 
  * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference
+ * @see https://developer.here.com/develop/javascript-api 
  * @see Diogo&apos;s thesis Page 70-72 + 59
  */
 export class BGMapWrapper {
 
     /**
-     * This is the map that comes from the background map provider(e.g., MapBox).
-     * @param {Object} map - The background map object that came from the provider (e.g., Mapbox, Google Maps). 
+     * Creates an instance of BGMapWrapper.
+     * @param {Object} bgmap - The background map object that came from the provider (e.g., Mapbox, Google Maps). 
      */
     constructor(bgmap) {
         /**
-         * This is the map object that comes from the background map provider(e.g., MapBox). 
+         * This is the background map object that comes from the background map provider(e.g., MapBox). 
          * @type {Object}
          */
         this.bgMapObject = bgmap;
@@ -78,6 +85,24 @@ export class BGMapWrapper {
      */
     getContainer() {
         return this.bgMapObject.getContainer();
+    }
+
+    /**
+     * Returns the width of the canvas elment.
+     * @returns {number} the width of the canvas elment.
+     * @memberOf BGMapWrapper
+     */
+    getWidth() {
+        return this.getContainer().offsetWidth;
+    }
+
+    /**
+     * Returns the height of the canvas element.
+     * @returns {number} the height of the canvas elment.
+     * @memberOf BGMapWrapper
+     */
+    getHeight() {
+        return this.getContainer().offsetHeight;
     }
 
     /**
@@ -113,16 +138,55 @@ export class BGMapWrapper {
      * Returns the longitude of the bounding box northwest corner.
      * @return {number} - Longitude of northwest corner, measured in degrees.
      */
-    getLngBound() {
-        return this.bgMapObject.getBounds().getNorthWest().lng;
+    getCenterLng() {
+        return ((((180 + this.bgMapObject.getCenter().lng) % 360) + 360) % 360) - 180;
     }
 
     /**
      * Returns the latitude of the bounding box northwest corner.
      * @return {number} - Latitude of northwest corner, measured in degrees.
      */
-    getLatBound() {
-        return this.bgMapObject.getBounds().getNorthWest().lat;
+    getCenterLat() {
+        return this.bgMapObject.getCenter().lat;
+    }
+
+    /**
+     * Returns all the corner bounds(NW, SW, NE, SE) of the background map.
+     * @returns {{NW: {lng: number, lat: number}, SW: {lng: number, lat: number}, NE: {lng: number, lat: number}, SE: {lng: number, lat: number}}} description
+     * @deprecated Not used atm.
+     * @memberOf BGMapWrapper
+     */
+    getMapBounds() {
+        let map = this.bgMapObject;
+        return {
+            NW: {
+                lng: map.getBounds().getNorthWest().lng,
+                lat: map.getBounds().getNorthWest().lat
+            },
+            SW: {
+                lng: map.getBounds().getSouthWest().lng,
+                lat: map.getBounds().getSouthWest().lat
+            },
+            NE: {
+                lng: map.getBounds().getNorthEast().lng,
+                lat: map.getBounds().getNorthEast().lat
+            },
+            SE: {
+                lng: map.getBounds().getSouthEast().lng,
+                lat: map.getBounds().getSouthEast().lat
+            }
+        };
+    }
+
+    /**
+     * Verifies if the background map being shown is in two different meridians.
+     * @param {{lng: number, lat: number}} NW - North west corner coordinates
+     * @param {{lng: number, lat: number}} NE - North East corner coordinates
+     * @deprecated Not used atm.
+     * @memberOf BGMapWrapper
+     */
+    isInMultipleMeridians(NW, NE) {
+        return false;
     }
 
     /**
@@ -131,7 +195,7 @@ export class BGMapWrapper {
      * @param {Function} eventfunction - The function to be called when the event is fired. The listener function is called with the data object passed to  fire , extended with  target and  type properties.
      * @return {void} 
      */
-    onEvent(eventstr, eventfunction) {
+    addEventListener(eventstr, eventfunction) {
         this.bgMapObject.on(eventstr, eventfunction);
     }
 
@@ -143,7 +207,7 @@ export class BGMapWrapper {
     showLoader() {
         if (this.loaderDiv === undefined) //@TODO: REMOVE If (See M1 + M8) 
             this.createLoader();
-        else { 
+        else {
             if (this.loaderDiv.style.display === &apos;none&apos;)
                 this.loaderDiv.style.display = &apos;flex&apos;;
             else
@@ -175,8 +239,16 @@ export class BGMapWrapper {
          * @type {HTMLDivElement}
          */
         this.loaderDiv = outerDiv;
-
         mapDiv.parentElement.insertBefore(outerDiv, mapDiv);
+    }
+
+    /**
+     * Returns the background map object. This is the Background provider object (e.g., Mapbox, GMaps, HereMaps, Bing Maps).
+     * @returns {BGMapWrapper#bgMapObject} the background map object.
+     * @memberOf BGMapWrapper
+     */
+    getBackgroundMapProviderObject() {
+        return this.bgMapObject;
     }
 }
 </code></pre>
