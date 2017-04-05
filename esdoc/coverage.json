@@ -1,7 +1,7 @@
 {
-  "coverage": "99.14%",
-  "expectCount": 235,
-  "actualCount": 233,
+  "coverage": "99.15%",
+  "expectCount": 237,
+  "actualCount": 235,
   "files": {
     "src/Gisplay/Maps/Aesthetic.js": {
       "expectCount": 24,
@@ -102,8 +102,8 @@
       "undocumentLines": []
     },
     "src/Gisplay/Maps/WebglUtils.js": {
-      "expectCount": 8,
-      "actualCount": 8,
+      "expectCount": 10,
+      "actualCount": 10,
       "undocumentLines": []
     }
   }

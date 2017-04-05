@@ -147,7 +147,7 @@ Always remeber WebGL is column major when reading the matrix code.</p>
         </p>
       </div>
       <div>
-        
+        <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
         
         <div data-ice="description"><p>Creates the M1 Matrix.</p>
 </div>
@@ -175,7 +175,7 @@ Always remeber WebGL is column major when reading the matrix code.</p>
         </p>
       </div>
       <div>
-        
+        <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
         
         <div data-ice="description"><p>Creates the M2 Matrix.</p>
 </div>
@@ -203,7 +203,7 @@ Always remeber WebGL is column major when reading the matrix code.</p>
         </p>
       </div>
       <div>
-        
+        <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
         
         <div data-ice="description"><p>Creates the M3 Matrix.</p>
 </div>
@@ -256,6 +256,34 @@ Always remeber WebGL is column major when reading the matrix code.</p>
         <p>
           
           
+          <span data-ice="name"><span><a href="class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-finalMatrix">finalMatrix</a></span></span><span data-ice="signature">(scale: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, width: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, height: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, offsetX: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, offsetY: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>This is the result matrix from multiplication M1<em>M2</em>M3</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
           <span data-ice="name"><span><a href="class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-generateShadersSourceCode">generateShadersSourceCode</a></span></span><span data-ice="signature">(): {vertexCode: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fragmentCode: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>}</span>
         </p>
       </div>
@@ -263,6 +291,34 @@ Always remeber WebGL is column major when reading the matrix code.</p>
         
         
         <div data-ice="description"><p>Creates shaders(Vertex + Fragment) source code.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          <span data-ice="name"><span><a href="class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-matrixMultiplication">matrixMultiplication</a></span></span><span data-ice="signature">(M1: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span>, M2: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></span>
+        </p>
+      </div>
+      <div>
+        <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
+        
+        <div data-ice="description"><p>Performs Matrix multiplication between two matrices.</p>
 </div>
       </div>
     </td>
@@ -323,7 +379,7 @@ Always remeber WebGL is column major when reading the matrix code.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber181">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber132">source</a></span></span>
     </span>
   </h3>
 
@@ -411,12 +467,12 @@ Always remeber WebGL is column major when reading the matrix code.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber51">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber175">source</a></span></span>
     </span>
   </h3>
 
   
-  
+  <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
   
   <div data-ice="description"><p>Creates the M1 Matrix. 
 This matrix is used to convert the result pixel to a position between 0 and 1(2/width and 2/height scaling) 
@@ -494,12 +550,12 @@ and after that convert to a position between -1 and 1(-1 translation).</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber76">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber200">source</a></span></span>
     </span>
   </h3>
 
   
-  
+  <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
   
   <div data-ice="description"><p>Creates the M2 Matrix.
 This matrix is used to calculate the positions of the pixel using the Web Mercator projection.</p>
@@ -581,12 +637,12 @@ This matrix is used to calculate the positions of the pixel using the Web Mercat
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber98">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber222">source</a></span></span>
     </span>
   </h3>
 
   
-  
+  <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
   
   <div data-ice="description"><p>Creates the M3 Matrix.
 This matrix is used to calculate the positions of the pixel using the Web Mercator projection.</p>
@@ -639,7 +695,7 @@ This matrix is used to calculate the positions of the pixel using the Web Mercat
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber196">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber147">source</a></span></span>
     </span>
   </h3>
 
@@ -701,6 +757,108 @@ This matrix is used to calculate the positions of the pixel using the Web Mercat
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-finalMatrix">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span data-ice="name">finalMatrix</span><span data-ice="signature">(scale: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, width: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, height: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, offsetX: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, offsetY: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber52">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>This is the result matrix from multiplication M1<em>M2</em>M3</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">scale</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The scale calculated with WebMercator projection.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">width</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The width of the canvas.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">height</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The height of the canvas.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">offsetX</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The offsetX calculated with WebMercator projection.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">offsetY</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The offsetY calculated with WebMercator projection.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The resulting matrix (M1<em>M2</em>M3) in a single matrix.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="Rui&apos;s thesis">Rui&apos;s thesis</a></span></li></ul></div>
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-generateShadersSourceCode">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
@@ -712,7 +870,7 @@ This matrix is used to calculate the positions of the pixel using the Web Mercat
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber117">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber70">source</a></span></span>
     </span>
   </h3>
 
@@ -734,6 +892,87 @@ This matrix is used to calculate the positions of the pixel using the Web Mercat
         <tr>
           <td class="return-type" data-ice="returnType">{vertexCode: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fragmentCode: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>}</td>
           <td class="return-desc" data-ice="returnDescription"><p>The code for the vertex and fragment shaders.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-matrixMultiplication">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span data-ice="name">matrixMultiplication</span><span data-ice="signature">(M1: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span>, M2: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/Gisplay/Maps/WebglUtils.js.html#lineNumber243">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  <div class="deprecated" data-ice="deprecated">this method was deprecated. finalMatrix(..) method is used instead.</div>
+  
+  <div data-ice="description"><p>Performs Matrix multiplication between two matrices.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">M1</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The M1 matrix.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">M2</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The M2 matrix.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array">Float32Array</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>a matrix which is the result of multiplying M1 by M2.</p>
 </td>
         </tr>
       </tbody>

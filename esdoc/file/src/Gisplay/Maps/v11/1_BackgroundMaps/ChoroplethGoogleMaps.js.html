@@ -86,7 +86,7 @@ export class ChoroplethGoogleMaps extends Choropleth {
         /*if(!this.gisplayOptions.interactive &amp;&amp; this.gisplayOptions.mapOnClickFunction === undefined)
             return;*/
         this.bGMap.addEventListener(&apos;zoom_changed&apos;, () =&gt; { this.draw(); });
-        this.bGMap.addEventListener(&apos;center_changed&apos;, () =&gt; { this.draw(); });
+        //this.bGMap.addEventListener(&apos;center_changed&apos;, () =&gt; { this.draw(); });
         this.bGMap.addEventListener(&apos;drag&apos;, () =&gt; { this.draw(); });
         this.bGMap.addEventListener(&apos;click&apos;, e =&gt; {
             const lat = e.latLng.lat();

@@ -1023,10 +1023,11 @@ export class Map {
 
     /**
      * This method will set all matrices needed to compute each point/vertex position. This will use the 
+     * Before sending the matrix to webGL we change the last column transformation in X and Y to the last row X and Y 
+     * because WebGL is column major. See MMatrix[6] =...
      * @memberOf Map
      */
     setMatrices(gl) {
-
         let lngCenter = this.bGMap.getCenterLng();
         let latCenter = this.bGMap.getCenterLat();
         let zoom = this.bGMap.getZoom();
@@ -1038,23 +1039,19 @@ export class Map {
              width = 2432;
          }*/
         let mercator = WebGLUtils.webMercatorProjection(lngCenter, latCenter, zoom, tileSize, width, height);
-        let M1Matrix = WebGLUtils.createM1(this._webgl.gl.drawingBufferWidth, this._webgl.gl.drawingBufferHeight); //TODO: This does not solve the resizing issue 100%.
+      /*  let M1Matrix = WebGLUtils.createM1(this._webgl.gl.drawingBufferWidth, this._webgl.gl.drawingBufferHeight); //TODO: This does not solve the resizing issue 100%.
         let M2Matrix = WebGLUtils.createM2(mercator.scale, mercator.offsetX, mercator.offsetY);
         let M3Matrix = WebGLUtils.createM3();
 
-        if (window.first) {
-            console.log(M1Matrix);
-            console.log(M2Matrix);
-            console.log(M3Matrix);
-        }
-
-        const M1loc = gl.getUniformLocation(this._webgl.program, &apos;M1&apos;);
-        const M2loc = gl.getUniformLocation(this._webgl.program, &apos;M2&apos;);
-        const M3loc = gl.getUniformLocation(this._webgl.program, &apos;M3&apos;);
-
-        gl.uniformMatrix4fv(M1loc, false, M1Matrix);
-        gl.uniformMatrix4fv(M2loc, false, M2Matrix);
-        gl.uniformMatrix4fv(M3loc, false, M3Matrix);
+        let M1xM2 = WebGLUtils.matrixMultiplication(M1Matrix, M2Matrix);
+        let MMatrix = WebGLUtils.matrixMultiplication(M1xM2, M3Matrix);
+        MMatrix[6] = MMatrix[2];
+        MMatrix[7] = MMatrix[5];
+        MMatrix[2] = 0;
+        MMatrix[5] = 0;*/
+        let MMatrix = WebGLUtils.finalMatrix(mercator.scale, width, height, mercator.offsetX, mercator.offsetY);
+        const Mloc = gl.getUniformLocation(this._webgl.program, &apos;M&apos;)
+        gl.uniformMatrix3fv(Mloc, false, MMatrix);
     }
 
     /**

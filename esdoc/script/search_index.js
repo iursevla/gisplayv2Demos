@@ -1974,9 +1974,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/gisplay/maps/webglutils.js~webglutils.finalmatrix",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-finalMatrix",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.finalMatrix",
+    "method"
+  ],
+  [
     "src/gisplay/maps/webglutils.js~webglutils.generateshaderssourcecode",
     "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-generateShadersSourceCode",
     "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.generateShadersSourceCode",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/webglutils.js~webglutils.matrixmultiplication",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#static-method-matrixMultiplication",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.matrixMultiplication",
     "method"
   ],
   [
