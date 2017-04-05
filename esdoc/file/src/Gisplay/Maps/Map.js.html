@@ -1034,54 +1034,11 @@ export class Map {
         let tileSize = this.gisplayOptions.tileSize;
         let width = this.bGMap.getWidth();
         let height = this.bGMap.getHeight();
-        /* if(window.first){
-             console.log(&quot;HERE&quot;)
-             width = 2432;
-         }*/
         let mercator = WebGLUtils.webMercatorProjection(lngCenter, latCenter, zoom, tileSize, width, height);
-      /*  let M1Matrix = WebGLUtils.createM1(this._webgl.gl.drawingBufferWidth, this._webgl.gl.drawingBufferHeight); //TODO: This does not solve the resizing issue 100%.
-        let M2Matrix = WebGLUtils.createM2(mercator.scale, mercator.offsetX, mercator.offsetY);
-        let M3Matrix = WebGLUtils.createM3();
-
-        let M1xM2 = WebGLUtils.matrixMultiplication(M1Matrix, M2Matrix);
-        let MMatrix = WebGLUtils.matrixMultiplication(M1xM2, M3Matrix);
-        MMatrix[6] = MMatrix[2];
-        MMatrix[7] = MMatrix[5];
-        MMatrix[2] = 0;
-        MMatrix[5] = 0;*/
+        
         let MMatrix = WebGLUtils.finalMatrix(mercator.scale, width, height, mercator.offsetX, mercator.offsetY);
         const Mloc = gl.getUniformLocation(this._webgl.program, &apos;M&apos;)
         gl.uniformMatrix3fv(Mloc, false, MMatrix);
-    }
-
-    /**
-     * M28) Scale matrix with the given x(scaleX) and y(scaleY) values.
-     * Scaling x and y, which is just scaling first two rows of matrix
-     * @param {Float32Array} matrix 
-     * @param {number} scaleX - Scale in X axis.
-     * @param {number} scaleY - Scale in Y axis.
-     * @see http://www.c-jump.com/bcc/common/Talk3/Math/Matrices/const_images/applying_scaling.png
-     * @see http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg Remember WebGL is Column major
-     * @see http://prntscr.com/eononb
-     * @memberOf Map
-     */
-    scaleProjection(matrix, scaleX, scaleY) {
-        for (let i = 0; i &lt; 8; i++)
-            i &lt; 4 ? (matrix[i] *= scaleX) : (matrix[i] *= scaleY);
-    }
-
-    /**
-     * M29) The translation is performed in the last row of the matrix. 
-     * @param {Float32Array} matrix - The matrix to hold the result.
-     * @param {number} tx - Translation in X axis.  
-     * @param {number} ty - Translation in Y axis.
-     * @see http://polymathprogrammer.com/images/blog/200809/translationmatrix.png
-     * @see http://prntscr.com/eononb
-     * @memberOf Map
-     */
-    translateProjection(matrix, tx, ty) {
-        for (let i = 0; i &lt; 4; i++)
-            matrix[i + 12] += (matrix[i] * tx) + (matrix[i + 4] * ty);
     }
 
     /** ########################    ABSTRACT METHODS    ######################## */

@@ -3899,7 +3899,7 @@
     "__docId__": 131,
     "kind": "file",
     "name": "src/Gisplay/Maps/Map.js",
-    "content": "import { BGMapWrapper } from './BGMapWrapper';\r\nimport { Aesthetic } from './Aesthetic';\r\nimport { GisplayOptions } from '../GisplayOptions';\r\nimport { WebGLUtils } from './WebGLUtils';\r\n\r\n/**\r\n * This class contains the Map class which represents the current map.\r\n * Each map has a group of functions available. There is only one map yet(maybe there will be two if we want to compare two).\r\n * @see Diogo's thesis 57-60 + 64/65\r\n */\r\nexport class Map {\r\n\r\n    /**\r\n     * Map constructor. All Map subclasses should call this first with super(...).\r\n     * @param {BGMapWrapper|Object} bgmap - Background map.\r\n     * @param {JSON} geometry - Geometry read from the file.\r\n     * @param {Object} userOptions - The user defined options. \r\n     * @todo With the type of the map we can do an if statement inside constructor to use or not some of the variables.\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        //console.log(\"Map constructor called -> super()\");\r\n        /**\r\n          * This object holds for each point it's long, lat and associated properties. \r\n          * This points will be used by k-d Tree. And k-d Tree is used to find the closest point to where the user clicked.\r\n          * @type {Array<{lon: number, lat: number, properties: JSON}>}\r\n          */\r\n        this.treepoints = [];\r\n\r\n        // ####################### DOT MAP ONLY\r\n        /**\r\n          * Holds the points for each Aesthethic object.\r\n          * @type {Array<Array<number>>}\r\n          */\r\n        this.tempAestheticPoints = new Array();\r\n\r\n        // ####################### ALL MAPS\r\n        /**\r\n         * Aesthetic objects that were saved.\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        this.aesthetics = new Array();\r\n        /**\r\n         * JSON object with the geometry that was read from the file.\r\n         * @type {JSON}\r\n         */\r\n        this.geometry = geometry;\r\n        /**\r\n         * This map unique identifier.\r\n         * @type {number}\r\n         */\r\n        this.id = window.mapcount++;\r\n\r\n        /**\r\n         * KdTree object to hold that will be used to calculate the closest point to the coordinates where the user made a click.\r\n         * @type {kdTree}\r\n         * @see Diogo's thesis Page 61.\r\n         * @see https://github.com/ubilabs/kd-tree-javascript\r\n         */\r\n        this.kdtree = undefined;\r\n        /**\r\n         * RBush(Rtree implementation) that is used to calculate the polygon closest to the coordinates where the user made a click.\r\n         * @type {PolygonLookup}\r\n         * @see Diogo's thesis page 61.\r\n         * @see https://github.com/pelias/polygon-lookup\r\n         * @see https://github.com/mourner/rbush\r\n         */\r\n        this.rtree = undefined;\r\n        /**\r\n         * Polygons do/do not exist. This is used to know if it to create a rtree or not on buildTrees method.\r\n         * @type {boolean}\r\n         */\r\n        this.hasPolygons = false;\r\n\r\n        /**\r\n         * This is the maixmum value found on the dataset. The final value for the break. E.g. [2, 37[ 37 is the max. \r\n         * Used for PSymbol Map and Change Map because on those maps it's important to take in consideration this values to define the Feature color.\r\n         * @see Diogo's thesis page 63 5.1.3 \r\n         * @type {number}\r\n         */\r\n        this.max = null;\r\n        /**\r\n         * This is the minimum value found on the dataset. The initial value for the break. E.g. [2, 37[ 2 is the min.\r\n         * Used for PSymbol Map and Change Map because on those maps it's important to take in consideration this values to define the Feature color.\r\n         * @see Diogo's thesis page 63 5.1.3\r\n         * @type {number}\r\n         */\r\n        this.min = null;\r\n    }\r\n\r\n    /**\r\n     * M1) Loads user and default options. For each case if it isn't provided by the user, then it uses\r\n     * the default option. 1st method to be called.\r\n     * @param {Object} userOptions - Options given by the user. \r\n     * @param {Object} bgmap  - The background map provider.\r\n     */\r\n    loadOptions(userOptions, bgmap) {\r\n        /**\r\n         * All the options available in the Gisplay API.\r\n         * @type {GisplayOptions}\r\n         */\r\n        this.gisplayOptions = new GisplayOptions(userOptions);\r\n\r\n        /**\r\n         * This is the Gisplay API Background map wrapper. It contains the background map provider object to access it's methods (zoom, coordinates,etc).\r\n         * This map(Gisplay Map) will  be drawn over the background map(bGMap).\r\n         * @type {BGMapWrapper}\r\n         */\r\n        this.bGMap = this.gisplayOptions.useCustomMapService ? bgmap : new BGMapWrapper(bgmap);\r\n        if (this.gisplayOptions.showLoader)\r\n            this.showLoader();\r\n    }\r\n\r\n    /**\r\n     * M2) Calls the Background Map Wrapper to create the loader to be used later when the user feeds data to the API.\r\n     * @deprecated Not used anymore\r\n     */\r\n    showLoader() {\r\n        this.bGMap.showLoader();\r\n    }\r\n\r\n    /**\r\n     * M3) Initializes the API by: creating canvas, the WebGL program and setting up all needed events.\r\n     * @return {void}\r\n     */\r\n    initializeCanvasAndEvents() {\r\n        this.createCanvas();\r\n        WebGLUtils.createWebGLProgram(this._webgl);\r\n        this.setupEvents(this.id);\r\n    }\r\n\r\n    /**\r\n     * M4) Creates a canvas element and WebGL associated information.\r\n     */\r\n    createCanvas() {\r\n        const canvas = this.bGMap.createCanvas(this.id);\r\n\r\n        /**\r\n         * @type {Object} _webgl - WebGL object.  Init webgl properties\r\n         * @property  {WebGLRenderingContext} _webgl.gl - The WebGLRenderingContext to be used.\r\n         * @property  {WebGLProgram} _webgl.program -  The WebGLProgram to be used. \r\n         * @property  {Float32Array} _webgl.projection - The projection to be used. Deprecated in favor of better projection to work with multiple map background providers.\r\n         * @see Diogo's thesis page 64+\r\n         */\r\n        this._webgl = {\r\n            gl: null,\r\n            program: null\r\n        };\r\n\r\n        this._webgl.gl = canvas.getContext(\"webgl\");\r\n        window.canvas = canvas;\r\n        this._webgl.gl.viewport(0, 0, this.bGMap.getContainer().offsetWidth, this.bGMap.getContainer().offsetHeight);\r\n        this._webgl.gl.disable(this._webgl.gl.DEPTH_TEST);\r\n    }\r\n\r\n    /**\r\n     * M8) Setup all events used by the API. Right now the API uses: drag, zoom and click events. \r\n     * This events will be fired by the background map provider and we can use them to draw(zoom and pan) or alert information(click).\r\n     * Pan/Zoom = move, click = click\r\n     * rtree will be used to find the closest polygon to the where the clicked event happened.\r\n     * kdtree will be used to find the closest point to where the click event happened.\r\n     * @todo This method is doing uneccessary job if the user set interative to false and mapOnClickFunction is undefined.\r\n     * @param {number} mappos - This map id. \r\n     * @return {void}\r\n     * @see https://www.mapbox.com/mapbox-gl-js/api/#events\r\n     * @see http://stackoverflow.com/a/34349737\r\n     */\r\n    setupEvents(mappos) {\r\n        /*if(!this.gisplayOptions.interactive && this.gisplayOptions.mapOnClickFunction === undefined)\r\n            return;*/\r\n        this.bGMap.addEventListener('move', () => { this.draw(); });\r\n        this.bGMap.addEventListener('click', e => { //TODO: Create 2 methods (1 for rtree another for kdtree)\r\n            const lng = ((((180 + e.latlng.lng) % 360) + 360) % 360) - 180;\r\n            const lat = e.latlng.lat;\r\n            /**\r\n             * When dealing with polygons rtree will be used.\r\n             * @see Diogo's thesis Page 62\r\n             */\r\n            if (this.rtree !== undefined)\r\n                this.searchRTree(lng, lat);\r\n\r\n            /**\r\n             * When dealing with points kdtree will be used.\r\n             * @see Diogo's thesis page 62\r\n             */\r\n            if (this.kdtree !== undefined)\r\n                this.searchKdTree(lng, lat);\r\n\r\n        });\r\n    }\r\n\r\n    /**\r\n     * Search the rtree for the closest polygon from the lng, lat that was clicked.\r\n     * @param {number} lng - The longitude of the click.\r\n     * @param {number} lat - The latitude of the click.\r\n     * @returns \r\n     * \r\n     * @memberOf Map\r\n     */\r\n    searchRTree(lng, lat) {\r\n        let rtreeSearchResult = this.rtree.search(lng, lat);\r\n        if (rtreeSearchResult === undefined)\r\n            return;\r\n        else {\r\n            let res = \"\";\r\n            let showPrtOnClick = this.gisplayOptions.showPropertiesOnClick;\r\n            if (showPrtOnClick !== null) {\r\n                for (let i = 0; i < showPrtOnClick.length; i += 2) {\r\n                    if (i === 0)\r\n                        res += `${showPrtOnClick[i + 1]}: ${rtreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                    else\r\n                        res += `\\n${showPrtOnClick[i + 1]}: ${rtreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                }\r\n            }\r\n            else {\r\n                let keys = Object.keys(rtreeSearchResult.properties);\r\n                for (let [i, key] of keys.entries())\r\n                    if (key !== \"_gisplayid\")\r\n                        i == 0 ? res += `${key}: ${rtreeSearchResult.properties[key]}` : res += `\\n${key}: ${rtreeSearchResult.properties[key]}`;\r\n            }\r\n\r\n            if (this.gisplayOptions.interactive)\r\n                alert(res);//todo\r\n            if (this.gisplayOptions.mapOnClickFunction !== undefined)\r\n                this.gisplayOptions.mapOnClickFunction(rtreeSearchResult);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Search the rtree for the closest point from the lng, lat that was clicked. \r\n     * @param {number} lon - The longitude of the click.\r\n     * @param {number} lat - The latitude of the click.\r\n     * @returns \r\n     * @memberOf Map\r\n     */\r\n    searchKdTree(lon, lat) {\r\n        let nearest = this.kdtree.nearest({ lon, lat }, 1, 128 / ((2 ** (this.bGMap.getZoom() * 2))));\r\n        console.log(\"21\", nearest)\r\n        if (nearest.length <= 0)\r\n            return;\r\n        else {\r\n            console.log(\"22\")\r\n            let kdTreeSearchResult = nearest[0][0];\r\n            let res = \"\";\r\n            let showPrtOnClick = this.gisplayOptions.showPropertiesOnClick;\r\n            if (showPrtOnClick !== null) { //TODO: Remove if dentro do for e passar a começar no i=1 e passar o if para antes do for\r\n                for (let i = 0; i < showPrtOnClick.length; i += 2) {\r\n                    if (i === 0)\r\n                        res += `${showPrtOnClick[i + 1]}: ${kdTreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                    else\r\n                        res += `\\n${showPrtOnClick[i + 1]}: ${kdTreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                }\r\n            }\r\n            else {\r\n                let keys = Object.keys(kdTreeSearchResult.properties);\r\n                for (let [i, key] of keys.entries())\r\n                    if (key !== \"_gisplayid\")\r\n                        i == 0 ? res += `${key}: ${kdTreeSearchResult.properties[key]}` : res += `\\n${key}: ${kdTreeSearchResult.properties[key]}`;\r\n            }\r\n\r\n            if (this.gisplayOptions.interactive)\r\n                alert(res);\r\n            if (this.gisplayOptions.mapOnClickFunction !== undefined)\r\n                this.gisplayOptions.mapOnClickFunction(kdTreeSearchResult);\r\n        }\r\n    }\r\n\r\n    /** ########################   METHOD from Gisplay.js    ######################## */\r\n    /**\r\n     * M9) Method that executes all the process associated with the creation of the thematic map.\r\n     * @memberOf Map\r\n     */\r\n    makeMap() {\r\n        let opts = this.gisplayOptions;\r\n        setTimeout(console => {\r\n            if (opts.colorScheme === undefined)\r\n                opts.colorScheme = this.defaults(opts.colorSchemeId).colorScheme;\r\n            if (opts.classBreaks === undefined) {\r\n                if (opts.numberOfClasses === undefined)\r\n                    opts.numberOfClasses = this.defaults(opts.colorSchemeId).numberOfClasses;\r\n                this.preProcessData(this.geometry, opts.numberOfClasses, opts.classBreaksMethod, opts.colorScheme);\r\n            }\r\n\r\n            this.loadGeoJSON(this.geometry);\r\n            this.draw();\r\n\r\n            if (opts.showLegend)\r\n                this.buildLegend();\r\n            if (opts.showLoader) //@TODO: Change this if to be the 1st thing done inside the setTimeout\r\n                this.showLoader();\r\n        }, 1);\r\n    }\r\n\r\n    /**\r\n     * M11) Creates Aesthetic objects. If there's the need to calculate the class intervals,\r\n     * the method calcClassBreaks is called \r\n     * @param {JSON} geojson - GeoJSON object.\r\n     * @param {number} numberOfClasses - Number of classes that the Legend will contain.\r\n     * @param {string} classBreaksMethod - Algorithm to be used to calculate class breaks. Only used it class breaks are not given by the user.\r\n     * @param {string[]} colorscheme - Color scheme to be used by this map.\r\n     * @memberOf Map\r\n     */\r\n    preProcessData(geojson, numberOfClasses, classBreaksMethod, colorscheme) {\r\n        /**\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        const aesarray = []; //Array of aesthetic objects loaded from the file\r\n        const numberValues = []; //The attr is a number\r\n        const stringValues = []; //The attr is a string\r\n        let classBreaks; //Class Breaks given by the user or calculated by the API\r\n        let fcolor; //Colors to be used\r\n        let opts = this.gisplayOptions; //Options given by the user and defaults\r\n\r\n        let geoJsonFeaturesLength = geojson.features.length;\r\n        for (let i = 0; i < geoJsonFeaturesLength && (i < opts.maxFeatures); i++) { //@TODO?: Two fors one if attr is a string another if it a number\r\n            let attrValue = geojson.features[i].properties[opts.attr];\r\n            if (attrValue !== null && typeof attrValue === 'number') { //If \"f3\" exists and its a number\r\n                numberValues.push(attrValue);\r\n                this.max = Math.max(this.max, attrValue);\r\n                this.min = Math.min(this.min, attrValue);\r\n            }\r\n            else if (!stringValues.includes(attrValue)) //If its a string\r\n                stringValues.push(geojson.features[i].properties[opts.attr]);\r\n        }\r\n\r\n        if (numberValues.length > 0) { //Quantitative\r\n            if (opts.classBreaks === undefined) { //Not given by the user then calculate them\r\n                if (numberOfClasses > 1)\r\n                    classBreaks = this.calcClassBreaks(numberValues, classBreaksMethod, numberOfClasses);\r\n                else\r\n                    classBreaks = [this.min, this.max]; //Change Map\r\n            }\r\n            else //Given by the user\r\n                classBreaks = opts.classBreaks;\r\n\r\n            if (classBreaks.length > 2) {\r\n                fcolor = chroma.scale(colorscheme).colors(classBreaks.length - 1);\r\n                for (let i = 0; i < classBreaks.length - 1; i++) {\r\n                    let [r, g, b] = chroma(fcolor[i]).rgb(); // let color = chroma(fcolor[i]).rgb();\r\n                    let aes;\r\n                    if (i !== classBreaks.length - 2)\r\n                        aes = new Aesthetic(i, opts.attr, [Math.round(r), Math.round(g), Math.round(b), opts.alpha], [0, 0, 0, 1], null, [classBreaks[i], classBreaks[i + 1]]);\r\n                    else {\r\n                        aes = new Aesthetic(i, opts.attr, [Math.round(r), Math.round(g), Math.round(b), opts.alpha], [0, 0, 0, 1], null, [classBreaks[i], classBreaks[i + 1]]);\r\n                        aes.outer = true;\r\n                    }\r\n                    aesarray.push(aes);\r\n                }\r\n            }\r\n            else {\r\n                let [r, g, b] = chroma(colorscheme[0]).rgb();// let color = chroma(colorscheme[0]).rgb();\r\n                let aes = new Aesthetic(0, opts.attr, [Math.round(r), Math.round(g), Math.round(b), opts.alpha], [0, 0, 0, 1], null, [classBreaks[0], classBreaks[1]]);\r\n                aes.outer = true;\r\n                aesarray.push(aes);\r\n            }\r\n        }\r\n        else { //Qualitative\r\n            if (stringValues.length > 0) {\r\n                classBreaks = stringValues;\r\n                if (typeof colorscheme === 'string') //string\r\n                    fcolor = chroma.scale(colorscheme).colors(classBreaks.length);\r\n                else  //array\r\n                    fcolor = chroma.scale(colorscheme).colors(classBreaks.length);\r\n\r\n                for (let i = 0; i < classBreaks.length; i++) {\r\n                    let [r, g, b] = chroma(fcolor[i]).rgb();// let color = chroma(fcolor[i]).rgb();\r\n                    let aes = new Aesthetic(i, opts.attr, [Math.round(r), Math.round(g), Math.round(b), 1], [0, 0, 0, 1], null, [stringValues[i]]);\r\n                    aesarray.push(aes);\r\n                }\r\n            }\r\n        }\r\n\r\n        /**\r\n         * All the Aesthetics that were read from the GeoJSON file.\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        this.aesthetics = aesarray;\r\n    }\r\n\r\n    /**\r\n     * M12) Calculates the class breaks using the algorithm given(k-means, quantile or equidistant). \r\n     * There will be as many class breaks as number of classes(numberOfClasses) given as input. \r\n     * @param {number[]} numberValues - The data values that will be used to be compute the breaks. \r\n     * @param {string} classBreakMethod - The algorithm to use to calculate the class breaks.\r\n     * @param {number} numberOfClasses - Number of classes the result expects.\r\n     * @returns {number[]} - The class breaks resulting from the use of the given algorithm and the number of classes.\r\n     * @see http://gka.github.io/chroma.js/#chroma-limits\r\n     * @memberOf Map\r\n     */\r\n    calcClassBreaks(numberValues, classBreakMethod, numberOfClasses) {\r\n        let classBreaks;\r\n        switch (classBreakMethod) {\r\n            case 'equidistant':\r\n                classBreaks = chroma.limits(numberValues, 'e', numberOfClasses);\r\n                break;\r\n\r\n            case 'quantile':\r\n                classBreaks = chroma.limits(numberValues, 'q', numberOfClasses);\r\n                break;\r\n\r\n            case 'k-means':\r\n                classBreaks = chroma.limits(numberValues, 'k', numberOfClasses);\r\n                break;\r\n\r\n            default:\r\n                classBreaks = chroma.limits(numberValues, 'q', numberOfClasses);\r\n                break;\r\n        }\r\n        return classBreaks;\r\n    }\r\n\r\n    /**\r\n     * M13) Loads GeoJSON object that came from the file uploaded by the user. \r\n     * Extracts the Features present in the geometry object and inserts them in Aesthetic object(s)\r\n     * This method will create and insert features to Aesthetic objects and build trees of relationships between points or polygons.\r\n     * @param {JSON} geojson - GeoJSON read from the file.\r\n     * @see https://www.dashingd3js.com/lessons/geojson\r\n     * @memberOf Map\r\n     */\r\n    loadGeoJSON(geojson) {\r\n        for (let i = 0; i < geojson.features.length && (this.gisplayOptions.maxFeatures === undefined || i < this.gisplayOptions.maxFeatures); i++) {\r\n            geojson.features[i].properties['_gisplayid'] = i;\r\n            const geometry = geojson.features[i].geometry;\r\n            const properties = geojson.features[i].properties;\r\n            this.createAndInsertFeature(i, geometry, properties);\r\n        }\r\n        this.buildTrees(geojson); //@TODO: Only call this method if it's a low end device aka options.memorySaver is on\r\n    }\r\n\r\n    /**\r\n     * M14) Creates a Feature and then calls a method to insert said Feature in one or more Aesthetic objects.\r\n     * @param {number} featureId - Id of the Feature.\r\n     * @param {JSON} geometry - GeoJSON Geometry Object. \r\n     * @param {JSON} properties - GeoJSON properties Object.\r\n     * @see http://geojson.org/geojson-spec.html#geometry-objects\r\n     * @memberOf Map\r\n     */\r\n    createAndInsertFeature(featureId, geometry, properties) {\r\n        const gl = this._webgl.gl;\r\n        /**\r\n         * @type {GisplayOptions}\r\n         */\r\n        let opts = this.gisplayOptions;\r\n        if (opts.minuend !== undefined && opts.subtrahend !== undefined\r\n            && typeof properties[opts.minuend] === 'number' && typeof properties[opts.subtrahend] === 'number'\r\n            && properties[opts.minuend] !== undefined && properties[opts.subtrahend] !== undefined) {\r\n            properties[opts.attr] = properties[opts.minuend] - properties[opts.subtrahend]; //Used for Change map\r\n        }\r\n\r\n        //let isPoint = geometry.type == \"Point\";\r\n        if (geometry.type === \"Polygon\" || geometry.type === \"MultiPolygon\") {\r\n            this.hasPolygons = true;\r\n            const polygons = this.processPolygon({ geometry, properties });\r\n\r\n            const currentTriangles = []; //Polygon Triangles vertices\r\n            const bufferT = []; //WebGL Buffers with  triangles\r\n            const currentBorders = []; //Polygon Borders vertices\r\n            const bufferB = []; //Buffer borders\r\n\r\n            for (let i = 0; i < polygons.length; i++) { //For each Polygon\r\n                const trianglesPolygon = polygons[i].triangles;\r\n                const border = polygons[i].vertices;\r\n                currentTriangles[i] = new Array(); //Add This Polygon triangles\r\n                currentBorders[i] = new Array(); //Add this Polygon borders\r\n\r\n                for (let j = 0; j < trianglesPolygon.length; j++) { //Triangles\r\n                    currentTriangles[i].push(border[trianglesPolygon[j] * 2], border[trianglesPolygon[j] * 2 + 1]);\r\n\r\n                    if (j === trianglesPolygon.length - 1) {\r\n                        bufferT.push(gl.createBuffer());\r\n\r\n                        let vertArray = new Float32Array(currentTriangles[i]);\r\n                        gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n                        gl.bindBuffer(gl.ARRAY_BUFFER, bufferT[i]);\r\n                        gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n\r\n                        bufferT[i].itemSize = 2;\r\n                        bufferT[i].numItems = vertArray.length / 2;\r\n                    }\r\n                }\r\n\r\n                for (let k = 0; k < border.length; k += 2) { //Borders\r\n                    currentBorders[i].push(border[k], border[k + 1]);\r\n\r\n                    if (k === border.length - 2) {\r\n                        bufferB.push(gl.createBuffer());\r\n\r\n                        let vertArray = new Float32Array(currentBorders[i]);\r\n                        gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n                        gl.bindBuffer(gl.ARRAY_BUFFER, bufferB[i]);\r\n                        gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n\r\n                        bufferB[i].itemSize = 2;\r\n                        bufferB[i].numItems = vertArray.length / 2;\r\n                    }\r\n                }\r\n            }\r\n            this.insertFeature(featureId, properties, bufferT, bufferB, []);\r\n        }\r\n\r\n        else if (geometry.type === \"Point\" && opts.isDynamic) {\r\n            const currentPoints = new Array();\r\n            currentPoints.push(geometry.coordinates[0], geometry.coordinates[1]);\r\n            const bufferPoints = [];//Buffer points\r\n            let vertArray = new Float32Array(currentPoints);\r\n\r\n            bufferPoints.push(gl.createBuffer());\r\n            gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n            gl.bindBuffer(gl.ARRAY_BUFFER, bufferPoints[0]);\r\n            gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n\r\n            bufferPoints[0].itemSize = 2;\r\n            bufferPoints[0].numItems = vertArray.length / 2;\r\n\r\n            this.insertFeature(featureId, properties, [], [], bufferPoints);\r\n            this.treepoints.push({ lon: geometry.coordinates[0], lat: geometry.coordinates[1], properties });\r\n        }\r\n\r\n        else if (geometry.type === \"Point\" && !opts.isDynamic) {\r\n            if (this.tempAestheticPoints.length === 0)\r\n                for (let i = 0; i < this.aesthetics.length; i++)\r\n                    this.tempAestheticPoints[i] = [];\r\n\r\n            const aesPositions = this.fitFeature(properties);\r\n            for (const aesPos of aesPositions)\r\n                this.tempAestheticPoints[aesPos].push(geometry.coordinates[0], geometry.coordinates[1]);\r\n\r\n            this.treepoints.push({ lon: geometry.coordinates[0], lat: geometry.coordinates[1], properties });\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M15) Deals with polygon triangulation.\r\n     * @param {{geometry: JSON, properties: JSON}} polygon - The geometry and properties of the polygon.\r\n     * @returns {{triangles: Array<number>, vertices: Array<number>}} - The triangles and vertices calculated by earcut triangulation. The vertices are the outside of the polygon, the triangles are the inside.\r\n     * @see http://www.macwright.org/2015/03/23/geojson-second-bite.html#polygons\r\n     * @memberOf Map\r\n     */\r\n    processPolygon(polygon) {\r\n        let polyarray = [];\r\n        if (polygon.geometry.type === \"Polygon\") { //@TODO: [Demos never use this if statement.]\r\n            let outsidepolygon = polygon.geometry.coordinates[0]; //See: http://geojson.org/geojson-spec.html#polygon\r\n            let tempVerts = new Array();\r\n            for (let out = 0; out < outsidepolygon.length - 1; out++)\r\n                tempVerts.push(outsidepolygon[out][0], outsidepolygon[out][1]);//_vertexcount += (outsidepolygon.length + 1) / 2;\r\n            let triangles_vert = earcut(tempVerts); // _tricount += (triangles_vert.length / 3);\r\n            polyarray.push({ triangles: triangles_vert, vertices: tempVerts });\r\n        }\r\n        else if (polygon.geometry.type == \"MultiPolygon\") { //See http://geojson.org/geojson-spec.html#multipolygon\r\n            for (const cs of polygon.geometry.coordinates) {\r\n                let outsidepolygon = cs[0];\r\n                let tempVerts = new Array();\r\n                for (const c of outsidepolygon)\r\n                    tempVerts.push(c[0], c[1]);\r\n                let triangles_vert = earcut(tempVerts);\r\n                polyarray.push({ triangles: triangles_vert, vertices: tempVerts });\r\n            }\r\n        }\r\n        return polyarray;\r\n    }\r\n\r\n    /**\r\n     * M16) Converts geographic coordinates(latitude, longitude) to canvas coordinate pixels.\r\n     * @param {number} longitude - The longitude.\r\n     * @param {number} latitude - The latitude.\r\n     * @returns {x: number, y: number} - canvas coordinate system pixels.\r\n     * @see http://gisgeography.com/latitude-longitude-coordinates/\r\n     * @see https://www.w3schools.com/graphics/canvas_coordinates.asp\r\n     * @deprecated Not used anymore. YEAH...\r\n     * @memberOf Map\r\n     */\r\n    latLongToPixelXY(longitude, latitude) {\r\n        const pi_180 = Math.PI / 180.0;\r\n        const pi_4 = Math.PI * 4;\r\n        const sinLatitude = Math.sin(latitude * pi_180);\r\n        const pixelY = (0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (pi_4)) * 256;\r\n        const pixelX = ((longitude + 180) / 360) * 256;\r\n\r\n        const pixel = { x: pixelX, y: pixelY };\r\n        return pixel;\r\n    }\r\n\r\n    /**\r\n     * M17) Inserts the Feature into one or more Aesthetic objects. If the Feature does not fit in any Aesthetic then does nothing.\r\n     * @param {number} id - The Feature id. \r\n     * @param {JSON} properties - The Feature properties. \r\n     * @param {{itemSize: number, numItems: number}} triangles - Triangles, each in one WebGLBuffer.\r\n     * @param {{itemSize: number, numItems: number}} borders - Borders, each in one WebGLBuffer.\r\n     * @param {{itemSize: number, numItems: number}} points - Points, each in one WebGLBuffer.\r\n     * @return {void}\r\n     * @memberOf Map\r\n     */\r\n    insertFeature(id, properties, triangles, borders, points) {\r\n        for (const aes of this.aesthetics)\r\n            if (aes.checkProperty(properties[aes.getAttr()]))\r\n                aes.addFeature(id, properties, triangles, borders, points);\r\n        /* for (let i = 0; i < this.aesthetics.length; i++)\r\n             if (this.aesthetics[i].checkProperty(properties[this.aesthetics[i].getAttr()]))\r\n                 this.aesthetics[i].addFeature(id, properties, triangles, borders, points);*/\r\n    }\r\n\r\n    /**\r\n     * M18) Returns an array of Aesthetic ids that tells us the objects where the Feature belongs.\r\n     * @param {JSON} properties - The Feature properties\r\n     * @returns {Array<number>} - The Aesthetic ids where the Feature belongs.\r\n     * @memberOf Map\r\n     */\r\n    fitFeature(properties) {\r\n        const res = [];\r\n        for (let i = 0; i < this.aesthetics.length; i++)\r\n            if (this.aesthetics[i].checkProperty(properties[this.aesthetics[i].getAttr()]))\r\n                res.push(i);\r\n        return res;\r\n    }\r\n\r\n    /**\r\n     * M19) Receives the dataset as parameter. This dataset in each row contains geometry and associated properties, then it creates one tree\r\n     * either for points or polygons. This tree can be k-d Treee or RBush(RTree)\r\n     * @param {JSON} geojson \r\n     * @return {void}\r\n     * @see Diogo's thesis page 62\r\n     * @memberOf Map\r\n     */\r\n    buildTrees(geojson) {\r\n        const gl = this._webgl.gl;\r\n        if (this.tempAestheticPoints.length > 0) {\r\n            for (let i = 0; i < this.tempAestheticPoints.length; i++) {\r\n                if (this.tempAestheticPoints[i].length > 0) {\r\n                    const vertArray = new Float32Array(this.tempAestheticPoints[i]);\r\n                    const bufferP = [];\r\n                    bufferP.push(gl.createBuffer());\r\n\r\n                    gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, bufferP[0]);\r\n                    gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n                    bufferP[0].itemSize = 2;\r\n                    bufferP[0].numItems = vertArray.length / 2;\r\n                    this.insertGroupedFeature(i, [], [], bufferP);\r\n                }\r\n            }\r\n        }\r\n        if (this.treepoints !== null)\r\n            this.kdtree = new kdTree(this.treepoints, (a, b) => (a.lon - b.lon) ** 2 + (a.lat - b.lat) ** 2, [\"lon\", \"lat\", \"properties\"]);\r\n        if (this.hasPolygons)\r\n            this.rtree = new PolygonLookup(geojson);\r\n    }\r\n\r\n    /**\r\n     * M20) Similar to insertFeature, in this case inserts a group of Features like it was only one.\r\n     * It creates one WebGLBuffer with all the points instead of one WebGLBuffer per point.\r\n     * This method should only be used when we already grouped the Features by Aesthetic class (fitFeature() method).\r\n     * This method exists to provide one alternative less expensive in terms of memory for low end devices.\r\n     * Used only on Dot Map because on those we can easily end up with millions of different Features.\r\n     * @param {number} id - Aesthethics id. \r\n     * @param {{itemSize: number, numItems: number}} triangles - Not used ?\r\n     * @param {{itemSize: number, numItems: number}} borders - Not used ?\r\n     * @param {{itemSize: number, numItems: number}} points - All the points for the Aesthethic object in one WebGLBuffer.\r\n     * @memberOf Map\r\n     */\r\n    insertGroupedFeature(id, triangles, borders, points) {\r\n        this.aesthetics[id].addGroupedFeature(null, triangles, borders, points);\r\n    }\r\n\r\n    /** ########################    LEGEND METHODS    ######################## */\r\n    /**\r\n     * M17) Creates a Legend element suitable for polygons based on the Aesthethic objects.\r\n     * Should be overriden by subclasses.\r\n     * @return {void}\r\n     * @abstract\r\n     * @memberOf Map\r\n     */\r\n    buildLegend() {\r\n        const mapCanvas = document.getElementById(`mapCanvas${this.id}`);\r\n        const legendDiv = document.createElement('div');\r\n        legendDiv.id = `legendDiv${this.id}`;\r\n        legendDiv.style.position = 'absolute';\r\n        legendDiv.style.backgroundColor = 'white';\r\n        legendDiv.style.width = 250;\r\n        legendDiv.style.bottom = 20;\r\n        legendDiv.style.right = 0;\r\n        legendDiv.style.borderColor = 'black';\r\n        legendDiv.style.border = 'solid';\r\n\r\n        const table = document.createElement('table');\r\n        const thvalue = document.createElement('th');\r\n        const thcolor = document.createElement('th');\r\n        table.style.zIndex = \"2000\";\r\n        thcolor.style.width = 100;\r\n        table.appendChild(thcolor);\r\n        table.appendChild(thvalue);\r\n\r\n        for (const currentaes of this.aesthetics) {\r\n            const row = document.createElement('tr');\r\n            const value = document.createElement('td');\r\n            const color = document.createElement('td');\r\n            const ptext = document.createElement('p');\r\n            let text;\r\n            if (typeof currentaes.range[0] === 'number')\r\n                text = document.createTextNode(`[${currentaes.range[0]}, ${currentaes.range[1]}[`);\r\n            else\r\n                text = document.createTextNode(currentaes.range[0]);\r\n            ptext.appendChild(text);\r\n            value.appendChild(ptext);\r\n\r\n            const colorDiv = document.createElement('div');\r\n            colorDiv.style.position = 'relative';\r\n            const rgbc = `rgba(${currentaes.fillColor[0]},${currentaes.fillColor[1]},${currentaes.fillColor[2]},${currentaes.fillColor[3]})`;\r\n            colorDiv.style['backgroundColor'] = rgbc;\r\n            colorDiv.style.height = 25;\r\n            colorDiv.style.width = 80;\r\n            color.appendChild(colorDiv);\r\n\r\n            row.appendChild(color);\r\n            row.appendChild(value);\r\n            table.appendChild(row);\r\n        }\r\n\r\n        legendDiv.appendChild(table);\r\n        this.bGMap.getContainer().appendChild(legendDiv);\r\n    }\r\n\r\n    /** ########################    WEBGL METHODS    ######################## */\r\n    /**\r\n     * M22) Clear current buffers to preset values.\r\n     * @see https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clear\r\n     * @memberOf Map\r\n     */\r\n    clear() {\r\n        const gl = this._webgl.gl;\r\n        gl.clear(gl.COLOR_BUFFER_BIT);\r\n        gl.disable(gl.DEPTH_TEST);\r\n    }\r\n\r\n    /**\r\n     * M23) Receiving an Aesthetics object, draws the triangles contained in it's Features,\r\n     * using the color that the Aesthethics object has.\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @see Diogo's thesis Page 58/59\r\n     * @memberOf Map\r\n     */\r\n    drawTriangles(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 5.0, 1.0);\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b, a] = aes.getFillColor();\r\n\r\n        this.setMatrices(gl);\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 0.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, a);// Draw Polygons' Interior\r\n\r\n        let features = aes.getFeatures();\r\n        for (const f of features) { // Draw Polygons' Interior\r\n            let triangles = f.getTriangles();\r\n            for (const t of triangles) {\r\n                gl.bindBuffer(gl.ARRAY_BUFFER, t);\r\n                gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                gl.drawArrays(gl.TRIANGLES, 0, t.numItems);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M24) Receiving an Aesthetics object, draws the borders contained in it's Features, \r\n     * aplying the color specified in the Aeshteic object for the line color(Aeshteic.strokeColor).\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @memberOf Map\r\n     */\r\n    drawBorders(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        gl.enable(gl.BLEND);\r\n        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 5.0, 1.0);\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b, a] = aes.getStrokeColor();\r\n\r\n        this.setMatrices(gl);\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 0.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, a);\r\n\r\n        let features = aes.getFeatures();\r\n        for (const f of features) {\r\n            let borders = f.getBorders();\r\n            for (const b of borders) {\r\n                gl.bindBuffer(gl.ARRAY_BUFFER, b);\r\n                gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                gl.drawArrays(gl.LINE_LOOP, 0, b.numItems);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M25) Receiving an Aesthetics object, draws the borders contained in it's Features, \r\n     * aplying the filling color calculated using the attribute and the color scheme.\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @memberOf Map\r\n     */\r\n    drawContinuousPolygons(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 5.0, 1.0);\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n\r\n        this.setMatrices(gl);\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 0.0);\r\n\r\n        let features = aes.getFeatures();\r\n        for (const f of features) {\r\n            let color;\r\n            const diff = f.getProperties()[this.gisplayOptions.attr];\r\n            if (diff === 0)\r\n                color = aes.fillColor(0.5).rgb();\r\n            else {\r\n                if (diff > 0)\r\n                    color = aes.fillColor(0.5 + diff / this.max / 2).rgb();\r\n                else\r\n                    color = aes.fillColor(0.5 - diff / this.min / 2).rgb();\r\n            }\r\n            let [r, g, b, a] = [Math.round(color[0]) / 255, Math.round(color[1]) / 255, Math.round(color[2]) / 255, this.gisplayOptions.alpha];\r\n            gl.uniform4f(fragmentColorLocation, r, g, b, a);\r\n\r\n            let triangles = f.getTriangles();\r\n            for (const t of triangles) {\r\n                gl.bindBuffer(gl.ARRAY_BUFFER, t);\r\n                gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);//gl.vertexAttribPointer(vertexColorLocation, 4, gl.FLOAT, false, fsize * 6, fsize * 2);\r\n                gl.drawArrays(gl.TRIANGLES, 0, t.numItems);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M26) Receiving an Aesthetics object, draws the points contained in it's Features, \r\n     * aplying the values specified in that Aesthetic object visual variables (color and size).\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @memberOf Map\r\n     */\r\n    drawPoints(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        gl.enable(gl.BLEND);\r\n        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 4.0 + aes.getPointSize(), aes.getPointSize());\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b, a] = aes.getFillColor();\r\n\r\n        this.setMatrices(gl); //Set M1, M2 and M3\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 1.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, a);\r\n\r\n        let features = aes.getFeatures();\r\n        let allFeatures = aes.getAllFeatures();\r\n        if (this.gisplayOptions.isDynamic && aes.getFeatures().length > 0) {\r\n            for (const f of features) {\r\n                let points = f.getPoints();\r\n                for (const p of points) {\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, p);\r\n                    gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                    gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                    gl.drawArrays(gl.POINTS, 0, p.numItems);\r\n                }\r\n            }\r\n        }\r\n        else if (allFeatures !== null && !this.gisplayOptions.isDynamic) {\r\n            for (const allF of allFeatures) {\r\n                let points = allF.getPoints();\r\n                for (const p of points) {\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, p);\r\n                    gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                    gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                    gl.drawArrays(gl.POINTS, 0, p.numItems);\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M27) Receiving an Aesthetics object, draws the points contained in it's Features, \r\n     * aplying the color specified in the Aeshteic object for the line color(Aeshteic.strokeColor) \r\n     * and the size of the point is based on the attribute value and the specified limits.\r\n     * @param {Aesthetic} aes - The Aesthetic object. \r\n     * @returns {void} \r\n     * @memberOf Map\r\n     */\r\n    drawProportionalPoints(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        gl.enable(gl.BLEND);\r\n        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\r\n\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b] = aes.getFillColor();\r\n\r\n        this.setMatrices(gl);\r\n        gl.uniform1f(isPointLocation, 1.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, this.gisplayOptions.alpha); //TODO: Para 2.5D usar alpha a 0?\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        let opts = this.gisplayOptions;\r\n        if (this.gisplayOptions.isDynamic) {\r\n            let features = aes.getFeatures();\r\n            for (const f of features) {\r\n                const propvalue = parseFloat(f.getProperties()[opts.attr]);\r\n                const temppointsize = ((opts.maxPointSize - opts.minPointSize) / (this.max - this.min)) * (propvalue - this.min);\r\n                const pointSize = Math.max(currentZoom - 4.0 + temppointsize * currentZoom / 4, 2);\r\n\r\n                let points = f.getPoints();\r\n                for (let p of points) {\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, p);\r\n                    gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n                    gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                    gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                    gl.drawArrays(gl.POINTS, 0, p.numItems);\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * This method will set all matrices needed to compute each point/vertex position. This will use the \r\n     * Before sending the matrix to webGL we change the last column transformation in X and Y to the last row X and Y \r\n     * because WebGL is column major. See MMatrix[6] =...\r\n     * @memberOf Map\r\n     */\r\n    setMatrices(gl) {\r\n        let lngCenter = this.bGMap.getCenterLng();\r\n        let latCenter = this.bGMap.getCenterLat();\r\n        let zoom = this.bGMap.getZoom();\r\n        let tileSize = this.gisplayOptions.tileSize;\r\n        let width = this.bGMap.getWidth();\r\n        let height = this.bGMap.getHeight();\r\n        /* if(window.first){\r\n             console.log(\"HERE\")\r\n             width = 2432;\r\n         }*/\r\n        let mercator = WebGLUtils.webMercatorProjection(lngCenter, latCenter, zoom, tileSize, width, height);\r\n      /*  let M1Matrix = WebGLUtils.createM1(this._webgl.gl.drawingBufferWidth, this._webgl.gl.drawingBufferHeight); //TODO: This does not solve the resizing issue 100%.\r\n        let M2Matrix = WebGLUtils.createM2(mercator.scale, mercator.offsetX, mercator.offsetY);\r\n        let M3Matrix = WebGLUtils.createM3();\r\n\r\n        let M1xM2 = WebGLUtils.matrixMultiplication(M1Matrix, M2Matrix);\r\n        let MMatrix = WebGLUtils.matrixMultiplication(M1xM2, M3Matrix);\r\n        MMatrix[6] = MMatrix[2];\r\n        MMatrix[7] = MMatrix[5];\r\n        MMatrix[2] = 0;\r\n        MMatrix[5] = 0;*/\r\n        let MMatrix = WebGLUtils.finalMatrix(mercator.scale, width, height, mercator.offsetX, mercator.offsetY);\r\n        const Mloc = gl.getUniformLocation(this._webgl.program, 'M')\r\n        gl.uniformMatrix3fv(Mloc, false, MMatrix);\r\n    }\r\n\r\n    /**\r\n     * M28) Scale matrix with the given x(scaleX) and y(scaleY) values.\r\n     * Scaling x and y, which is just scaling first two rows of matrix\r\n     * @param {Float32Array} matrix \r\n     * @param {number} scaleX - Scale in X axis.\r\n     * @param {number} scaleY - Scale in Y axis.\r\n     * @see http://www.c-jump.com/bcc/common/Talk3/Math/Matrices/const_images/applying_scaling.png\r\n     * @see http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg Remember WebGL is Column major\r\n     * @see http://prntscr.com/eononb\r\n     * @memberOf Map\r\n     */\r\n    scaleProjection(matrix, scaleX, scaleY) {\r\n        for (let i = 0; i < 8; i++)\r\n            i < 4 ? (matrix[i] *= scaleX) : (matrix[i] *= scaleY);\r\n    }\r\n\r\n    /**\r\n     * M29) The translation is performed in the last row of the matrix. \r\n     * @param {Float32Array} matrix - The matrix to hold the result.\r\n     * @param {number} tx - Translation in X axis.  \r\n     * @param {number} ty - Translation in Y axis.\r\n     * @see http://polymathprogrammer.com/images/blog/200809/translationmatrix.png\r\n     * @see http://prntscr.com/eononb\r\n     * @memberOf Map\r\n     */\r\n    translateProjection(matrix, tx, ty) {\r\n        for (let i = 0; i < 4; i++)\r\n            matrix[i + 12] += (matrix[i] * tx) + (matrix[i + 4] * ty);\r\n    }\r\n\r\n    /** ########################    ABSTRACT METHODS    ######################## */\r\n    /**\r\n     * M21) Draw map function. Must be overriden by subclasses.\r\n     * @abstract \r\n     */\r\n    draw() {\r\n        throw new Error(\"Draw must be implemented by subclass.\");\r\n    }\r\n\r\n    /**\r\n     * M10) Defaults for each map. Subclasses should override this method.\r\n     * @param {any} defaultId \r\n     * @abstract \r\n     * @memberOf Map\r\n     */\r\n    defaults(defaultId) {\r\n        throw new Error(\"This map has no defaults defined.\");\r\n    }\r\n\r\n    /**\r\n     * This function should be implemented by any subclass that wants to use another way of processing data.\r\n     * By default it loads GeoJSON but if the user wants to load another type of data it should do so by implementing this method.\r\n     * A function similar to loadGeoJSON should also be implemented\r\n     * @param {Object|JSON} data - Dataset to be used. \r\n     * TODO: Add static to this method.\r\n     * @abstract\r\n     */\r\n    processData(data) {\r\n        this.loadGeoJSON(geojson);\r\n    }\r\n}",
+    "content": "import { BGMapWrapper } from './BGMapWrapper';\r\nimport { Aesthetic } from './Aesthetic';\r\nimport { GisplayOptions } from '../GisplayOptions';\r\nimport { WebGLUtils } from './WebGLUtils';\r\n\r\n/**\r\n * This class contains the Map class which represents the current map.\r\n * Each map has a group of functions available. There is only one map yet(maybe there will be two if we want to compare two).\r\n * @see Diogo's thesis 57-60 + 64/65\r\n */\r\nexport class Map {\r\n\r\n    /**\r\n     * Map constructor. All Map subclasses should call this first with super(...).\r\n     * @param {BGMapWrapper|Object} bgmap - Background map.\r\n     * @param {JSON} geometry - Geometry read from the file.\r\n     * @param {Object} userOptions - The user defined options. \r\n     * @todo With the type of the map we can do an if statement inside constructor to use or not some of the variables.\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        //console.log(\"Map constructor called -> super()\");\r\n        /**\r\n          * This object holds for each point it's long, lat and associated properties. \r\n          * This points will be used by k-d Tree. And k-d Tree is used to find the closest point to where the user clicked.\r\n          * @type {Array<{lon: number, lat: number, properties: JSON}>}\r\n          */\r\n        this.treepoints = [];\r\n\r\n        // ####################### DOT MAP ONLY\r\n        /**\r\n          * Holds the points for each Aesthethic object.\r\n          * @type {Array<Array<number>>}\r\n          */\r\n        this.tempAestheticPoints = new Array();\r\n\r\n        // ####################### ALL MAPS\r\n        /**\r\n         * Aesthetic objects that were saved.\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        this.aesthetics = new Array();\r\n        /**\r\n         * JSON object with the geometry that was read from the file.\r\n         * @type {JSON}\r\n         */\r\n        this.geometry = geometry;\r\n        /**\r\n         * This map unique identifier.\r\n         * @type {number}\r\n         */\r\n        this.id = window.mapcount++;\r\n\r\n        /**\r\n         * KdTree object to hold that will be used to calculate the closest point to the coordinates where the user made a click.\r\n         * @type {kdTree}\r\n         * @see Diogo's thesis Page 61.\r\n         * @see https://github.com/ubilabs/kd-tree-javascript\r\n         */\r\n        this.kdtree = undefined;\r\n        /**\r\n         * RBush(Rtree implementation) that is used to calculate the polygon closest to the coordinates where the user made a click.\r\n         * @type {PolygonLookup}\r\n         * @see Diogo's thesis page 61.\r\n         * @see https://github.com/pelias/polygon-lookup\r\n         * @see https://github.com/mourner/rbush\r\n         */\r\n        this.rtree = undefined;\r\n        /**\r\n         * Polygons do/do not exist. This is used to know if it to create a rtree or not on buildTrees method.\r\n         * @type {boolean}\r\n         */\r\n        this.hasPolygons = false;\r\n\r\n        /**\r\n         * This is the maixmum value found on the dataset. The final value for the break. E.g. [2, 37[ 37 is the max. \r\n         * Used for PSymbol Map and Change Map because on those maps it's important to take in consideration this values to define the Feature color.\r\n         * @see Diogo's thesis page 63 5.1.3 \r\n         * @type {number}\r\n         */\r\n        this.max = null;\r\n        /**\r\n         * This is the minimum value found on the dataset. The initial value for the break. E.g. [2, 37[ 2 is the min.\r\n         * Used for PSymbol Map and Change Map because on those maps it's important to take in consideration this values to define the Feature color.\r\n         * @see Diogo's thesis page 63 5.1.3\r\n         * @type {number}\r\n         */\r\n        this.min = null;\r\n    }\r\n\r\n    /**\r\n     * M1) Loads user and default options. For each case if it isn't provided by the user, then it uses\r\n     * the default option. 1st method to be called.\r\n     * @param {Object} userOptions - Options given by the user. \r\n     * @param {Object} bgmap  - The background map provider.\r\n     */\r\n    loadOptions(userOptions, bgmap) {\r\n        /**\r\n         * All the options available in the Gisplay API.\r\n         * @type {GisplayOptions}\r\n         */\r\n        this.gisplayOptions = new GisplayOptions(userOptions);\r\n\r\n        /**\r\n         * This is the Gisplay API Background map wrapper. It contains the background map provider object to access it's methods (zoom, coordinates,etc).\r\n         * This map(Gisplay Map) will  be drawn over the background map(bGMap).\r\n         * @type {BGMapWrapper}\r\n         */\r\n        this.bGMap = this.gisplayOptions.useCustomMapService ? bgmap : new BGMapWrapper(bgmap);\r\n        if (this.gisplayOptions.showLoader)\r\n            this.showLoader();\r\n    }\r\n\r\n    /**\r\n     * M2) Calls the Background Map Wrapper to create the loader to be used later when the user feeds data to the API.\r\n     * @deprecated Not used anymore\r\n     */\r\n    showLoader() {\r\n        this.bGMap.showLoader();\r\n    }\r\n\r\n    /**\r\n     * M3) Initializes the API by: creating canvas, the WebGL program and setting up all needed events.\r\n     * @return {void}\r\n     */\r\n    initializeCanvasAndEvents() {\r\n        this.createCanvas();\r\n        WebGLUtils.createWebGLProgram(this._webgl);\r\n        this.setupEvents(this.id);\r\n    }\r\n\r\n    /**\r\n     * M4) Creates a canvas element and WebGL associated information.\r\n     */\r\n    createCanvas() {\r\n        const canvas = this.bGMap.createCanvas(this.id);\r\n\r\n        /**\r\n         * @type {Object} _webgl - WebGL object.  Init webgl properties\r\n         * @property  {WebGLRenderingContext} _webgl.gl - The WebGLRenderingContext to be used.\r\n         * @property  {WebGLProgram} _webgl.program -  The WebGLProgram to be used. \r\n         * @property  {Float32Array} _webgl.projection - The projection to be used. Deprecated in favor of better projection to work with multiple map background providers.\r\n         * @see Diogo's thesis page 64+\r\n         */\r\n        this._webgl = {\r\n            gl: null,\r\n            program: null\r\n        };\r\n\r\n        this._webgl.gl = canvas.getContext(\"webgl\");\r\n        window.canvas = canvas;\r\n        this._webgl.gl.viewport(0, 0, this.bGMap.getContainer().offsetWidth, this.bGMap.getContainer().offsetHeight);\r\n        this._webgl.gl.disable(this._webgl.gl.DEPTH_TEST);\r\n    }\r\n\r\n    /**\r\n     * M8) Setup all events used by the API. Right now the API uses: drag, zoom and click events. \r\n     * This events will be fired by the background map provider and we can use them to draw(zoom and pan) or alert information(click).\r\n     * Pan/Zoom = move, click = click\r\n     * rtree will be used to find the closest polygon to the where the clicked event happened.\r\n     * kdtree will be used to find the closest point to where the click event happened.\r\n     * @todo This method is doing uneccessary job if the user set interative to false and mapOnClickFunction is undefined.\r\n     * @param {number} mappos - This map id. \r\n     * @return {void}\r\n     * @see https://www.mapbox.com/mapbox-gl-js/api/#events\r\n     * @see http://stackoverflow.com/a/34349737\r\n     */\r\n    setupEvents(mappos) {\r\n        /*if(!this.gisplayOptions.interactive && this.gisplayOptions.mapOnClickFunction === undefined)\r\n            return;*/\r\n        this.bGMap.addEventListener('move', () => { this.draw(); });\r\n        this.bGMap.addEventListener('click', e => { //TODO: Create 2 methods (1 for rtree another for kdtree)\r\n            const lng = ((((180 + e.latlng.lng) % 360) + 360) % 360) - 180;\r\n            const lat = e.latlng.lat;\r\n            /**\r\n             * When dealing with polygons rtree will be used.\r\n             * @see Diogo's thesis Page 62\r\n             */\r\n            if (this.rtree !== undefined)\r\n                this.searchRTree(lng, lat);\r\n\r\n            /**\r\n             * When dealing with points kdtree will be used.\r\n             * @see Diogo's thesis page 62\r\n             */\r\n            if (this.kdtree !== undefined)\r\n                this.searchKdTree(lng, lat);\r\n\r\n        });\r\n    }\r\n\r\n    /**\r\n     * Search the rtree for the closest polygon from the lng, lat that was clicked.\r\n     * @param {number} lng - The longitude of the click.\r\n     * @param {number} lat - The latitude of the click.\r\n     * @returns \r\n     * \r\n     * @memberOf Map\r\n     */\r\n    searchRTree(lng, lat) {\r\n        let rtreeSearchResult = this.rtree.search(lng, lat);\r\n        if (rtreeSearchResult === undefined)\r\n            return;\r\n        else {\r\n            let res = \"\";\r\n            let showPrtOnClick = this.gisplayOptions.showPropertiesOnClick;\r\n            if (showPrtOnClick !== null) {\r\n                for (let i = 0; i < showPrtOnClick.length; i += 2) {\r\n                    if (i === 0)\r\n                        res += `${showPrtOnClick[i + 1]}: ${rtreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                    else\r\n                        res += `\\n${showPrtOnClick[i + 1]}: ${rtreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                }\r\n            }\r\n            else {\r\n                let keys = Object.keys(rtreeSearchResult.properties);\r\n                for (let [i, key] of keys.entries())\r\n                    if (key !== \"_gisplayid\")\r\n                        i == 0 ? res += `${key}: ${rtreeSearchResult.properties[key]}` : res += `\\n${key}: ${rtreeSearchResult.properties[key]}`;\r\n            }\r\n\r\n            if (this.gisplayOptions.interactive)\r\n                alert(res);//todo\r\n            if (this.gisplayOptions.mapOnClickFunction !== undefined)\r\n                this.gisplayOptions.mapOnClickFunction(rtreeSearchResult);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Search the rtree for the closest point from the lng, lat that was clicked. \r\n     * @param {number} lon - The longitude of the click.\r\n     * @param {number} lat - The latitude of the click.\r\n     * @returns \r\n     * @memberOf Map\r\n     */\r\n    searchKdTree(lon, lat) {\r\n        let nearest = this.kdtree.nearest({ lon, lat }, 1, 128 / ((2 ** (this.bGMap.getZoom() * 2))));\r\n        console.log(\"21\", nearest)\r\n        if (nearest.length <= 0)\r\n            return;\r\n        else {\r\n            console.log(\"22\")\r\n            let kdTreeSearchResult = nearest[0][0];\r\n            let res = \"\";\r\n            let showPrtOnClick = this.gisplayOptions.showPropertiesOnClick;\r\n            if (showPrtOnClick !== null) { //TODO: Remove if dentro do for e passar a começar no i=1 e passar o if para antes do for\r\n                for (let i = 0; i < showPrtOnClick.length; i += 2) {\r\n                    if (i === 0)\r\n                        res += `${showPrtOnClick[i + 1]}: ${kdTreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                    else\r\n                        res += `\\n${showPrtOnClick[i + 1]}: ${kdTreeSearchResult.properties[showPrtOnClick[i]]}`;\r\n                }\r\n            }\r\n            else {\r\n                let keys = Object.keys(kdTreeSearchResult.properties);\r\n                for (let [i, key] of keys.entries())\r\n                    if (key !== \"_gisplayid\")\r\n                        i == 0 ? res += `${key}: ${kdTreeSearchResult.properties[key]}` : res += `\\n${key}: ${kdTreeSearchResult.properties[key]}`;\r\n            }\r\n\r\n            if (this.gisplayOptions.interactive)\r\n                alert(res);\r\n            if (this.gisplayOptions.mapOnClickFunction !== undefined)\r\n                this.gisplayOptions.mapOnClickFunction(kdTreeSearchResult);\r\n        }\r\n    }\r\n\r\n    /** ########################   METHOD from Gisplay.js    ######################## */\r\n    /**\r\n     * M9) Method that executes all the process associated with the creation of the thematic map.\r\n     * @memberOf Map\r\n     */\r\n    makeMap() {\r\n        let opts = this.gisplayOptions;\r\n        setTimeout(console => {\r\n            if (opts.colorScheme === undefined)\r\n                opts.colorScheme = this.defaults(opts.colorSchemeId).colorScheme;\r\n            if (opts.classBreaks === undefined) {\r\n                if (opts.numberOfClasses === undefined)\r\n                    opts.numberOfClasses = this.defaults(opts.colorSchemeId).numberOfClasses;\r\n                this.preProcessData(this.geometry, opts.numberOfClasses, opts.classBreaksMethod, opts.colorScheme);\r\n            }\r\n\r\n            this.loadGeoJSON(this.geometry);\r\n            this.draw();\r\n\r\n            if (opts.showLegend)\r\n                this.buildLegend();\r\n            if (opts.showLoader) //@TODO: Change this if to be the 1st thing done inside the setTimeout\r\n                this.showLoader();\r\n        }, 1);\r\n    }\r\n\r\n    /**\r\n     * M11) Creates Aesthetic objects. If there's the need to calculate the class intervals,\r\n     * the method calcClassBreaks is called \r\n     * @param {JSON} geojson - GeoJSON object.\r\n     * @param {number} numberOfClasses - Number of classes that the Legend will contain.\r\n     * @param {string} classBreaksMethod - Algorithm to be used to calculate class breaks. Only used it class breaks are not given by the user.\r\n     * @param {string[]} colorscheme - Color scheme to be used by this map.\r\n     * @memberOf Map\r\n     */\r\n    preProcessData(geojson, numberOfClasses, classBreaksMethod, colorscheme) {\r\n        /**\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        const aesarray = []; //Array of aesthetic objects loaded from the file\r\n        const numberValues = []; //The attr is a number\r\n        const stringValues = []; //The attr is a string\r\n        let classBreaks; //Class Breaks given by the user or calculated by the API\r\n        let fcolor; //Colors to be used\r\n        let opts = this.gisplayOptions; //Options given by the user and defaults\r\n\r\n        let geoJsonFeaturesLength = geojson.features.length;\r\n        for (let i = 0; i < geoJsonFeaturesLength && (i < opts.maxFeatures); i++) { //@TODO?: Two fors one if attr is a string another if it a number\r\n            let attrValue = geojson.features[i].properties[opts.attr];\r\n            if (attrValue !== null && typeof attrValue === 'number') { //If \"f3\" exists and its a number\r\n                numberValues.push(attrValue);\r\n                this.max = Math.max(this.max, attrValue);\r\n                this.min = Math.min(this.min, attrValue);\r\n            }\r\n            else if (!stringValues.includes(attrValue)) //If its a string\r\n                stringValues.push(geojson.features[i].properties[opts.attr]);\r\n        }\r\n\r\n        if (numberValues.length > 0) { //Quantitative\r\n            if (opts.classBreaks === undefined) { //Not given by the user then calculate them\r\n                if (numberOfClasses > 1)\r\n                    classBreaks = this.calcClassBreaks(numberValues, classBreaksMethod, numberOfClasses);\r\n                else\r\n                    classBreaks = [this.min, this.max]; //Change Map\r\n            }\r\n            else //Given by the user\r\n                classBreaks = opts.classBreaks;\r\n\r\n            if (classBreaks.length > 2) {\r\n                fcolor = chroma.scale(colorscheme).colors(classBreaks.length - 1);\r\n                for (let i = 0; i < classBreaks.length - 1; i++) {\r\n                    let [r, g, b] = chroma(fcolor[i]).rgb(); // let color = chroma(fcolor[i]).rgb();\r\n                    let aes;\r\n                    if (i !== classBreaks.length - 2)\r\n                        aes = new Aesthetic(i, opts.attr, [Math.round(r), Math.round(g), Math.round(b), opts.alpha], [0, 0, 0, 1], null, [classBreaks[i], classBreaks[i + 1]]);\r\n                    else {\r\n                        aes = new Aesthetic(i, opts.attr, [Math.round(r), Math.round(g), Math.round(b), opts.alpha], [0, 0, 0, 1], null, [classBreaks[i], classBreaks[i + 1]]);\r\n                        aes.outer = true;\r\n                    }\r\n                    aesarray.push(aes);\r\n                }\r\n            }\r\n            else {\r\n                let [r, g, b] = chroma(colorscheme[0]).rgb();// let color = chroma(colorscheme[0]).rgb();\r\n                let aes = new Aesthetic(0, opts.attr, [Math.round(r), Math.round(g), Math.round(b), opts.alpha], [0, 0, 0, 1], null, [classBreaks[0], classBreaks[1]]);\r\n                aes.outer = true;\r\n                aesarray.push(aes);\r\n            }\r\n        }\r\n        else { //Qualitative\r\n            if (stringValues.length > 0) {\r\n                classBreaks = stringValues;\r\n                if (typeof colorscheme === 'string') //string\r\n                    fcolor = chroma.scale(colorscheme).colors(classBreaks.length);\r\n                else  //array\r\n                    fcolor = chroma.scale(colorscheme).colors(classBreaks.length);\r\n\r\n                for (let i = 0; i < classBreaks.length; i++) {\r\n                    let [r, g, b] = chroma(fcolor[i]).rgb();// let color = chroma(fcolor[i]).rgb();\r\n                    let aes = new Aesthetic(i, opts.attr, [Math.round(r), Math.round(g), Math.round(b), 1], [0, 0, 0, 1], null, [stringValues[i]]);\r\n                    aesarray.push(aes);\r\n                }\r\n            }\r\n        }\r\n\r\n        /**\r\n         * All the Aesthetics that were read from the GeoJSON file.\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        this.aesthetics = aesarray;\r\n    }\r\n\r\n    /**\r\n     * M12) Calculates the class breaks using the algorithm given(k-means, quantile or equidistant). \r\n     * There will be as many class breaks as number of classes(numberOfClasses) given as input. \r\n     * @param {number[]} numberValues - The data values that will be used to be compute the breaks. \r\n     * @param {string} classBreakMethod - The algorithm to use to calculate the class breaks.\r\n     * @param {number} numberOfClasses - Number of classes the result expects.\r\n     * @returns {number[]} - The class breaks resulting from the use of the given algorithm and the number of classes.\r\n     * @see http://gka.github.io/chroma.js/#chroma-limits\r\n     * @memberOf Map\r\n     */\r\n    calcClassBreaks(numberValues, classBreakMethod, numberOfClasses) {\r\n        let classBreaks;\r\n        switch (classBreakMethod) {\r\n            case 'equidistant':\r\n                classBreaks = chroma.limits(numberValues, 'e', numberOfClasses);\r\n                break;\r\n\r\n            case 'quantile':\r\n                classBreaks = chroma.limits(numberValues, 'q', numberOfClasses);\r\n                break;\r\n\r\n            case 'k-means':\r\n                classBreaks = chroma.limits(numberValues, 'k', numberOfClasses);\r\n                break;\r\n\r\n            default:\r\n                classBreaks = chroma.limits(numberValues, 'q', numberOfClasses);\r\n                break;\r\n        }\r\n        return classBreaks;\r\n    }\r\n\r\n    /**\r\n     * M13) Loads GeoJSON object that came from the file uploaded by the user. \r\n     * Extracts the Features present in the geometry object and inserts them in Aesthetic object(s)\r\n     * This method will create and insert features to Aesthetic objects and build trees of relationships between points or polygons.\r\n     * @param {JSON} geojson - GeoJSON read from the file.\r\n     * @see https://www.dashingd3js.com/lessons/geojson\r\n     * @memberOf Map\r\n     */\r\n    loadGeoJSON(geojson) {\r\n        for (let i = 0; i < geojson.features.length && (this.gisplayOptions.maxFeatures === undefined || i < this.gisplayOptions.maxFeatures); i++) {\r\n            geojson.features[i].properties['_gisplayid'] = i;\r\n            const geometry = geojson.features[i].geometry;\r\n            const properties = geojson.features[i].properties;\r\n            this.createAndInsertFeature(i, geometry, properties);\r\n        }\r\n        this.buildTrees(geojson); //@TODO: Only call this method if it's a low end device aka options.memorySaver is on\r\n    }\r\n\r\n    /**\r\n     * M14) Creates a Feature and then calls a method to insert said Feature in one or more Aesthetic objects.\r\n     * @param {number} featureId - Id of the Feature.\r\n     * @param {JSON} geometry - GeoJSON Geometry Object. \r\n     * @param {JSON} properties - GeoJSON properties Object.\r\n     * @see http://geojson.org/geojson-spec.html#geometry-objects\r\n     * @memberOf Map\r\n     */\r\n    createAndInsertFeature(featureId, geometry, properties) {\r\n        const gl = this._webgl.gl;\r\n        /**\r\n         * @type {GisplayOptions}\r\n         */\r\n        let opts = this.gisplayOptions;\r\n        if (opts.minuend !== undefined && opts.subtrahend !== undefined\r\n            && typeof properties[opts.minuend] === 'number' && typeof properties[opts.subtrahend] === 'number'\r\n            && properties[opts.minuend] !== undefined && properties[opts.subtrahend] !== undefined) {\r\n            properties[opts.attr] = properties[opts.minuend] - properties[opts.subtrahend]; //Used for Change map\r\n        }\r\n\r\n        //let isPoint = geometry.type == \"Point\";\r\n        if (geometry.type === \"Polygon\" || geometry.type === \"MultiPolygon\") {\r\n            this.hasPolygons = true;\r\n            const polygons = this.processPolygon({ geometry, properties });\r\n\r\n            const currentTriangles = []; //Polygon Triangles vertices\r\n            const bufferT = []; //WebGL Buffers with  triangles\r\n            const currentBorders = []; //Polygon Borders vertices\r\n            const bufferB = []; //Buffer borders\r\n\r\n            for (let i = 0; i < polygons.length; i++) { //For each Polygon\r\n                const trianglesPolygon = polygons[i].triangles;\r\n                const border = polygons[i].vertices;\r\n                currentTriangles[i] = new Array(); //Add This Polygon triangles\r\n                currentBorders[i] = new Array(); //Add this Polygon borders\r\n\r\n                for (let j = 0; j < trianglesPolygon.length; j++) { //Triangles\r\n                    currentTriangles[i].push(border[trianglesPolygon[j] * 2], border[trianglesPolygon[j] * 2 + 1]);\r\n\r\n                    if (j === trianglesPolygon.length - 1) {\r\n                        bufferT.push(gl.createBuffer());\r\n\r\n                        let vertArray = new Float32Array(currentTriangles[i]);\r\n                        gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n                        gl.bindBuffer(gl.ARRAY_BUFFER, bufferT[i]);\r\n                        gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n\r\n                        bufferT[i].itemSize = 2;\r\n                        bufferT[i].numItems = vertArray.length / 2;\r\n                    }\r\n                }\r\n\r\n                for (let k = 0; k < border.length; k += 2) { //Borders\r\n                    currentBorders[i].push(border[k], border[k + 1]);\r\n\r\n                    if (k === border.length - 2) {\r\n                        bufferB.push(gl.createBuffer());\r\n\r\n                        let vertArray = new Float32Array(currentBorders[i]);\r\n                        gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n                        gl.bindBuffer(gl.ARRAY_BUFFER, bufferB[i]);\r\n                        gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n\r\n                        bufferB[i].itemSize = 2;\r\n                        bufferB[i].numItems = vertArray.length / 2;\r\n                    }\r\n                }\r\n            }\r\n            this.insertFeature(featureId, properties, bufferT, bufferB, []);\r\n        }\r\n\r\n        else if (geometry.type === \"Point\" && opts.isDynamic) {\r\n            const currentPoints = new Array();\r\n            currentPoints.push(geometry.coordinates[0], geometry.coordinates[1]);\r\n            const bufferPoints = [];//Buffer points\r\n            let vertArray = new Float32Array(currentPoints);\r\n\r\n            bufferPoints.push(gl.createBuffer());\r\n            gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n            gl.bindBuffer(gl.ARRAY_BUFFER, bufferPoints[0]);\r\n            gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n\r\n            bufferPoints[0].itemSize = 2;\r\n            bufferPoints[0].numItems = vertArray.length / 2;\r\n\r\n            this.insertFeature(featureId, properties, [], [], bufferPoints);\r\n            this.treepoints.push({ lon: geometry.coordinates[0], lat: geometry.coordinates[1], properties });\r\n        }\r\n\r\n        else if (geometry.type === \"Point\" && !opts.isDynamic) {\r\n            if (this.tempAestheticPoints.length === 0)\r\n                for (let i = 0; i < this.aesthetics.length; i++)\r\n                    this.tempAestheticPoints[i] = [];\r\n\r\n            const aesPositions = this.fitFeature(properties);\r\n            for (const aesPos of aesPositions)\r\n                this.tempAestheticPoints[aesPos].push(geometry.coordinates[0], geometry.coordinates[1]);\r\n\r\n            this.treepoints.push({ lon: geometry.coordinates[0], lat: geometry.coordinates[1], properties });\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M15) Deals with polygon triangulation.\r\n     * @param {{geometry: JSON, properties: JSON}} polygon - The geometry and properties of the polygon.\r\n     * @returns {{triangles: Array<number>, vertices: Array<number>}} - The triangles and vertices calculated by earcut triangulation. The vertices are the outside of the polygon, the triangles are the inside.\r\n     * @see http://www.macwright.org/2015/03/23/geojson-second-bite.html#polygons\r\n     * @memberOf Map\r\n     */\r\n    processPolygon(polygon) {\r\n        let polyarray = [];\r\n        if (polygon.geometry.type === \"Polygon\") { //@TODO: [Demos never use this if statement.]\r\n            let outsidepolygon = polygon.geometry.coordinates[0]; //See: http://geojson.org/geojson-spec.html#polygon\r\n            let tempVerts = new Array();\r\n            for (let out = 0; out < outsidepolygon.length - 1; out++)\r\n                tempVerts.push(outsidepolygon[out][0], outsidepolygon[out][1]);//_vertexcount += (outsidepolygon.length + 1) / 2;\r\n            let triangles_vert = earcut(tempVerts); // _tricount += (triangles_vert.length / 3);\r\n            polyarray.push({ triangles: triangles_vert, vertices: tempVerts });\r\n        }\r\n        else if (polygon.geometry.type == \"MultiPolygon\") { //See http://geojson.org/geojson-spec.html#multipolygon\r\n            for (const cs of polygon.geometry.coordinates) {\r\n                let outsidepolygon = cs[0];\r\n                let tempVerts = new Array();\r\n                for (const c of outsidepolygon)\r\n                    tempVerts.push(c[0], c[1]);\r\n                let triangles_vert = earcut(tempVerts);\r\n                polyarray.push({ triangles: triangles_vert, vertices: tempVerts });\r\n            }\r\n        }\r\n        return polyarray;\r\n    }\r\n\r\n    /**\r\n     * M16) Converts geographic coordinates(latitude, longitude) to canvas coordinate pixels.\r\n     * @param {number} longitude - The longitude.\r\n     * @param {number} latitude - The latitude.\r\n     * @returns {x: number, y: number} - canvas coordinate system pixels.\r\n     * @see http://gisgeography.com/latitude-longitude-coordinates/\r\n     * @see https://www.w3schools.com/graphics/canvas_coordinates.asp\r\n     * @deprecated Not used anymore. YEAH...\r\n     * @memberOf Map\r\n     */\r\n    latLongToPixelXY(longitude, latitude) {\r\n        const pi_180 = Math.PI / 180.0;\r\n        const pi_4 = Math.PI * 4;\r\n        const sinLatitude = Math.sin(latitude * pi_180);\r\n        const pixelY = (0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (pi_4)) * 256;\r\n        const pixelX = ((longitude + 180) / 360) * 256;\r\n\r\n        const pixel = { x: pixelX, y: pixelY };\r\n        return pixel;\r\n    }\r\n\r\n    /**\r\n     * M17) Inserts the Feature into one or more Aesthetic objects. If the Feature does not fit in any Aesthetic then does nothing.\r\n     * @param {number} id - The Feature id. \r\n     * @param {JSON} properties - The Feature properties. \r\n     * @param {{itemSize: number, numItems: number}} triangles - Triangles, each in one WebGLBuffer.\r\n     * @param {{itemSize: number, numItems: number}} borders - Borders, each in one WebGLBuffer.\r\n     * @param {{itemSize: number, numItems: number}} points - Points, each in one WebGLBuffer.\r\n     * @return {void}\r\n     * @memberOf Map\r\n     */\r\n    insertFeature(id, properties, triangles, borders, points) {\r\n        for (const aes of this.aesthetics)\r\n            if (aes.checkProperty(properties[aes.getAttr()]))\r\n                aes.addFeature(id, properties, triangles, borders, points);\r\n        /* for (let i = 0; i < this.aesthetics.length; i++)\r\n             if (this.aesthetics[i].checkProperty(properties[this.aesthetics[i].getAttr()]))\r\n                 this.aesthetics[i].addFeature(id, properties, triangles, borders, points);*/\r\n    }\r\n\r\n    /**\r\n     * M18) Returns an array of Aesthetic ids that tells us the objects where the Feature belongs.\r\n     * @param {JSON} properties - The Feature properties\r\n     * @returns {Array<number>} - The Aesthetic ids where the Feature belongs.\r\n     * @memberOf Map\r\n     */\r\n    fitFeature(properties) {\r\n        const res = [];\r\n        for (let i = 0; i < this.aesthetics.length; i++)\r\n            if (this.aesthetics[i].checkProperty(properties[this.aesthetics[i].getAttr()]))\r\n                res.push(i);\r\n        return res;\r\n    }\r\n\r\n    /**\r\n     * M19) Receives the dataset as parameter. This dataset in each row contains geometry and associated properties, then it creates one tree\r\n     * either for points or polygons. This tree can be k-d Treee or RBush(RTree)\r\n     * @param {JSON} geojson \r\n     * @return {void}\r\n     * @see Diogo's thesis page 62\r\n     * @memberOf Map\r\n     */\r\n    buildTrees(geojson) {\r\n        const gl = this._webgl.gl;\r\n        if (this.tempAestheticPoints.length > 0) {\r\n            for (let i = 0; i < this.tempAestheticPoints.length; i++) {\r\n                if (this.tempAestheticPoints[i].length > 0) {\r\n                    const vertArray = new Float32Array(this.tempAestheticPoints[i]);\r\n                    const bufferP = [];\r\n                    bufferP.push(gl.createBuffer());\r\n\r\n                    gl.fsize = vertArray.BYTES_PER_ELEMENT;\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, bufferP[0]);\r\n                    gl.bufferData(gl.ARRAY_BUFFER, vertArray, gl.STATIC_DRAW);\r\n                    bufferP[0].itemSize = 2;\r\n                    bufferP[0].numItems = vertArray.length / 2;\r\n                    this.insertGroupedFeature(i, [], [], bufferP);\r\n                }\r\n            }\r\n        }\r\n        if (this.treepoints !== null)\r\n            this.kdtree = new kdTree(this.treepoints, (a, b) => (a.lon - b.lon) ** 2 + (a.lat - b.lat) ** 2, [\"lon\", \"lat\", \"properties\"]);\r\n        if (this.hasPolygons)\r\n            this.rtree = new PolygonLookup(geojson);\r\n    }\r\n\r\n    /**\r\n     * M20) Similar to insertFeature, in this case inserts a group of Features like it was only one.\r\n     * It creates one WebGLBuffer with all the points instead of one WebGLBuffer per point.\r\n     * This method should only be used when we already grouped the Features by Aesthetic class (fitFeature() method).\r\n     * This method exists to provide one alternative less expensive in terms of memory for low end devices.\r\n     * Used only on Dot Map because on those we can easily end up with millions of different Features.\r\n     * @param {number} id - Aesthethics id. \r\n     * @param {{itemSize: number, numItems: number}} triangles - Not used ?\r\n     * @param {{itemSize: number, numItems: number}} borders - Not used ?\r\n     * @param {{itemSize: number, numItems: number}} points - All the points for the Aesthethic object in one WebGLBuffer.\r\n     * @memberOf Map\r\n     */\r\n    insertGroupedFeature(id, triangles, borders, points) {\r\n        this.aesthetics[id].addGroupedFeature(null, triangles, borders, points);\r\n    }\r\n\r\n    /** ########################    LEGEND METHODS    ######################## */\r\n    /**\r\n     * M17) Creates a Legend element suitable for polygons based on the Aesthethic objects.\r\n     * Should be overriden by subclasses.\r\n     * @return {void}\r\n     * @abstract\r\n     * @memberOf Map\r\n     */\r\n    buildLegend() {\r\n        const mapCanvas = document.getElementById(`mapCanvas${this.id}`);\r\n        const legendDiv = document.createElement('div');\r\n        legendDiv.id = `legendDiv${this.id}`;\r\n        legendDiv.style.position = 'absolute';\r\n        legendDiv.style.backgroundColor = 'white';\r\n        legendDiv.style.width = 250;\r\n        legendDiv.style.bottom = 20;\r\n        legendDiv.style.right = 0;\r\n        legendDiv.style.borderColor = 'black';\r\n        legendDiv.style.border = 'solid';\r\n\r\n        const table = document.createElement('table');\r\n        const thvalue = document.createElement('th');\r\n        const thcolor = document.createElement('th');\r\n        table.style.zIndex = \"2000\";\r\n        thcolor.style.width = 100;\r\n        table.appendChild(thcolor);\r\n        table.appendChild(thvalue);\r\n\r\n        for (const currentaes of this.aesthetics) {\r\n            const row = document.createElement('tr');\r\n            const value = document.createElement('td');\r\n            const color = document.createElement('td');\r\n            const ptext = document.createElement('p');\r\n            let text;\r\n            if (typeof currentaes.range[0] === 'number')\r\n                text = document.createTextNode(`[${currentaes.range[0]}, ${currentaes.range[1]}[`);\r\n            else\r\n                text = document.createTextNode(currentaes.range[0]);\r\n            ptext.appendChild(text);\r\n            value.appendChild(ptext);\r\n\r\n            const colorDiv = document.createElement('div');\r\n            colorDiv.style.position = 'relative';\r\n            const rgbc = `rgba(${currentaes.fillColor[0]},${currentaes.fillColor[1]},${currentaes.fillColor[2]},${currentaes.fillColor[3]})`;\r\n            colorDiv.style['backgroundColor'] = rgbc;\r\n            colorDiv.style.height = 25;\r\n            colorDiv.style.width = 80;\r\n            color.appendChild(colorDiv);\r\n\r\n            row.appendChild(color);\r\n            row.appendChild(value);\r\n            table.appendChild(row);\r\n        }\r\n\r\n        legendDiv.appendChild(table);\r\n        this.bGMap.getContainer().appendChild(legendDiv);\r\n    }\r\n\r\n    /** ########################    WEBGL METHODS    ######################## */\r\n    /**\r\n     * M22) Clear current buffers to preset values.\r\n     * @see https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clear\r\n     * @memberOf Map\r\n     */\r\n    clear() {\r\n        const gl = this._webgl.gl;\r\n        gl.clear(gl.COLOR_BUFFER_BIT);\r\n        gl.disable(gl.DEPTH_TEST);\r\n    }\r\n\r\n    /**\r\n     * M23) Receiving an Aesthetics object, draws the triangles contained in it's Features,\r\n     * using the color that the Aesthethics object has.\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @see Diogo's thesis Page 58/59\r\n     * @memberOf Map\r\n     */\r\n    drawTriangles(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 5.0, 1.0);\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b, a] = aes.getFillColor();\r\n\r\n        this.setMatrices(gl);\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 0.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, a);// Draw Polygons' Interior\r\n\r\n        let features = aes.getFeatures();\r\n        for (const f of features) { // Draw Polygons' Interior\r\n            let triangles = f.getTriangles();\r\n            for (const t of triangles) {\r\n                gl.bindBuffer(gl.ARRAY_BUFFER, t);\r\n                gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                gl.drawArrays(gl.TRIANGLES, 0, t.numItems);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M24) Receiving an Aesthetics object, draws the borders contained in it's Features, \r\n     * aplying the color specified in the Aeshteic object for the line color(Aeshteic.strokeColor).\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @memberOf Map\r\n     */\r\n    drawBorders(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        gl.enable(gl.BLEND);\r\n        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 5.0, 1.0);\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b, a] = aes.getStrokeColor();\r\n\r\n        this.setMatrices(gl);\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 0.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, a);\r\n\r\n        let features = aes.getFeatures();\r\n        for (const f of features) {\r\n            let borders = f.getBorders();\r\n            for (const b of borders) {\r\n                gl.bindBuffer(gl.ARRAY_BUFFER, b);\r\n                gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                gl.drawArrays(gl.LINE_LOOP, 0, b.numItems);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M25) Receiving an Aesthetics object, draws the borders contained in it's Features, \r\n     * aplying the filling color calculated using the attribute and the color scheme.\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @memberOf Map\r\n     */\r\n    drawContinuousPolygons(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 5.0, 1.0);\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n\r\n        this.setMatrices(gl);\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 0.0);\r\n\r\n        let features = aes.getFeatures();\r\n        for (const f of features) {\r\n            let color;\r\n            const diff = f.getProperties()[this.gisplayOptions.attr];\r\n            if (diff === 0)\r\n                color = aes.fillColor(0.5).rgb();\r\n            else {\r\n                if (diff > 0)\r\n                    color = aes.fillColor(0.5 + diff / this.max / 2).rgb();\r\n                else\r\n                    color = aes.fillColor(0.5 - diff / this.min / 2).rgb();\r\n            }\r\n            let [r, g, b, a] = [Math.round(color[0]) / 255, Math.round(color[1]) / 255, Math.round(color[2]) / 255, this.gisplayOptions.alpha];\r\n            gl.uniform4f(fragmentColorLocation, r, g, b, a);\r\n\r\n            let triangles = f.getTriangles();\r\n            for (const t of triangles) {\r\n                gl.bindBuffer(gl.ARRAY_BUFFER, t);\r\n                gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);//gl.vertexAttribPointer(vertexColorLocation, 4, gl.FLOAT, false, fsize * 6, fsize * 2);\r\n                gl.drawArrays(gl.TRIANGLES, 0, t.numItems);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M26) Receiving an Aesthetics object, draws the points contained in it's Features, \r\n     * aplying the values specified in that Aesthetic object visual variables (color and size).\r\n     * @param {Aesthetic} aes - The Aesthetic object.\r\n     * @returns {void}\r\n     * @memberOf Map\r\n     */\r\n    drawPoints(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        gl.enable(gl.BLEND);\r\n        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const pointSize = Math.max(currentZoom - 4.0 + aes.getPointSize(), aes.getPointSize());\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b, a] = aes.getFillColor();\r\n\r\n        this.setMatrices(gl); //Set M1, M2 and M3\r\n        gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n        gl.uniform1f(isPointLocation, 1.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, a);\r\n\r\n        let features = aes.getFeatures();\r\n        let allFeatures = aes.getAllFeatures();\r\n        if (this.gisplayOptions.isDynamic && aes.getFeatures().length > 0) {\r\n            for (const f of features) {\r\n                let points = f.getPoints();\r\n                for (const p of points) {\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, p);\r\n                    gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                    gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                    gl.drawArrays(gl.POINTS, 0, p.numItems);\r\n                }\r\n            }\r\n        }\r\n        else if (allFeatures !== null && !this.gisplayOptions.isDynamic) {\r\n            for (const allF of allFeatures) {\r\n                let points = allF.getPoints();\r\n                for (const p of points) {\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, p);\r\n                    gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                    gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                    gl.drawArrays(gl.POINTS, 0, p.numItems);\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * M27) Receiving an Aesthetics object, draws the points contained in it's Features, \r\n     * aplying the color specified in the Aeshteic object for the line color(Aeshteic.strokeColor) \r\n     * and the size of the point is based on the attribute value and the specified limits.\r\n     * @param {Aesthetic} aes - The Aesthetic object. \r\n     * @returns {void} \r\n     * @memberOf Map\r\n     */\r\n    drawProportionalPoints(aes) {\r\n        const gl = this._webgl.gl;\r\n        if (gl === null)\r\n            return;\r\n\r\n        gl.enable(gl.BLEND);\r\n        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\r\n\r\n        const currentZoom = this.bGMap.getZoom();\r\n        const vertexCoordsLocation = gl.getAttribLocation(this._webgl.program, 'coords');\r\n        const vertexSizeLocation = gl.getAttribLocation(this._webgl.program, 'aPointSize');\r\n        const fragmentColorLocation = gl.getUniformLocation(this._webgl.program, \"u_color\");\r\n        const isPointLocation = gl.getUniformLocation(this._webgl.program, 'isPoint');\r\n        let [r, g, b] = aes.getFillColor();\r\n\r\n        this.setMatrices(gl);\r\n        gl.uniform1f(isPointLocation, 1.0);\r\n        gl.uniform4f(fragmentColorLocation, r / 255, g / 255, b / 255, this.gisplayOptions.alpha); //TODO: Para 2.5D usar alpha a 0?\r\n\r\n        const fsize = Float32Array.BYTES_PER_ELEMENT;\r\n        let opts = this.gisplayOptions;\r\n        if (this.gisplayOptions.isDynamic) {\r\n            let features = aes.getFeatures();\r\n            for (const f of features) {\r\n                const propvalue = parseFloat(f.getProperties()[opts.attr]);\r\n                const temppointsize = ((opts.maxPointSize - opts.minPointSize) / (this.max - this.min)) * (propvalue - this.min);\r\n                const pointSize = Math.max(currentZoom - 4.0 + temppointsize * currentZoom / 4, 2);\r\n\r\n                let points = f.getPoints();\r\n                for (let p of points) {\r\n                    gl.bindBuffer(gl.ARRAY_BUFFER, p);\r\n                    gl.vertexAttrib1f(vertexSizeLocation, pointSize);\r\n                    gl.enableVertexAttribArray(vertexCoordsLocation);\r\n                    gl.vertexAttribPointer(vertexCoordsLocation, 2, gl.FLOAT, false, fsize * 2, 0);\r\n                    gl.drawArrays(gl.POINTS, 0, p.numItems);\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * This method will set all matrices needed to compute each point/vertex position. This will use the \r\n     * Before sending the matrix to webGL we change the last column transformation in X and Y to the last row X and Y \r\n     * because WebGL is column major. See MMatrix[6] =...\r\n     * @memberOf Map\r\n     */\r\n    setMatrices(gl) {\r\n        let lngCenter = this.bGMap.getCenterLng();\r\n        let latCenter = this.bGMap.getCenterLat();\r\n        let zoom = this.bGMap.getZoom();\r\n        let tileSize = this.gisplayOptions.tileSize;\r\n        let width = this.bGMap.getWidth();\r\n        let height = this.bGMap.getHeight();\r\n        let mercator = WebGLUtils.webMercatorProjection(lngCenter, latCenter, zoom, tileSize, width, height);\r\n        \r\n        let MMatrix = WebGLUtils.finalMatrix(mercator.scale, width, height, mercator.offsetX, mercator.offsetY);\r\n        const Mloc = gl.getUniformLocation(this._webgl.program, 'M')\r\n        gl.uniformMatrix3fv(Mloc, false, MMatrix);\r\n    }\r\n\r\n    /** ########################    ABSTRACT METHODS    ######################## */\r\n    /**\r\n     * M21) Draw map function. Must be overriden by subclasses.\r\n     * @abstract \r\n     */\r\n    draw() {\r\n        throw new Error(\"Draw must be implemented by subclass.\");\r\n    }\r\n\r\n    /**\r\n     * M10) Defaults for each map. Subclasses should override this method.\r\n     * @param {any} defaultId \r\n     * @abstract \r\n     * @memberOf Map\r\n     */\r\n    defaults(defaultId) {\r\n        throw new Error(\"This map has no defaults defined.\");\r\n    }\r\n\r\n    /**\r\n     * This function should be implemented by any subclass that wants to use another way of processing data.\r\n     * By default it loads GeoJSON but if the user wants to load another type of data it should do so by implementing this method.\r\n     * A function similar to loadGeoJSON should also be implemented\r\n     * @param {Object|JSON} data - Dataset to be used. \r\n     * TODO: Add static to this method.\r\n     * @abstract\r\n     */\r\n    processData(data) {\r\n        this.loadGeoJSON(geojson);\r\n    }\r\n}",
     "static": true,
     "longname": "src/Gisplay/Maps/Map.js",
     "access": null,
@@ -5484,117 +5484,6 @@
   {
     "__docId__": 179,
     "kind": "method",
-    "name": "scaleProjection",
-    "memberof": "src/Gisplay/Maps/Map.js~Map",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/Gisplay/Maps/Map.js~Map#scaleProjection",
-    "access": null,
-    "description": "M28) Scale matrix with the given x(scaleX) and y(scaleY) values.\nScaling x and y, which is just scaling first two rows of matrix",
-    "see": [
-      "http://www.c-jump.com/bcc/common/Talk3/Math/Matrices/const_images/applying_scaling.png",
-      "http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg Remember WebGL is Column major",
-      "http://prntscr.com/eononb"
-    ],
-    "lineNumber": 1009,
-    "unknown": [
-      {
-        "tagName": "@memberOf",
-        "tagValue": "Map"
-      }
-    ],
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Float32Array"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "matrix",
-        "description": ""
-      },
-      {
-        "nullable": null,
-        "types": [
-          "number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "scaleX",
-        "description": "Scale in X axis."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "scaleY",
-        "description": "Scale in Y axis."
-      }
-    ]
-  },
-  {
-    "__docId__": 180,
-    "kind": "method",
-    "name": "translateProjection",
-    "memberof": "src/Gisplay/Maps/Map.js~Map",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/Gisplay/Maps/Map.js~Map#translateProjection",
-    "access": null,
-    "description": "M29) The translation is performed in the last row of the matrix. ",
-    "see": [
-      "http://polymathprogrammer.com/images/blog/200809/translationmatrix.png",
-      "http://prntscr.com/eononb"
-    ],
-    "lineNumber": 1023,
-    "unknown": [
-      {
-        "tagName": "@memberOf",
-        "tagValue": "Map"
-      }
-    ],
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Float32Array"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "matrix",
-        "description": "The matrix to hold the result."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "tx",
-        "description": "Translation in X axis."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "ty",
-        "description": "Translation in Y axis."
-      }
-    ]
-  },
-  {
-    "__docId__": 181,
-    "kind": "method",
     "name": "draw",
     "memberof": "src/Gisplay/Maps/Map.js~Map",
     "generator": false,
@@ -5603,12 +5492,12 @@
     "longname": "src/Gisplay/Maps/Map.js~Map#draw",
     "access": null,
     "description": "M21) Draw map function. Must be overriden by subclasses.",
-    "lineNumber": 1033,
+    "lineNumber": 990,
     "params": [],
     "abstract": true
   },
   {
-    "__docId__": 182,
+    "__docId__": 180,
     "kind": "method",
     "name": "defaults",
     "memberof": "src/Gisplay/Maps/Map.js~Map",
@@ -5618,7 +5507,7 @@
     "longname": "src/Gisplay/Maps/Map.js~Map#defaults",
     "access": null,
     "description": "M10) Defaults for each map. Subclasses should override this method.",
-    "lineNumber": 1043,
+    "lineNumber": 1000,
     "unknown": [
       {
         "tagName": "@memberOf",
@@ -5640,7 +5529,7 @@
     "abstract": true
   },
   {
-    "__docId__": 183,
+    "__docId__": 181,
     "kind": "method",
     "name": "processData",
     "memberof": "src/Gisplay/Maps/Map.js~Map",
@@ -5650,7 +5539,7 @@
     "longname": "src/Gisplay/Maps/Map.js~Map#processData",
     "access": null,
     "description": "This function should be implemented by any subclass that wants to use another way of processing data.\nBy default it loads GeoJSON but if the user wants to load another type of data it should do so by implementing this method.\nA function similar to loadGeoJSON should also be implemented",
-    "lineNumber": 1055,
+    "lineNumber": 1012,
     "params": [
       {
         "nullable": null,
@@ -5667,7 +5556,7 @@
     "abstract": true
   },
   {
-    "__docId__": 184,
+    "__docId__": 182,
     "kind": "file",
     "name": "src/Gisplay/Maps/Types/ChangeMap.js",
     "content": "import { Map } from '../Map';\r\nimport { Legend } from '../Legend';\r\nimport { Aesthetic } from '../Aesthetic';\r\n\r\n/**\r\n * ChangeMap implementation 07/03\r\n */\r\nexport class ChangeMap extends Map {\r\n\r\n    /**\r\n     * Creates an instance of ChangeMap.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} options - User options to be used.\r\n     * @memberOf ChangeMap\r\n     */\r\n    constructor(bgmap, geometry, options) {\r\n        super(bgmap, geometry, options);\r\n        options.attr = \"change\"; //this.gisplayOptions.attr = \"change\"; // this.type = 'CM'; //window.maps.push(this);\r\n        this.loadOptions(options, bgmap);\r\n        this.initializeCanvasAndEvents();\r\n    }\r\n\r\n    /**\r\n     * Draw Change map, at the beginning and when the map is moved.\r\n     * @see initialize() and makeMap() methods.\r\n     * @override \r\n     * @memberOf ChangeMap\r\n     */\r\n    draw() {\r\n        this.clear();\r\n        for (const aes of this.aesthetics) {\r\n            if (aes.isEnabled())\r\n                this.drawContinuousPolygons(aes);\r\n            this.drawBorders(aes);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Process data loaded by the user. This mothed overrides the parent(Map class) default processData method.\r\n     * @param {JSON} geojson - GeoJSON object.\r\n     * @param {number} numberOfClasses - Number of classes that the Legend will contain.\r\n     * @param {string} classBreaksMethod - Algorithm to be used to calculate class breaks. Only used it class breaks are not given by the user.\r\n     * @param {string[]} colorscheme - Color scheme to be used by this map.\r\n     * @override \r\n     * @memberOf ChangeMap\r\n     */\r\n    preProcessData(geojson, numberOfClasses, classBreaksMethod, colorscheme) {\r\n        let opts = this.gisplayOptions;\r\n        let gjonFeatures = geojson.features;\r\n        for (let i = 0; i < gjonFeatures.length && i < opts.maxFeatures; i++) {\r\n            let gjsonMinuend = gjonFeatures[i].properties[opts.minuend];\r\n            let gjsonSubtrahend = gjonFeatures[i].properties[opts.subtrahend];\r\n            if (typeof gjsonMinuend === 'number' && typeof gjsonSubtrahend === 'number') { //  && gjonminuend != null && gjonSubtrahend != null\r\n                this.max = Math.max(this.max, gjsonMinuend - gjsonSubtrahend);\r\n                this.min = Math.min(this.min, gjsonMinuend - gjsonSubtrahend);\r\n            }\r\n        }\r\n\r\n        let breaks = [this.min, this.max];\r\n        /**\r\n         * The color to fill the Aesthetic element(RGBA) OR a function to create this color.\r\n         * @type {number[]}\r\n         */\r\n        this.fcolor = chroma.scale(colorscheme);\r\n        const aes = new Aesthetic(0, opts.attr, this.fcolor, [0, 0, 0, 1], null, [breaks[0], breaks[1]]);\r\n        aes.outer = true;\r\n        /**\r\n         * Aesthetic object. In the case of a Change Map only one Aesthetic exists.\r\n         * @type {Array<Aesthetic>}\r\n         */\r\n        this.aesthetics = [aes];\r\n    }\r\n\r\n    /**\r\n     * Method called to build the Map Legend.\r\n     * Create a gradient and insert legend onto background map.\r\n     * @override \r\n     * @memberOf ChangeMap\r\n     */\r\n    buildLegend() {\r\n        /**\r\n         * The Legend to be used through the life of the map.\r\n         * @type {Legend} \r\n         */\r\n        this.legend = new Legend(this.id, this.gisplayOptions.legendTitle);\r\n        this.legend.insertGradient(this, this.min, 0, this.max);\r\n        this.legend.insertLegend(this.bGMap);\r\n    }\r\n\r\n    /**\r\n     * Returns empty object.\r\n     * @param {number} defaultColorSchemeId - The id of the default color scheme to choose the colors.\r\n     * @override \r\n     * @memberOf ChangeMap\r\n     */\r\n    defaults(defaultColorSchemeId) {\r\n        return {};\r\n    }\r\n}",
@@ -5678,7 +5567,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 185,
+    "__docId__": 183,
     "kind": "class",
     "name": "ChangeMap",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js",
@@ -5696,7 +5585,7 @@
     ]
   },
   {
-    "__docId__": 186,
+    "__docId__": 184,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5747,7 +5636,7 @@
     ]
   },
   {
-    "__docId__": 187,
+    "__docId__": 185,
     "kind": "method",
     "name": "draw",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5771,7 +5660,7 @@
     "override": true
   },
   {
-    "__docId__": 188,
+    "__docId__": 186,
     "kind": "method",
     "name": "preProcessData",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5833,7 +5722,7 @@
     "override": true
   },
   {
-    "__docId__": 189,
+    "__docId__": 187,
     "kind": "member",
     "name": "max",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5856,7 +5745,7 @@
     }
   },
   {
-    "__docId__": 190,
+    "__docId__": 188,
     "kind": "member",
     "name": "min",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5879,7 +5768,7 @@
     }
   },
   {
-    "__docId__": 191,
+    "__docId__": 189,
     "kind": "member",
     "name": "fcolor",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5898,7 +5787,7 @@
     }
   },
   {
-    "__docId__": 192,
+    "__docId__": 190,
     "kind": "member",
     "name": "aesthetics",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5917,7 +5806,7 @@
     }
   },
   {
-    "__docId__": 193,
+    "__docId__": 191,
     "kind": "method",
     "name": "buildLegend",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5938,7 +5827,7 @@
     "override": true
   },
   {
-    "__docId__": 194,
+    "__docId__": 192,
     "kind": "member",
     "name": "legend",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5957,7 +5846,7 @@
     }
   },
   {
-    "__docId__": 195,
+    "__docId__": 193,
     "kind": "method",
     "name": "defaults",
     "memberof": "src/Gisplay/Maps/Types/ChangeMap.js~ChangeMap",
@@ -5994,7 +5883,7 @@
     "override": true
   },
   {
-    "__docId__": 196,
+    "__docId__": 194,
     "kind": "file",
     "name": "src/Gisplay/Maps/Types/ChorochromaticMap.js",
     "content": "import { Choropleth } from './Choropleth';\r\n\r\n/**\r\n * Chorochormatic Map implemenetation.\r\n */\r\nexport class ChorochromaticMap extends Choropleth {\r\n\r\n    /**\r\n     * Creates an instance of ChorochromaticMap.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} options - User options to be used. \r\n     * @memberOf ChorochromaticMap\r\n     */\r\n    constructor(bgmap, geometry, options) {\r\n        super(bgmap, geometry, options);\r\n    }\r\n\r\n    /**\r\n     * Returns the color scheme associated with the id given.\r\n     * @param {number} defaultColorSchemeId - The id of the color scheme to choose the colors.\r\n     * @returns {colorScheme: string[]} - The color scheme.\r\n     * @override\r\n     * @memberOf ChorochromaticMap\r\n     */\r\n    defaults(defaultColorSchemeId) {\r\n        const options = {};\r\n        switch (defaultColorSchemeId) {\r\n            case 1:\r\n                options.colorScheme = [\"#440154\", \"#440256\", \"#450457\", \"#450559\", \"#46075a\", \"#46085c\", \"#460a5d\", \"#460b5e\", \"#470d60\", \"#470e61\", \"#471063\", \"#471164\", \"#471365\", \"#481467\", \"#481668\", \"#481769\", \"#48186a\", \"#481a6c\", \"#481b6d\", \"#481c6e\", \"#481d6f\", \"#481f70\", \"#482071\", \"#482173\", \"#482374\", \"#482475\", \"#482576\", \"#482677\", \"#482878\", \"#482979\", \"#472a7a\", \"#472c7a\", \"#472d7b\", \"#472e7c\", \"#472f7d\", \"#46307e\", \"#46327e\", \"#46337f\", \"#463480\", \"#453581\", \"#453781\", \"#453882\", \"#443983\", \"#443a83\", \"#443b84\", \"#433d84\", \"#433e85\", \"#423f85\", \"#424086\", \"#424186\", \"#414287\", \"#414487\", \"#404588\", \"#404688\", \"#3f4788\", \"#3f4889\", \"#3e4989\", \"#3e4a89\", \"#3e4c8a\", \"#3d4d8a\", \"#3d4e8a\", \"#3c4f8a\", \"#3c508b\", \"#3b518b\", \"#3b528b\", \"#3a538b\", \"#3a548c\", \"#39558c\", \"#39568c\", \"#38588c\", \"#38598c\", \"#375a8c\", \"#375b8d\", \"#365c8d\", \"#365d8d\", \"#355e8d\", \"#355f8d\", \"#34608d\", \"#34618d\", \"#33628d\", \"#33638d\", \"#32648e\", \"#32658e\", \"#31668e\", \"#31678e\", \"#31688e\", \"#30698e\", \"#306a8e\", \"#2f6b8e\", \"#2f6c8e\", \"#2e6d8e\", \"#2e6e8e\", \"#2e6f8e\", \"#2d708e\", \"#2d718e\", \"#2c718e\", \"#2c728e\", \"#2c738e\", \"#2b748e\", \"#2b758e\", \"#2a768e\", \"#2a778e\", \"#2a788e\", \"#29798e\", \"#297a8e\", \"#297b8e\", \"#287c8e\", \"#287d8e\", \"#277e8e\", \"#277f8e\", \"#27808e\", \"#26818e\", \"#26828e\", \"#26828e\", \"#25838e\", \"#25848e\", \"#25858e\", \"#24868e\", \"#24878e\", \"#23888e\", \"#23898e\", \"#238a8d\", \"#228b8d\", \"#228c8d\", \"#228d8d\", \"#218e8d\", \"#218f8d\", \"#21908d\", \"#21918c\", \"#20928c\", \"#20928c\", \"#20938c\", \"#1f948c\", \"#1f958b\", \"#1f968b\", \"#1f978b\", \"#1f988b\", \"#1f998a\", \"#1f9a8a\", \"#1e9b8a\", \"#1e9c89\", \"#1e9d89\", \"#1f9e89\", \"#1f9f88\", \"#1fa088\", \"#1fa188\", \"#1fa187\", \"#1fa287\", \"#20a386\", \"#20a486\", \"#21a585\", \"#21a685\", \"#22a785\", \"#22a884\", \"#23a983\", \"#24aa83\", \"#25ab82\", \"#25ac82\", \"#26ad81\", \"#27ad81\", \"#28ae80\", \"#29af7f\", \"#2ab07f\", \"#2cb17e\", \"#2db27d\", \"#2eb37c\", \"#2fb47c\", \"#31b57b\", \"#32b67a\", \"#34b679\", \"#35b779\", \"#37b878\", \"#38b977\", \"#3aba76\", \"#3bbb75\", \"#3dbc74\", \"#3fbc73\", \"#40bd72\", \"#42be71\", \"#44bf70\", \"#46c06f\", \"#48c16e\", \"#4ac16d\", \"#4cc26c\", \"#4ec36b\", \"#50c46a\", \"#52c569\", \"#54c568\", \"#56c667\", \"#58c765\", \"#5ac864\", \"#5cc863\", \"#5ec962\", \"#60ca60\", \"#63cb5f\", \"#65cb5e\", \"#67cc5c\", \"#69cd5b\", \"#6ccd5a\", \"#6ece58\", \"#70cf57\", \"#73d056\", \"#75d054\", \"#77d153\", \"#7ad151\", \"#7cd250\", \"#7fd34e\", \"#81d34d\", \"#84d44b\", \"#86d549\", \"#89d548\", \"#8bd646\", \"#8ed645\", \"#90d743\", \"#93d741\", \"#95d840\", \"#98d83e\", \"#9bd93c\", \"#9dd93b\", \"#a0da39\", \"#a2da37\", \"#a5db36\", \"#a8db34\", \"#aadc32\", \"#addc30\", \"#b0dd2f\", \"#b2dd2d\", \"#b5de2b\", \"#b8de29\", \"#bade28\", \"#bddf26\", \"#c0df25\", \"#c2df23\", \"#c5e021\", \"#c8e020\", \"#cae11f\", \"#cde11d\", \"#d0e11c\", \"#d2e21b\", \"#d5e21a\", \"#d8e219\", \"#dae319\", \"#dde318\", \"#dfe318\", \"#e2e418\", \"#e5e419\", \"#e7e419\", \"#eae51a\", \"#ece51b\", \"#efe51c\", \"#f1e51d\", \"#f4e61e\", \"#f6e620\", \"#f8e621\", \"#fbe723\", \"#fde725\"];\r\n                break;\r\n            case 2:\r\n                options.colorScheme = ['purple', 'orange', 'blue', 'yellow', 'pink', 'green', 'red', 'navy'];\r\n                break;\r\n            default:\r\n                options.colorScheme = [\"#440154\", \"#440256\", \"#450457\", \"#450559\", \"#46075a\", \"#46085c\", \"#460a5d\", \"#460b5e\", \"#470d60\", \"#470e61\", \"#471063\", \"#471164\", \"#471365\", \"#481467\", \"#481668\", \"#481769\", \"#48186a\", \"#481a6c\", \"#481b6d\", \"#481c6e\", \"#481d6f\", \"#481f70\", \"#482071\", \"#482173\", \"#482374\", \"#482475\", \"#482576\", \"#482677\", \"#482878\", \"#482979\", \"#472a7a\", \"#472c7a\", \"#472d7b\", \"#472e7c\", \"#472f7d\", \"#46307e\", \"#46327e\", \"#46337f\", \"#463480\", \"#453581\", \"#453781\", \"#453882\", \"#443983\", \"#443a83\", \"#443b84\", \"#433d84\", \"#433e85\", \"#423f85\", \"#424086\", \"#424186\", \"#414287\", \"#414487\", \"#404588\", \"#404688\", \"#3f4788\", \"#3f4889\", \"#3e4989\", \"#3e4a89\", \"#3e4c8a\", \"#3d4d8a\", \"#3d4e8a\", \"#3c4f8a\", \"#3c508b\", \"#3b518b\", \"#3b528b\", \"#3a538b\", \"#3a548c\", \"#39558c\", \"#39568c\", \"#38588c\", \"#38598c\", \"#375a8c\", \"#375b8d\", \"#365c8d\", \"#365d8d\", \"#355e8d\", \"#355f8d\", \"#34608d\", \"#34618d\", \"#33628d\", \"#33638d\", \"#32648e\", \"#32658e\", \"#31668e\", \"#31678e\", \"#31688e\", \"#30698e\", \"#306a8e\", \"#2f6b8e\", \"#2f6c8e\", \"#2e6d8e\", \"#2e6e8e\", \"#2e6f8e\", \"#2d708e\", \"#2d718e\", \"#2c718e\", \"#2c728e\", \"#2c738e\", \"#2b748e\", \"#2b758e\", \"#2a768e\", \"#2a778e\", \"#2a788e\", \"#29798e\", \"#297a8e\", \"#297b8e\", \"#287c8e\", \"#287d8e\", \"#277e8e\", \"#277f8e\", \"#27808e\", \"#26818e\", \"#26828e\", \"#26828e\", \"#25838e\", \"#25848e\", \"#25858e\", \"#24868e\", \"#24878e\", \"#23888e\", \"#23898e\", \"#238a8d\", \"#228b8d\", \"#228c8d\", \"#228d8d\", \"#218e8d\", \"#218f8d\", \"#21908d\", \"#21918c\", \"#20928c\", \"#20928c\", \"#20938c\", \"#1f948c\", \"#1f958b\", \"#1f968b\", \"#1f978b\", \"#1f988b\", \"#1f998a\", \"#1f9a8a\", \"#1e9b8a\", \"#1e9c89\", \"#1e9d89\", \"#1f9e89\", \"#1f9f88\", \"#1fa088\", \"#1fa188\", \"#1fa187\", \"#1fa287\", \"#20a386\", \"#20a486\", \"#21a585\", \"#21a685\", \"#22a785\", \"#22a884\", \"#23a983\", \"#24aa83\", \"#25ab82\", \"#25ac82\", \"#26ad81\", \"#27ad81\", \"#28ae80\", \"#29af7f\", \"#2ab07f\", \"#2cb17e\", \"#2db27d\", \"#2eb37c\", \"#2fb47c\", \"#31b57b\", \"#32b67a\", \"#34b679\", \"#35b779\", \"#37b878\", \"#38b977\", \"#3aba76\", \"#3bbb75\", \"#3dbc74\", \"#3fbc73\", \"#40bd72\", \"#42be71\", \"#44bf70\", \"#46c06f\", \"#48c16e\", \"#4ac16d\", \"#4cc26c\", \"#4ec36b\", \"#50c46a\", \"#52c569\", \"#54c568\", \"#56c667\", \"#58c765\", \"#5ac864\", \"#5cc863\", \"#5ec962\", \"#60ca60\", \"#63cb5f\", \"#65cb5e\", \"#67cc5c\", \"#69cd5b\", \"#6ccd5a\", \"#6ece58\", \"#70cf57\", \"#73d056\", \"#75d054\", \"#77d153\", \"#7ad151\", \"#7cd250\", \"#7fd34e\", \"#81d34d\", \"#84d44b\", \"#86d549\", \"#89d548\", \"#8bd646\", \"#8ed645\", \"#90d743\", \"#93d741\", \"#95d840\", \"#98d83e\", \"#9bd93c\", \"#9dd93b\", \"#a0da39\", \"#a2da37\", \"#a5db36\", \"#a8db34\", \"#aadc32\", \"#addc30\", \"#b0dd2f\", \"#b2dd2d\", \"#b5de2b\", \"#b8de29\", \"#bade28\", \"#bddf26\", \"#c0df25\", \"#c2df23\", \"#c5e021\", \"#c8e020\", \"#cae11f\", \"#cde11d\", \"#d0e11c\", \"#d2e21b\", \"#d5e21a\", \"#d8e219\", \"#dae319\", \"#dde318\", \"#dfe318\", \"#e2e418\", \"#e5e419\", \"#e7e419\", \"#eae51a\", \"#ece51b\", \"#efe51c\", \"#f1e51d\", \"#f4e61e\", \"#f6e620\", \"#f8e621\", \"#fbe723\", \"#fde725\"];\r\n                break;\r\n        }\r\n        return options;\r\n    }\r\n}\r\n",
@@ -6005,7 +5894,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 197,
+    "__docId__": 195,
     "kind": "class",
     "name": "ChorochromaticMap",
     "memberof": "src/Gisplay/Maps/Types/ChorochromaticMap.js",
@@ -6023,7 +5912,7 @@
     ]
   },
   {
-    "__docId__": 198,
+    "__docId__": 196,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap",
@@ -6074,7 +5963,7 @@
     ]
   },
   {
-    "__docId__": 199,
+    "__docId__": 197,
     "kind": "method",
     "name": "defaults",
     "memberof": "src/Gisplay/Maps/Types/ChorochromaticMap.js~ChorochromaticMap",
@@ -6118,7 +6007,7 @@
     "override": true
   },
   {
-    "__docId__": 200,
+    "__docId__": 198,
     "kind": "file",
     "name": "src/Gisplay/Maps/Types/Choropleth.js",
     "content": "import { Map } from '../Map';\r\nimport { Legend } from '../Legend';\r\n\r\n/**\r\n * Choropleth implementation 06/03 - 23/03\r\n */\r\nexport class Choropleth extends Map {\r\n\r\n    /**\r\n     * Creates an instance of Choropleth.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} userOptions - User options to be used.\r\n     * @memberOf Choropleth\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        super(bgmap, geometry, userOptions);\r\n        this.loadOptions(userOptions, bgmap);// this.type = 'CP'; window.maps.push(this);\r\n        this.initializeCanvasAndEvents();\r\n    }\r\n\r\n    /**\r\n     * Draw Choropleth map, at the beginning and when the map is moved.\r\n     * @see initialize() and makeMap() methods.\r\n     * @override  \r\n     * @memberOf Choropleth\r\n     */\r\n    draw() {\r\n        this.clear();\r\n        for (const aes of this.aesthetics) {\r\n            if (aes.isEnabled())\r\n                this.drawTriangles(aes);\r\n            this.drawBorders(aes);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Method called to build the Map Legend.\r\n     * For all Aesthethics that exist crate one polygon row and then insert the Legend to the map. \r\n     * @override \r\n     * @memberOf Choropleth\r\n     */\r\n    buildLegend() {\r\n        /**\r\n         * The Legend to be used through the life of the map.\r\n         * @type {Legend} \r\n         */\r\n        this.legend = new Legend(this.id, this.gisplayOptions.legendTitle);\r\n        for (const aes of this.aesthetics)\r\n            this.legend.insertPolygonRow(aes, this);\r\n        this.legend.insertLegend(this.bGMap);\r\n    }\r\n\r\n    /**\r\n     * Returns the color scheme and number of classes associated with the id given.\r\n     * @param {number} defaultColorSchemeId - The id of the default color scheme to choose the colors.\r\n     * @returns {{colorScheme: string[], numberOfClasses: number}} - Color scheme and number of classes associated with the id given, empty object otherwise.\r\n     * @override \r\n     * @memberOf Choropleth\r\n     */\r\n    defaults(defaultColorSchemeId) {\r\n        const options = {};\r\n        switch (defaultColorSchemeId) {\r\n            case 1:\r\n                options.colorScheme = ['white', 'yellow', 'orange', 'red'];\r\n                options.numberOfClasses = 4;\r\n                break;\r\n            default:\r\n                break;\r\n        }\r\n        return options;\r\n    }\r\n}",
@@ -6129,7 +6018,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 201,
+    "__docId__": 199,
     "kind": "class",
     "name": "Choropleth",
     "memberof": "src/Gisplay/Maps/Types/Choropleth.js",
@@ -6147,7 +6036,7 @@
     ]
   },
   {
-    "__docId__": 202,
+    "__docId__": 200,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/Types/Choropleth.js~Choropleth",
@@ -6198,7 +6087,7 @@
     ]
   },
   {
-    "__docId__": 203,
+    "__docId__": 201,
     "kind": "method",
     "name": "draw",
     "memberof": "src/Gisplay/Maps/Types/Choropleth.js~Choropleth",
@@ -6222,7 +6111,7 @@
     "override": true
   },
   {
-    "__docId__": 204,
+    "__docId__": 202,
     "kind": "method",
     "name": "buildLegend",
     "memberof": "src/Gisplay/Maps/Types/Choropleth.js~Choropleth",
@@ -6243,7 +6132,7 @@
     "override": true
   },
   {
-    "__docId__": 205,
+    "__docId__": 203,
     "kind": "member",
     "name": "legend",
     "memberof": "src/Gisplay/Maps/Types/Choropleth.js~Choropleth",
@@ -6262,7 +6151,7 @@
     }
   },
   {
-    "__docId__": 206,
+    "__docId__": 204,
     "kind": "method",
     "name": "defaults",
     "memberof": "src/Gisplay/Maps/Types/Choropleth.js~Choropleth",
@@ -6306,7 +6195,7 @@
     "override": true
   },
   {
-    "__docId__": 207,
+    "__docId__": 205,
     "kind": "file",
     "name": "src/Gisplay/Maps/Types/DotMap.js",
     "content": "import { Map } from '../Map';\r\nimport { Legend } from '../Legend';\r\n\r\n/**\r\n * DotMap implemenetation\r\n */\r\nexport class DotMap extends Map {\r\n\r\n    /**\r\n     * Creates an instance of DotMap.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} options - User options to be used.\r\n     * @memberOf DotMap\r\n     */\r\n    constructor(bgmap, geometry, options) {\r\n        super(bgmap, geometry, options);\r\n        this.loadOptions(options, bgmap);\r\n        this.initializeCanvasAndEvents();\r\n    }\r\n\r\n    /**\r\n     * Draw Dot map, at the beginning and when the map is moved.\r\n     * @see initialize() and makeMap() methods.\r\n     * @override\r\n     * @memberOf DotMap\r\n     */\r\n    draw() {\r\n        this.clear();\r\n        for (const aes of this.aesthetics)\r\n            if (aes.isEnabled())\r\n                this.drawPoints(aes);\r\n    }\r\n\r\n    /**\r\n     * Method called to build the Map Legend.\r\n     * For all Aesthethics that exist crate one point row and then insert the Legend to the map\r\n     * @override \r\n     * @memberOf DotMap\r\n     */\r\n    buildLegend() {\r\n        /**\r\n         * The Legend to be used through the life of the map.\r\n         * @type {Legend} \r\n         */\r\n        this.legend = new Legend(this.id, this.gisplayOptions.legendTitle);\r\n        for (const aes of this.aesthetics)\r\n            this.legend.insertPointRow(aes, this);\r\n        this.legend.insertLegend(this.bGMap);\r\n    }\r\n\r\n    /**\r\n     * Returns the color scheme and number of classes associated with the id given.\r\n     * @param {number} defaultColorSchemeId \r\n     * @returns {{colorScheme: string[], numberOfClasses: number}}\r\n     * @override \r\n     * @memberOf DotMap\r\n     */\r\n    defaults(defaultColorSchemeId) {\r\n        const options = {};\r\n        switch (defaultColorSchemeId) {\r\n            case 1:\r\n                options.colorScheme = [\"#440154\", \"#440256\", \"#450457\", \"#450559\", \"#46075a\", \"#46085c\", \"#460a5d\", \"#460b5e\", \"#470d60\", \"#470e61\", \"#471063\", \"#471164\", \"#471365\", \"#481467\", \"#481668\", \"#481769\", \"#48186a\", \"#481a6c\", \"#481b6d\", \"#481c6e\", \"#481d6f\", \"#481f70\", \"#482071\", \"#482173\", \"#482374\", \"#482475\", \"#482576\", \"#482677\", \"#482878\", \"#482979\", \"#472a7a\", \"#472c7a\", \"#472d7b\", \"#472e7c\", \"#472f7d\", \"#46307e\", \"#46327e\", \"#46337f\", \"#463480\", \"#453581\", \"#453781\", \"#453882\", \"#443983\", \"#443a83\", \"#443b84\", \"#433d84\", \"#433e85\", \"#423f85\", \"#424086\", \"#424186\", \"#414287\", \"#414487\", \"#404588\", \"#404688\", \"#3f4788\", \"#3f4889\", \"#3e4989\", \"#3e4a89\", \"#3e4c8a\", \"#3d4d8a\", \"#3d4e8a\", \"#3c4f8a\", \"#3c508b\", \"#3b518b\", \"#3b528b\", \"#3a538b\", \"#3a548c\", \"#39558c\", \"#39568c\", \"#38588c\", \"#38598c\", \"#375a8c\", \"#375b8d\", \"#365c8d\", \"#365d8d\", \"#355e8d\", \"#355f8d\", \"#34608d\", \"#34618d\", \"#33628d\", \"#33638d\", \"#32648e\", \"#32658e\", \"#31668e\", \"#31678e\", \"#31688e\", \"#30698e\", \"#306a8e\", \"#2f6b8e\", \"#2f6c8e\", \"#2e6d8e\", \"#2e6e8e\", \"#2e6f8e\", \"#2d708e\", \"#2d718e\", \"#2c718e\", \"#2c728e\", \"#2c738e\", \"#2b748e\", \"#2b758e\", \"#2a768e\", \"#2a778e\", \"#2a788e\", \"#29798e\", \"#297a8e\", \"#297b8e\", \"#287c8e\", \"#287d8e\", \"#277e8e\", \"#277f8e\", \"#27808e\", \"#26818e\", \"#26828e\", \"#26828e\", \"#25838e\", \"#25848e\", \"#25858e\", \"#24868e\", \"#24878e\", \"#23888e\", \"#23898e\", \"#238a8d\", \"#228b8d\", \"#228c8d\", \"#228d8d\", \"#218e8d\", \"#218f8d\", \"#21908d\", \"#21918c\", \"#20928c\", \"#20928c\", \"#20938c\", \"#1f948c\", \"#1f958b\", \"#1f968b\", \"#1f978b\", \"#1f988b\", \"#1f998a\", \"#1f9a8a\", \"#1e9b8a\", \"#1e9c89\", \"#1e9d89\", \"#1f9e89\", \"#1f9f88\", \"#1fa088\", \"#1fa188\", \"#1fa187\", \"#1fa287\", \"#20a386\", \"#20a486\", \"#21a585\", \"#21a685\", \"#22a785\", \"#22a884\", \"#23a983\", \"#24aa83\", \"#25ab82\", \"#25ac82\", \"#26ad81\", \"#27ad81\", \"#28ae80\", \"#29af7f\", \"#2ab07f\", \"#2cb17e\", \"#2db27d\", \"#2eb37c\", \"#2fb47c\", \"#31b57b\", \"#32b67a\", \"#34b679\", \"#35b779\", \"#37b878\", \"#38b977\", \"#3aba76\", \"#3bbb75\", \"#3dbc74\", \"#3fbc73\", \"#40bd72\", \"#42be71\", \"#44bf70\", \"#46c06f\", \"#48c16e\", \"#4ac16d\", \"#4cc26c\", \"#4ec36b\", \"#50c46a\", \"#52c569\", \"#54c568\", \"#56c667\", \"#58c765\", \"#5ac864\", \"#5cc863\", \"#5ec962\", \"#60ca60\", \"#63cb5f\", \"#65cb5e\", \"#67cc5c\", \"#69cd5b\", \"#6ccd5a\", \"#6ece58\", \"#70cf57\", \"#73d056\", \"#75d054\", \"#77d153\", \"#7ad151\", \"#7cd250\", \"#7fd34e\", \"#81d34d\", \"#84d44b\", \"#86d549\", \"#89d548\", \"#8bd646\", \"#8ed645\", \"#90d743\", \"#93d741\", \"#95d840\", \"#98d83e\", \"#9bd93c\", \"#9dd93b\", \"#a0da39\", \"#a2da37\", \"#a5db36\", \"#a8db34\", \"#aadc32\", \"#addc30\", \"#b0dd2f\", \"#b2dd2d\", \"#b5de2b\", \"#b8de29\", \"#bade28\", \"#bddf26\", \"#c0df25\", \"#c2df23\", \"#c5e021\", \"#c8e020\", \"#cae11f\", \"#cde11d\", \"#d0e11c\", \"#d2e21b\", \"#d5e21a\", \"#d8e219\", \"#dae319\", \"#dde318\", \"#dfe318\", \"#e2e418\", \"#e5e419\", \"#e7e419\", \"#eae51a\", \"#ece51b\", \"#efe51c\", \"#f1e51d\", \"#f4e61e\", \"#f6e620\", \"#f8e621\", \"#fbe723\", \"#fde725\"];\r\n                break;\r\n            case 2:\r\n                options.colorScheme = ['purple', 'orange', 'blue', 'yellow', 'pink', 'green', 'red', 'navy'];\r\n                break;\r\n            default:\r\n                break;\r\n        }\r\n        options.numberOfClasses = 1;\r\n        return options;\r\n    }\r\n}",
@@ -6317,7 +6206,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 208,
+    "__docId__": 206,
     "kind": "class",
     "name": "DotMap",
     "memberof": "src/Gisplay/Maps/Types/DotMap.js",
@@ -6335,7 +6224,7 @@
     ]
   },
   {
-    "__docId__": 209,
+    "__docId__": 207,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/Types/DotMap.js~DotMap",
@@ -6386,7 +6275,7 @@
     ]
   },
   {
-    "__docId__": 210,
+    "__docId__": 208,
     "kind": "method",
     "name": "draw",
     "memberof": "src/Gisplay/Maps/Types/DotMap.js~DotMap",
@@ -6410,7 +6299,7 @@
     "override": true
   },
   {
-    "__docId__": 211,
+    "__docId__": 209,
     "kind": "method",
     "name": "buildLegend",
     "memberof": "src/Gisplay/Maps/Types/DotMap.js~DotMap",
@@ -6431,7 +6320,7 @@
     "override": true
   },
   {
-    "__docId__": 212,
+    "__docId__": 210,
     "kind": "member",
     "name": "legend",
     "memberof": "src/Gisplay/Maps/Types/DotMap.js~DotMap",
@@ -6450,7 +6339,7 @@
     }
   },
   {
-    "__docId__": 213,
+    "__docId__": 211,
     "kind": "method",
     "name": "defaults",
     "memberof": "src/Gisplay/Maps/Types/DotMap.js~DotMap",
@@ -6494,7 +6383,7 @@
     "override": true
   },
   {
-    "__docId__": 214,
+    "__docId__": 212,
     "kind": "file",
     "name": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js",
     "content": "import { Map } from '../Map';\r\nimport { Legend } from '../Legend';\r\n\r\n/**\r\n * Proportional Symbols Map implementation.\r\n */\r\nexport class ProportionalSymbolsMap extends Map {\r\n\r\n    /**\r\n     * Creates an instance of ProportionalSymbolsMap.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} options - User options to be used.\r\n     * @memberOf ProportionalSymbolsMap\r\n     */\r\n    constructor(bgmap, geometry, options) {\r\n        super(bgmap, geometry, options);\r\n        this.loadOptions(options, bgmap);\r\n        this.gisplayOptions.isDynamic = !options.sizeByClass;\r\n        this.initializeCanvasAndEvents();\r\n    }\r\n\r\n    /**\r\n     * Draw ProportionalSymbols map, at the beginning and when the map is moved.\r\n     * @see initialize() and makeMap() methods.\r\n     * @override \r\n     * @memberOf ProportionalSymbolsMap\r\n     */\r\n    draw() {\r\n        this.clear();\r\n        if (!this.gisplayOptions.isDynamic) {\r\n            for (let i = this.aesthetics.length - 1; i >= 0; i--)\r\n                if (this.aesthetics[i].isEnabled())\r\n                    this.drawPoints(this.aesthetics[i]);\r\n        }\r\n        else {\r\n            for (let i = this.aesthetics.length - 1; i >= 0; i--)\r\n                if (this.aesthetics[i].isEnabled())\r\n                    this.drawProportionalPoints(this.aesthetics[i]);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Method called to build the Map Legend.\r\n     * For all Aesthethics that exist crate one proportional symbol row and then insert the Legend to the map. \r\n     * @override \r\n     * @memberOf ProportionalSymbolsMap\r\n     */\r\n    buildLegend() {\r\n        /**\r\n         * The Legend to be used through the life of the map.\r\n         * @type {Legend} \r\n         */\r\n        this.legend = new Legend(this.id, this.gisplayOptions.legendTitle);\r\n        if (this.aesthetics.length === 1)\r\n            this.legend.insertProportionalSymbols(this.aesthetics[0], this, this.gisplayOptions.numberOfLegendItems);\r\n        else\r\n            for (let i = this.aesthetics.length - 1; i >= 0; i--) {\r\n                if (i === 0)\r\n                    this.legend.insertProportionalSymbols(this.aesthetics[i], this, 2);\r\n                else\r\n                    this.legend.insertProportionalSymbols(this.aesthetics[i], this, 1);\r\n            }\r\n        // i == 0 ? this.legend.insertProportionalSymbols(this.aesthetics[i], this, 2) : this.legend.insertProportionalSymbols(this.aesthetics[i], this, 1);\r\n        this.legend.insertLegend(this.bGMap);\r\n    }\r\n\r\n    /**\r\n     * Returns the color scheme, number of classes, minimum point size and max point size associated with the id given.\r\n     * @param {number} defaultColorSchemeId - The id of the default color scheme to choose the colors.\r\n     * @returns {{maxPointSize: number, minPointSize: number, colorScheme: string[], numberOfClasses: number}}\r\n     * @override \r\n     * @memberOf ProportionalSymbolsMap\r\n     */\r\n    defaults(defaultColorSchemeId) {\r\n        const options = {};\r\n        switch (defaultColorSchemeId) {\r\n            case 1:\r\n                options.maxPointSize = 60;\r\n                options.minPointSize = 5;\r\n                options.colorScheme = ['green', 'red', 'blue'];\r\n                options.numberOfClasses = 1;\r\n                break;\r\n            default:\r\n                break;\r\n        }\r\n        return options;\r\n    }\r\n\r\n}",
@@ -6505,7 +6394,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 215,
+    "__docId__": 213,
     "kind": "class",
     "name": "ProportionalSymbolsMap",
     "memberof": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js",
@@ -6523,7 +6412,7 @@
     ]
   },
   {
-    "__docId__": 216,
+    "__docId__": 214,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap",
@@ -6574,7 +6463,7 @@
     ]
   },
   {
-    "__docId__": 217,
+    "__docId__": 215,
     "kind": "method",
     "name": "draw",
     "memberof": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap",
@@ -6598,7 +6487,7 @@
     "override": true
   },
   {
-    "__docId__": 218,
+    "__docId__": 216,
     "kind": "method",
     "name": "buildLegend",
     "memberof": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap",
@@ -6619,7 +6508,7 @@
     "override": true
   },
   {
-    "__docId__": 219,
+    "__docId__": 217,
     "kind": "member",
     "name": "legend",
     "memberof": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap",
@@ -6638,7 +6527,7 @@
     }
   },
   {
-    "__docId__": 220,
+    "__docId__": 218,
     "kind": "method",
     "name": "defaults",
     "memberof": "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js~ProportionalSymbolsMap",
@@ -6682,7 +6571,7 @@
     "override": true
   },
   {
-    "__docId__": 221,
+    "__docId__": 219,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js",
     "content": "import { BGMapWrapper } from '../../BGMapWrapper';\r\n\r\n/**\r\n * Here Maps as background map provider. \r\n * @export\r\n * @class BGMapBingMaps\r\n * @extends {BGMapWrapper}\r\n * @see https://msdn.microsoft.com/en-us/library/mt712542.aspx\r\n */\r\nexport class BGMapBingMaps extends BGMapWrapper {\r\n\r\n    /**\r\n     * Creates an instance of Bing Maps.\r\n     * @param {Object} bgmap - The Bing Maps object.\r\n     * @memberOf BGMapBingMaps\r\n     */\r\n    constructor(bgmap) {\r\n        super(bgmap);\r\n    }\r\n\r\n    /**\r\n     * Returns the map's containing HTML element.\r\n     * @return {HTMLElement} - The map's HTML element container.\r\n     */\r\n    getContainer() {\r\n        return this.bgMapObject.getRootElement();\r\n    }\r\n\r\n    /**\r\n     * Given one id it creates a canvas object.\r\n     * @todo Understand case mapbox comment bellow.\r\n     * @param {number} id - The id of the canvas to be created.\r\n     * @return {HTMLElement} Canvas object where everything will be drawn.\r\n     * @see http://stackoverflow.com/a/6862022\r\n     */\r\n    createCanvas(id) {\r\n        const mapCanvas = document.createElement('canvas');\r\n        mapCanvas.id = `mapCanvas${id}`;\r\n        mapCanvas.style.position = 'absolute';\r\n\r\n        const mapDiv = this.bgMapObject.getRootElement();//Could be: this.getContainer();\r\n        mapCanvas.height = mapDiv.offsetHeight;\r\n        mapCanvas.width = mapDiv.offsetWidth;\r\n\r\n        // Bing Maps\r\n        mapCanvas.style.pointerEvents = 'none';\r\n        mapDiv.insertBefore(mapCanvas, mapDiv.firstChild.nextSibling);\r\n\r\n        const canvas = document.getElementById(`mapCanvas${id}`);\r\n        return canvas;\r\n    }\r\n\r\n    /**\r\n     * Returns the map's current zoom level.\r\n     * @return {number} - The map's current zoom level.\r\n     */\r\n    getZoom() {\r\n        return this.bgMapObject.getZoom();\r\n    }\r\n\r\n    /**\r\n     * Returns the longitude(X) of the bounding box northwest corner.\r\n     * @return {number} - Longitude of northwest corner, measured in degrees.\r\n     * @see \r\n     */\r\n    getCenterLng() {\r\n        return this.bgMapObject.getCenter().longitude;\r\n    }\r\n\r\n    /**\r\n     * Returns the latitude(Y) of the bounding box northwest corner.\r\n     * @return {number} - Latitude of northwest corner, measured in degrees.\r\n     * @see \r\n     */\r\n    getCenterLat() {\r\n        return this.bgMapObject.getCenter().latitude;\r\n    }\r\n}",
@@ -6693,7 +6582,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 222,
+    "__docId__": 220,
     "kind": "class",
     "name": "BGMapBingMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js",
@@ -6720,7 +6609,7 @@
     ]
   },
   {
-    "__docId__": 223,
+    "__docId__": 221,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps",
@@ -6751,7 +6640,7 @@
     ]
   },
   {
-    "__docId__": 224,
+    "__docId__": 222,
     "kind": "method",
     "name": "getContainer",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps",
@@ -6773,7 +6662,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 223,
     "kind": "method",
     "name": "createCanvas",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps",
@@ -6812,7 +6701,7 @@
     }
   },
   {
-    "__docId__": 226,
+    "__docId__": 224,
     "kind": "method",
     "name": "getZoom",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps",
@@ -6834,7 +6723,7 @@
     }
   },
   {
-    "__docId__": 227,
+    "__docId__": 225,
     "kind": "method",
     "name": "getCenterLng",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps",
@@ -6859,7 +6748,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 226,
     "kind": "method",
     "name": "getCenterLat",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js~BGMapBingMaps",
@@ -6884,7 +6773,7 @@
     }
   },
   {
-    "__docId__": 229,
+    "__docId__": 227,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js",
     "content": "import { BGMapWrapper } from '../../BGMapWrapper';\r\n\r\n/**\r\n * Google Maps as background map provider. \r\n * @export\r\n * @class GoogleMapsBGMap\r\n * @extends {BGMapWrapper}\r\n * @see https://developers.google.com/maps/documentation/javascript/3.exp/reference\r\n * @see \r\n */\r\nexport class BGMapGoogleMaps extends BGMapWrapper {\r\n\r\n    /**\r\n     * Creates an instance of GoogleMapsBGMap.\r\n     * @param {Object} bgmap - The Google Maps object.\r\n     * @memberOf GoogleMapsBGMap\r\n     */\r\n    constructor(bgmap) {\r\n        super(bgmap);\r\n    }\r\n\r\n    /**\r\n     * Returns the map's containing HTML element.\r\n     * @return {HTMLElement} - The map's HTML element container.\r\n     */\r\n    getContainer() {\r\n        return this.bgMapObject.getDiv();\r\n    }\r\n\r\n    /**\r\n     * Given one id it creates a canvas object.\r\n     * @todo Understand case mapbox comment bellow.\r\n     * @param {number} id - The id of the canvas to be created.\r\n     * @return {HTMLElement} Canvas object where everything will be drawn.\r\n     * @see http://stackoverflow.com/a/6862022\r\n     */\r\n    createCanvas(id) {\r\n        const mapCanvas = document.createElement('canvas');\r\n        mapCanvas.id = `mapCanvas${id}`;\r\n        mapCanvas.style.position = 'absolute';\r\n\r\n        const mapDiv = this.bgMapObject.getDiv();\r\n        mapCanvas.height = mapDiv.offsetHeight;\r\n        mapCanvas.width = mapDiv.offsetWidth;\r\n        \r\n        // Google Maps\r\n        mapCanvas.style.pointerEvents = 'none';\r\n        mapDiv.insertBefore(mapCanvas, mapDiv.firstChild.nextSibling);\r\n\r\n        const canvas = document.getElementById(`mapCanvas${id}`);\r\n        return canvas;\r\n    }\r\n\r\n    /**\r\n     * Returns the map's current zoom level.\r\n     * @return {number} - The map's current zoom level.\r\n     */\r\n    getZoom() {\r\n        return this.bgMapObject.getZoom();\r\n    }\r\n\r\n    /**\r\n     * Returns the longitude(X) of the bounding box northwest corner.\r\n     * @return {number} - Longitude of northwest corner, measured in degrees.\r\n     * @see http://stackoverflow.com/a/6913505\r\n     */\r\n    getCenterLng() {\r\n         return ((((180 + this.bgMapObject.getCenter().lng()) % 360) + 360) % 360) - 180;\r\n    }\r\n\r\n    /**\r\n     * Returns the latitude(Y) of the bounding box northwest corner.\r\n     * @return {number} - Latitude of northwest corner, measured in degrees.\r\n     * @see http://stackoverflow.com/a/6913505\r\n     */\r\n    getCenterLat() {\r\n        return this.bgMapObject.getCenter().lat();\r\n    }\r\n\r\n    /**\r\n     * Adds a listener to a specified event type.\r\n     * @param {string} eventstr - The event type to add a listen for.\r\n     * @param {Function} eventfunction - The function to be called when the event is fired. The listener function is called with the data object passed to  fire , extended with  target and  type properties.\r\n     * @return {void} \r\n     */\r\n    addEventListener(eventstr, eventfunction) {\r\n        this.bgMapObject.addListener(eventstr, eventfunction);\r\n    }\r\n}",
@@ -6895,7 +6784,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 230,
+    "__docId__": 228,
     "kind": "class",
     "name": "BGMapGoogleMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js",
@@ -6923,7 +6812,7 @@
     ]
   },
   {
-    "__docId__": 231,
+    "__docId__": 229,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -6954,7 +6843,7 @@
     ]
   },
   {
-    "__docId__": 232,
+    "__docId__": 230,
     "kind": "method",
     "name": "getContainer",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -6976,7 +6865,7 @@
     }
   },
   {
-    "__docId__": 233,
+    "__docId__": 231,
     "kind": "method",
     "name": "createCanvas",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -7015,7 +6904,7 @@
     }
   },
   {
-    "__docId__": 234,
+    "__docId__": 232,
     "kind": "method",
     "name": "getZoom",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -7037,7 +6926,7 @@
     }
   },
   {
-    "__docId__": 235,
+    "__docId__": 233,
     "kind": "method",
     "name": "getCenterLng",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -7062,7 +6951,7 @@
     }
   },
   {
-    "__docId__": 236,
+    "__docId__": 234,
     "kind": "method",
     "name": "getCenterLat",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -7087,7 +6976,7 @@
     }
   },
   {
-    "__docId__": 237,
+    "__docId__": 235,
     "kind": "method",
     "name": "addEventListener",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js~BGMapGoogleMaps",
@@ -7130,7 +7019,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 236,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js",
     "content": "import { BGMapWrapper } from '../../BGMapWrapper';\r\n\r\n/**\r\n * Here Maps as background map provider. \r\n * @export\r\n * @class HereMapsBGMap\r\n * @extends {BGMapWrapper}\r\n * @see https://developer.here.com/develop/javascript-api\r\n * @see https://developer.here.com/javascript-apis/documentation/v3/maps/topics/quick-start.html\r\n */\r\nexport class BGMapHereMaps extends BGMapWrapper {\r\n\r\n    /**\r\n     * Creates an instance of Here Maps.\r\n     * @param {Object} bgmap - The Here Maps object.\r\n     * @memberOf HereMapsBGMap\r\n     */\r\n    constructor(bgmap) {\r\n        super(bgmap);\r\n    }\r\n\r\n    /**\r\n     * Returns the map's containing HTML element.\r\n     * @return {HTMLElement} - The map's HTML element container.\r\n     */\r\n    getContainer() {\r\n        return this.bgMapObject.getElement();\r\n    }\r\n\r\n    /**\r\n     * Given one id it creates a canvas object.\r\n     * @todo Understand case mapbox comment bellow.\r\n     * @param {number} id - The id of the canvas to be created.\r\n     * @return {HTMLElement} Canvas object where everything will be drawn.\r\n     * @see http://stackoverflow.com/a/6862022\r\n     */\r\n    createCanvas(id) {\r\n        const mapCanvas = document.createElement('canvas');\r\n        mapCanvas.id = `mapCanvas${id}`;\r\n        mapCanvas.style.position = 'absolute';\r\n\r\n        const mapDiv = this.bgMapObject.getElement();//Could be: this.getContainer();\r\n        mapCanvas.height = mapDiv.offsetHeight;\r\n        mapCanvas.width = mapDiv.offsetWidth;\r\n        \r\n        // Here Maps\r\n        mapCanvas.style.pointerEvents = 'none';\r\n        mapDiv.insertBefore(mapCanvas, mapDiv.firstChild.nextSibling);\r\n\r\n        const canvas = document.getElementById(`mapCanvas${id}`);\r\n        return canvas;\r\n    }\r\n\r\n    /**\r\n     * Returns the map's current zoom level.\r\n     * @return {number} - The map's current zoom level.\r\n     */\r\n    getZoom() {\r\n        return this.bgMapObject.getZoom();\r\n    }\r\n\r\n    /**\r\n     * Returns the longitude(X) of the bounding box northwest corner.\r\n     * @return {number} - Longitude of northwest corner, measured in degrees.\r\n     * @see https://developer.here.com/api-explorer/maps-js/v3.0/infoBubbles/position-on-mouse-click\r\n     */\r\n    getCenterLng() {\r\n        return ((((180 + this.bgMapObject.getCenter().lng) % 360) + 360) % 360) - 180;\r\n    }\r\n\r\n    /**\r\n     * Returns the latitude(Y) of the bounding box northwest corner.\r\n     * @return {number} - Latitude of northwest corner, measured in degrees.\r\n     * @see https://developer.here.com/api-explorer/maps-js/v3.0/infoBubbles/position-on-mouse-click\r\n     */\r\n    getCenterLat() {\r\n        return this.bgMapObject.getCenter().lat;\r\n    }\r\n\r\n    /**\r\n     * Adds a listener to a specified event type.\r\n     * @param {string} eventstr - The event type to add a listen for.\r\n     * @param {Function} eventfunction - The function to be called when the event is fired. The listener function is called with the data object passed to  fire , extended with  target and  type properties.\r\n     * @return {void} \r\n     */\r\n    addEventListener(eventstr, eventfunction) {\r\n        this.bgMapObject.addEventListener(eventstr, eventfunction);\r\n    }\r\n}",
@@ -7141,7 +7030,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 239,
+    "__docId__": 237,
     "kind": "class",
     "name": "BGMapHereMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js",
@@ -7169,7 +7058,7 @@
     ]
   },
   {
-    "__docId__": 240,
+    "__docId__": 238,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7200,7 +7089,7 @@
     ]
   },
   {
-    "__docId__": 241,
+    "__docId__": 239,
     "kind": "method",
     "name": "getContainer",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7222,7 +7111,7 @@
     }
   },
   {
-    "__docId__": 242,
+    "__docId__": 240,
     "kind": "method",
     "name": "createCanvas",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7261,7 +7150,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 241,
     "kind": "method",
     "name": "getZoom",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7283,7 +7172,7 @@
     }
   },
   {
-    "__docId__": 244,
+    "__docId__": 242,
     "kind": "method",
     "name": "getCenterLng",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7308,7 +7197,7 @@
     }
   },
   {
-    "__docId__": 245,
+    "__docId__": 243,
     "kind": "method",
     "name": "getCenterLat",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7333,7 +7222,7 @@
     }
   },
   {
-    "__docId__": 246,
+    "__docId__": 244,
     "kind": "method",
     "name": "addEventListener",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js~BGMapHereMaps",
@@ -7376,7 +7265,7 @@
     }
   },
   {
-    "__docId__": 247,
+    "__docId__": 245,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js",
     "content": "import { Choropleth } from '../../Types/Choropleth';\r\n\r\n/**\r\n * Choropleth implementation 06/03 - 23/03\r\n */\r\nexport class ChoroplethBingMaps extends Choropleth {\r\n\r\n    /**\r\n     * Creates an instance of Choropleth.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} userOptions - User options to be used.\r\n     * @memberOf Choropleth\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        super(bgmap, geometry, userOptions);\r\n    }\r\n\r\n    /**\r\n     * M8) Setup all events used by the API. Right now the API uses: drag, zoom and click events.\r\n     * Pan = viewchange,  Zoom = mousewheel, click = click\r\n     * @param {number} mappos - This map id. \r\n     * @return {void}\r\n     * @see http://www.bing.com/api/maps/sdkrelease/mapcontrol/isdk#addEventHandler+JS \r\n     * @see http://stackoverflow.com/a/8591192/5869289\r\n     * @see http://stackoverflow.com/a/18675579/5869289\r\n     */\r\n    setupEvents(mappos) {\r\n        Microsoft.Maps.Events.addHandler(this.bGMap.getBackgroundMapProviderObject(), 'mousewheel', () => { this.draw(); });\r\n        Microsoft.Maps.Events.addHandler(this.bGMap.getBackgroundMapProviderObject(), 'viewchange', () => { this.draw(); });\r\n        Microsoft.Maps.Events.addHandler(this.bGMap.getBackgroundMapProviderObject(), 'click', (e) => {\r\n            let point = new Microsoft.Maps.Point(e.getX(), e.getY());\r\n            let loc = e.target.tryPixelToLocation(point);\r\n            const lon = loc.longitude;\r\n            const lat = loc.latitude;\r\n            \r\n            if (this.rtree !== undefined) \r\n                this.searchRTree(lon, lat);\r\n            if (this.kdtree !== undefined) \r\n                this.searchKdTree(lon, lat);\r\n        });\r\n    }\r\n}",
@@ -7387,7 +7276,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 248,
+    "__docId__": 246,
     "kind": "class",
     "name": "ChoroplethBingMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js",
@@ -7405,7 +7294,7 @@
     ]
   },
   {
-    "__docId__": 249,
+    "__docId__": 247,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps",
@@ -7456,7 +7345,7 @@
     ]
   },
   {
-    "__docId__": 250,
+    "__docId__": 248,
     "kind": "method",
     "name": "setupEvents",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js~ChoroplethBingMaps",
@@ -7494,7 +7383,7 @@
     }
   },
   {
-    "__docId__": 251,
+    "__docId__": 249,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js",
     "content": "import { Choropleth } from '../../Types/Choropleth';\r\n\r\n/**\r\n * Choropleth implementation 06/03 - 23/03\r\n */\r\nexport class ChoroplethGoogleMaps extends Choropleth {\r\n\r\n    /**\r\n     * Creates an instance of Choropleth.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} userOptions - User options to be used.\r\n     * @memberOf Choropleth\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        super(bgmap, geometry, userOptions);\r\n    }\r\n\r\n    /**\r\n     * M8) Setup all events used by the API. Right now the API uses: drag, zoom and click events.\r\n     * Pan = drag, Zoom = zoom_changed, click = click\r\n     * @param {number} mappos - This map id. \r\n     * @return {void}\r\n     * @see https://developers.google.com/maps/documentation/javascript/events\r\n     */\r\n    setupEvents(mappos) {\r\n        /*if(!this.gisplayOptions.interactive && this.gisplayOptions.mapOnClickFunction === undefined)\r\n            return;*/\r\n        this.bGMap.addEventListener('zoom_changed', () => { this.draw(); });\r\n        //this.bGMap.addEventListener('center_changed', () => { this.draw(); });\r\n        this.bGMap.addEventListener('drag', () => { this.draw(); });\r\n        this.bGMap.addEventListener('click', e => {\r\n            const lat = e.latLng.lat();\r\n            const lon = e.latLng.lng();\r\n            \r\n            if (this.rtree !== undefined)\r\n                this.searchRTree(lon, lat);\r\n            if (this.kdtree !== undefined)\r\n                this.searchKdTree(lon, lat);\r\n        });\r\n    }\r\n}",
@@ -7505,7 +7394,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 252,
+    "__docId__": 250,
     "kind": "class",
     "name": "ChoroplethGoogleMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js",
@@ -7523,7 +7412,7 @@
     ]
   },
   {
-    "__docId__": 253,
+    "__docId__": 251,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps",
@@ -7574,7 +7463,7 @@
     ]
   },
   {
-    "__docId__": 254,
+    "__docId__": 252,
     "kind": "method",
     "name": "setupEvents",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js~ChoroplethGoogleMaps",
@@ -7610,7 +7499,7 @@
     }
   },
   {
-    "__docId__": 255,
+    "__docId__": 253,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js",
     "content": "import { Choropleth } from '../../Types/Choropleth';\r\n\r\n/**\r\n * Choropleth implementation 06/03 - 23/03\r\n */\r\nexport class ChoroplethHereMaps extends Choropleth {\r\n\r\n    /**\r\n     * Creates an instance of Choropleth.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} userOptions - User options to be used.\r\n     * @memberOf Choropleth\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        super(bgmap, geometry, userOptions);\r\n    }\r\n\r\n    /**\r\n     * M8) Setup all events used by the API. Right now the API uses: drag, zoom and click events.\r\n     * Pan = drag, Zoom = mapviewchange, click = tap\r\n     * @param {number} mappos - This map id. \r\n     * @return {void}\r\n     * @see https://developer.here.com/javascript-apis/documentation/v3/maps/topics/events.html\r\n     */\r\n    setupEvents(mappos) {\r\n        this.bGMap.addEventListener('mapviewchange', () => { this.draw(); });\r\n        this.bGMap.addEventListener('drag', () => { this.draw(); });\r\n        this.bGMap.addEventListener('tap', e => {\r\n            let coords = this.bGMap.getBackgroundMapProviderObject().screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);\r\n            const lon = coords.lng;\r\n            const lat = coords.lat;\r\n\r\n            if (this.rtree !== undefined)\r\n                this.searchRTree(lon, lat);\r\n            if (this.kdtree !== undefined)\r\n                this.searchKdTree(lon, lat);\r\n        });\r\n    }\r\n}",
@@ -7621,7 +7510,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 256,
+    "__docId__": 254,
     "kind": "class",
     "name": "ChoroplethHereMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js",
@@ -7639,7 +7528,7 @@
     ]
   },
   {
-    "__docId__": 257,
+    "__docId__": 255,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps",
@@ -7690,7 +7579,7 @@
     ]
   },
   {
-    "__docId__": 258,
+    "__docId__": 256,
     "kind": "method",
     "name": "setupEvents",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js~ChoroplethHereMaps",
@@ -7726,7 +7615,7 @@
     }
   },
   {
-    "__docId__": 259,
+    "__docId__": 257,
     "kind": "file",
     "name": "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js",
     "content": "import { DotMap } from '../../Types/DotMap';\r\n\r\n/**\r\n * DotMap Google Maps\r\n */\r\nexport class DotMapGoogleMaps extends DotMap {\r\n\r\n    /**\r\n     * Creates an instance of DotMapGoogleMaps.\r\n     * @param {BGMapWrapper} bgmap - Background map object.\r\n     * @param {JSON} geometry - JSON object with the geometry that was read from the file.\r\n     * @param {Object} userOptions - User options to be used.\r\n     * @memberOf Choropleth\r\n     */\r\n    constructor(bgmap, geometry, userOptions) {\r\n        super(bgmap, geometry, userOptions);\r\n    }\r\n\r\n    /**\r\n     * M8) Setup all events used by the API. Right now the API uses: drag, zoom and click events.\r\n     * Pan = drag, Zoom = zoom_changed, click = click\r\n     * @param {number} mappos - This map id. \r\n     * @return {void}\r\n     * @see https://developers.google.com/maps/documentation/javascript/events\r\n     */\r\n    setupEvents(mappos) {\r\n        /*if(!this.gisplayOptions.interactive && this.gisplayOptions.mapOnClickFunction === undefined)\r\n            return;*/\r\n        this.bGMap.addEventListener('zoom_changed', () => { this.draw(); });\r\n        this.bGMap.addEventListener('center_changed', () => { this.draw(); });\r\n        this.bGMap.addEventListener('drag', () => { this.draw(); });\r\n        this.bGMap.addEventListener('click', e => {\r\n            const lat = e.latLng.lat();\r\n            const lon = e.latLng.lng();\r\n            if (this.rtree !== undefined)\r\n                this.searchRTree(lon, lat);\r\n            if (this.kdtree !== undefined)\r\n                this.searchKdTree(lon, lat);\r\n        });\r\n    }\r\n}",
@@ -7737,7 +7626,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 260,
+    "__docId__": 258,
     "kind": "class",
     "name": "DotMapGoogleMaps",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js",
@@ -7755,7 +7644,7 @@
     ]
   },
   {
-    "__docId__": 261,
+    "__docId__": 259,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps",
@@ -7806,7 +7695,7 @@
     ]
   },
   {
-    "__docId__": 262,
+    "__docId__": 260,
     "kind": "method",
     "name": "setupEvents",
     "memberof": "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js~DotMapGoogleMaps",
@@ -7842,10 +7731,10 @@
     }
   },
   {
-    "__docId__": 263,
+    "__docId__": 261,
     "kind": "file",
     "name": "src/Gisplay/Maps/WebglUtils.js",
-    "content": "/**\r\n * Class with static methods that will help with WebGL related stuff(Matrices, web mercator projection and shaders).\r\n * Always remeber WebGL is column major when reading the matrix code.\r\n * @see http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg\r\n * @static \r\n * @class WebGLUtils\r\n */\r\nexport class WebGLUtils {\r\n\r\n    /**\r\n     * Calculates the scale and offset(X and Y) for the Web Mercator projection.\r\n     * @static\r\n     * @param {number} longitudeCenter - Longitude of the given position.\r\n     * @param {number} latitudeCenter - Latitude of the given position.\r\n     * @param {number} zoom - Current zoom level of the background map.\r\n     * @param {number} tileSize - The size of each tile in the background map. Usually is 256. If different should be given in the API options.\r\n     * @param {number} width - Width of the current canvas.\r\n     * @param {number} height - Height of the current canvas.\r\n     * @returns {{scale: number, offsetX: number, offsetY: number}} - Returns the scale, offsetX and offsetY of the point given using the Web Mercator projection.\r\n     * @see https://bl.ocks.org/enjalot/fb7f3d696167e9b83a72#viewport.js\r\n     * @see https://en.wikipedia.org/wiki/Web_Mercator\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static webMercatorProjection(longitudeCenter, latitudeCenter, zoom, tileSize, width, height) {\r\n        // console.log(longitudeCenter, latitudeCenter, zoom, tileSize,  width, height);\r\n        let PI = Math.PI;\r\n        let scale = ((tileSize / 2) / PI) * Math.pow(2, zoom);\r\n        let lambda = longitudeCenter * (PI / 180); // Convert longitude to radians\r\n        let phi = latitudeCenter * (PI / 180); // Convert latitude to radians\r\n\r\n        let xCenter = scale * (lambda + PI);\r\n        let yCenter = scale * (PI - Math.log(Math.tan((PI / 4) + (phi / 2))));\r\n        let offsetX = (width / 2) - xCenter;\r\n        let offsetY = (height / 2) - yCenter;\r\n\r\n\r\n        return { scale: scale, offsetX: offsetX, offsetY: offsetY };\r\n    }\r\n\r\n    /**\r\n     * This is the result matrix from multiplication M1*M2*M3\r\n     * @static\r\n     * @param {number} scale - The scale calculated with WebMercator projection.\r\n     * @param {number} width - The width of the canvas.\r\n     * @param {number} height - The height of the canvas.\r\n     * @param {number} offsetX - The offsetX calculated with WebMercator projection.\r\n     * @param {number} offsetY - The offsetY calculated with WebMercator projection.\r\n     * @returns {Float32Array} The resulting matrix (M1*M2*M3) in a single matrix.\r\n     * @see Rui's thesis\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static finalMatrix(scale, width, height, offsetX, offsetY) {\r\n        let p0 = (2 * Math.PI * scale) / (width * 180);\r\n        let p2 = ((2 * Math.PI * scale) / width) + ((2 * offsetX) / width) - 1;\r\n        let p4 = (2 * scale) / height;\r\n        let p5 = ((2 * offsetY / height) - 1);\r\n        return new Float32Array([\r\n            p0, 0, 0,\r\n            0, p4, 0,\r\n            p2, p5, 1\r\n        ]);\r\n    }\r\n\r\n    /**\r\n     * Creates shaders(Vertex + Fragment) source code.\r\n     * @static\r\n     * @returns {{vertexCode: string, fragmentCode: string}} - The code for the vertex and fragment shaders.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static generateShadersSourceCode() {\r\n        let vertexSourceCode =\r\n            `\r\n            #define PI radians(180.0)\r\n\r\n            attribute vec2 coords;\r\n            uniform mat3 M;\r\n            \r\n         \tattribute float aPointSize; \r\n         \tattribute float a_opacity; \r\n         \tvarying float v_opacity; \r\n\r\n         \tvoid main() {\r\n                float phi = coords[1] * (PI / 180.0);\r\n                float YValue = PI -log( tan((PI/4.0) + phi/2.0) );\r\n                vec3 f = vec3(coords[0], YValue, 1.0);\r\n                vec3 pixeis = M * f;\r\n                float X = pixeis[0];\r\n                float Y = -(pixeis[1]);\r\n                gl_Position = vec4(X, Y , 0.0, 1.0);\r\n         \t\t\r\n         \t\tgl_PointSize = aPointSize; \r\n                v_opacity = a_opacity; \r\n            }\r\n        `;\r\n\r\n        let fragmentSourceCode =\r\n            ` \r\n            precision mediump float;\r\n         \tuniform vec4 u_color;\r\n         \tvarying float v_opacity; \r\n           \tuniform float isPoint;\r\n            void main() {\r\n         \t\tfloat border = 0.5;\r\n         \t\tfloat radius = 0.5;\r\n         \t\tfloat centerDist = length(gl_PointCoord - 0.5);\r\n         \t\tfloat alpha;\r\n         \t\tif (u_color[3] == -1.0)    \r\n         \t\t\talpha =  v_opacity * step(centerDist, radius);\r\n         \t\telse \r\n         \t\t\talpha =  u_color[3] * step(centerDist, radius);\r\n\r\n         \t\tif(isPoint == 1.0 ) {\r\n         \t\t    if (alpha < 0.1) discard;\r\n         \t\t\t    gl_FragColor = vec4(u_color[0], u_color[1], u_color[2], alpha);\r\n                }\r\n           \t\telse\r\n         \t\t\tgl_FragColor = vec4(u_color[0], u_color[1], u_color[2], u_color[3]);\r\n         \t}\r\n        `;\r\n        return { vertexCode: vertexSourceCode, fragmentCode: fragmentSourceCode };\r\n    }\r\n\r\n    /**\r\n     * Creates and compiles a shader.\r\n     * @static\r\n     * @param {string} type - Type of shader. Options are: VERTEX_SHADER or FRAGMENT_SHADER;\r\n     * @param {string} source_code - The shader source code.\r\n     * @param {Map#_webgl} webgl - Webgl object used by the Map class.\r\n     * @returns {WebGLShader} - The shader(vertex of fragment).\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createAndCompileShader(type, source_code, webgl) {\r\n        let shader = webgl.gl.createShader(type);\r\n        webgl.gl.shaderSource(shader, source_code);\r\n        webgl.gl.compileShader(shader);\r\n        return shader;\r\n    }\r\n\r\n    /**\r\n     * Initializes:\r\n     * 1)WebGLProgram, 2) Generates shadders, 3) Attaches shaders to the program, 4) links program, 5) uses program.\r\n     * @static\r\n     * @param {{gl: WebGLRenderingContext, program: WebGLProgram}} webgl \r\n     * @returns {void}\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createWebGLProgram(webgl) {\r\n        webgl.program = webgl.gl.createProgram();\r\n\r\n        const source_code = this.generateShadersSourceCode();\r\n        const vertex_shader = this.createAndCompileShader(webgl.gl.VERTEX_SHADER, source_code.vertexCode, webgl);\r\n        const fragment_shader = this.createAndCompileShader(webgl.gl.FRAGMENT_SHADER, source_code.fragmentCode, webgl);\r\n\r\n        webgl.gl.attachShader(webgl.program, vertex_shader);\r\n        webgl.gl.attachShader(webgl.program, fragment_shader);\r\n\r\n        webgl.gl.linkProgram(webgl.program);\r\n        webgl.gl.useProgram(webgl.program);\r\n    }\r\n\r\n\r\n    /** ########################    DEPRECATED ZONE ######################## */\r\n    /**\r\n     * Creates the M1 Matrix. \r\n     * This matrix is used to convert the result pixel to a position between 0 and 1(2/width and 2/height scaling) \r\n     * and after that convert to a position between -1 and 1(-1 translation).\r\n     * @static\r\n     * @param {number} width - Width of the canvas.\r\n     * @param {number} height - Height of the canvas.\r\n     * @returns {Float32Array} The matrix M1 to be used to calculate each point/vertex position.\r\n     * @see Documentation of Rui's thesis. \r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createM1(width, height) {\r\n        let w = 2 / width;\r\n        let h = 2 / height;\r\n        return new Float32Array(\r\n            [\r\n                w, 0, -1,\r\n                0, h, -1,\r\n                0, 0, 1\r\n            ]\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Creates the M2 Matrix.\r\n     * This matrix is used to calculate the positions of the pixel using the Web Mercator projection.\r\n     * @static \r\n     * @param {number} scale \r\n     * @param {number} offsetX \r\n     * @param {number} offsetY \r\n     * @returns {Float32Array} The matrix M2 to be used to calculate each point/vertex position.\r\n     * @see https://bl.ocks.org/enjalot/fb7f3d696167e9b83a72#viewport.js\r\n     * @see Documentation of Rui's thesis. \r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createM2(scale, offsetX, offsetY) {\r\n        let s = scale;\r\n        let x = offsetX;\r\n        let y = offsetY;\r\n        return new Float32Array(\r\n            [\r\n                s, 0, x,\r\n                0, s, y,\r\n                0, 0, 1\r\n            ]\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Creates the M3 Matrix.\r\n     * This matrix is used to calculate the positions of the pixel using the Web Mercator projection.\r\n     * @static\r\n     * @returns {Float32Array}  The matrix M3 to be used to calculate each point/vertex position.\r\n     * @see Documentation of Rui's thesis.\r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createM3() {\r\n        let p = Math.PI;\r\n        let q = p / 180;\r\n        return new Float32Array(\r\n            [\r\n                q, 0, p,\r\n                0, 1, 0,\r\n                0, 0, 1\r\n            ]\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Performs Matrix multiplication between two matrices.\r\n     * @static\r\n     * @param {Float32Array} M1 - The M1 matrix. \r\n     * @param {Float32Array} M2 - The M2 matrix.\r\n     * @returns {Float32Array} a matrix which is the result of multiplying M1 by M2.\r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static matrixMultiplication(M1, M2) {\r\n        let res = new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0]);\r\n        res[0] = M1[0] * M2[0] + M1[1] * M2[3] + M1[2] * M2[6];\r\n        res[1] = M1[0] * M2[1] + M1[1] * M2[4] + M1[2] * M2[7];\r\n        res[2] = M1[0] * M2[2] + M1[1] * M2[5] + M1[2] * M2[8];\r\n\r\n        res[3] = M1[3] * M2[0] + M1[4] * M2[3] + M1[5] * M2[6];\r\n        res[4] = M1[3] * M2[1] + M1[4] * M2[4] + M1[5] * M2[7];\r\n        res[5] = M1[3] * M2[2] + M1[4] * M2[5] + M1[5] * M2[8];\r\n\r\n        res[6] = M1[6] * M2[0] + M1[7] * M2[3] + M1[8] * M2[6];\r\n        res[7] = M1[6] * M2[1] + M1[7] * M2[4] + M1[8] * M2[7];\r\n        res[8] = M1[6] * M2[2] + M1[7] * M2[5] + M1[8] * M2[8];\r\n        return res;\r\n    }\r\n}",
+    "content": "/**\r\n * Class with static methods that will help with WebGL related stuff(Matrices, web mercator projection and shaders).\r\n * Always remeber WebGL is column major when reading the matrix code.\r\n * @see http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg\r\n * @static \r\n * @class WebGLUtils\r\n */\r\nexport class WebGLUtils {\r\n\r\n    /**\r\n     * Calculates the scale and offset(X and Y) for the Web Mercator projection.\r\n     * @static\r\n     * @param {number} longitudeCenter - Longitude of the given position.\r\n     * @param {number} latitudeCenter - Latitude of the given position.\r\n     * @param {number} zoom - Current zoom level of the background map.\r\n     * @param {number} tileSize - The size of each tile in the background map. Usually is 256. If different should be given in the API options.\r\n     * @param {number} width - Width of the current canvas.\r\n     * @param {number} height - Height of the current canvas.\r\n     * @returns {{scale: number, offsetX: number, offsetY: number}} - Returns the scale, offsetX and offsetY of the point given using the Web Mercator projection.\r\n     * @see https://bl.ocks.org/enjalot/fb7f3d696167e9b83a72#viewport.js\r\n     * @see https://en.wikipedia.org/wiki/Web_Mercator\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static webMercatorProjection(longitudeCenter, latitudeCenter, zoom, tileSize, width, height) {\r\n        // console.log(longitudeCenter, latitudeCenter, zoom, tileSize,  width, height);\r\n        let PI = Math.PI;\r\n        let scale = ((tileSize / 2) / PI) * Math.pow(2, zoom);\r\n        let lambda = longitudeCenter * (PI / 180); // Convert longitude to radians\r\n        let phi = latitudeCenter * (PI / 180); // Convert latitude to radians\r\n\r\n        let xCenter = scale * (lambda + PI);\r\n        let yCenter = scale * (PI - Math.log(Math.tan((PI / 4) + (phi / 2))));\r\n        let offsetX = (width / 2) - xCenter;\r\n        let offsetY = (height / 2) - yCenter;\r\n\r\n\r\n        return { scale: scale, offsetX: offsetX, offsetY: offsetY };\r\n    }\r\n\r\n    /**\r\n     * This is the result matrix from the multiplication of M1*M2*M3\r\n     * @static\r\n     * @param {number} scale - The scale calculated with WebMercator projection.\r\n     * @param {number} width - The width of the canvas.\r\n     * @param {number} height - The height of the canvas.\r\n     * @param {number} offsetX - The offsetX calculated with WebMercator projection.\r\n     * @param {number} offsetY - The offsetY calculated with WebMercator projection.\r\n     * @returns {Float32Array} The resulting matrix (M1*M2*M3) in a single matrix to send to WebGL in order to calculate the resulting position.\r\n     * @see Rui's thesis\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static finalMatrix(scale, width, height, offsetX, offsetY) {\r\n        let p0 = (2 * Math.PI * scale) / (width * 180);\r\n        let p2 = ((2 * Math.PI * scale) / width) + ((2 * offsetX) / width) - 1;\r\n        let p4 = (2 * scale) / height;\r\n        let p5 = ((2 * offsetY / height) - 1);\r\n        return new Float32Array([\r\n            p0, 0, 0,\r\n            0, p4, 0,\r\n            p2, p5, 1\r\n        ]);\r\n    }\r\n\r\n    /**\r\n     * Creates shaders(Vertex + Fragment) source code.\r\n     * @static\r\n     * @returns {{vertexCode: string, fragmentCode: string}} - The code for the vertex and fragment shaders.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static generateShadersSourceCode() {\r\n        let vertexSourceCode =\r\n            `\r\n            #define PI radians(180.0)\r\n\r\n            attribute vec2 coords;\r\n            uniform mat3 M;\r\n            \r\n         \tattribute float aPointSize; \r\n         \tattribute float a_opacity; \r\n         \tvarying float v_opacity; \r\n\r\n         \tvoid main() {\r\n                float phi = coords[1] * (PI / 180.0);\r\n                float YValue = PI -log( tan((PI/4.0) + phi/2.0) );\r\n                vec3 f = vec3(coords[0], YValue, 1.0);\r\n                vec3 pixeis = M * f;\r\n                float X = pixeis[0];\r\n                float Y = -(pixeis[1]);\r\n                gl_Position = vec4(X, Y , 0.0, 1.0);\r\n         \t\t\r\n         \t\tgl_PointSize = aPointSize; \r\n                v_opacity = a_opacity; \r\n            }\r\n        `;\r\n\r\n        let fragmentSourceCode =\r\n            ` \r\n            precision mediump float;\r\n         \tuniform vec4 u_color;\r\n         \tvarying float v_opacity; \r\n           \tuniform float isPoint;\r\n            void main() {\r\n         \t\tfloat border = 0.5;\r\n         \t\tfloat radius = 0.5;\r\n         \t\tfloat centerDist = length(gl_PointCoord - 0.5);\r\n         \t\tfloat alpha;\r\n         \t\tif (u_color[3] == -1.0)    \r\n         \t\t\talpha =  v_opacity * step(centerDist, radius);\r\n         \t\telse \r\n         \t\t\talpha =  u_color[3] * step(centerDist, radius);\r\n\r\n         \t\tif(isPoint == 1.0 ) {\r\n         \t\t    if (alpha < 0.1) discard;\r\n         \t\t\t    gl_FragColor = vec4(u_color[0], u_color[1], u_color[2], alpha);\r\n                }\r\n           \t\telse\r\n         \t\t\tgl_FragColor = vec4(u_color[0], u_color[1], u_color[2], u_color[3]);\r\n         \t}\r\n        `;\r\n        return { vertexCode: vertexSourceCode, fragmentCode: fragmentSourceCode };\r\n    }\r\n\r\n    /**\r\n     * Creates and compiles a shader.\r\n     * @static\r\n     * @param {string} type - Type of shader. Options are: VERTEX_SHADER or FRAGMENT_SHADER;\r\n     * @param {string} source_code - The shader source code.\r\n     * @param {Map#_webgl} webgl - Webgl object used by the Map class.\r\n     * @returns {WebGLShader} - The shader(vertex of fragment).\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createAndCompileShader(type, source_code, webgl) {\r\n        let shader = webgl.gl.createShader(type);\r\n        webgl.gl.shaderSource(shader, source_code);\r\n        webgl.gl.compileShader(shader);\r\n        return shader;\r\n    }\r\n\r\n    /**\r\n     * Initializes:\r\n     * 1)WebGLProgram, 2) Generates shadders, 3) Attaches shaders to the program, 4) links program, 5) uses program.\r\n     * @static\r\n     * @param {{gl: WebGLRenderingContext, program: WebGLProgram}} webgl \r\n     * @returns {void}\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createWebGLProgram(webgl) {\r\n        webgl.program = webgl.gl.createProgram();\r\n\r\n        const source_code = this.generateShadersSourceCode();\r\n        const vertex_shader = this.createAndCompileShader(webgl.gl.VERTEX_SHADER, source_code.vertexCode, webgl);\r\n        const fragment_shader = this.createAndCompileShader(webgl.gl.FRAGMENT_SHADER, source_code.fragmentCode, webgl);\r\n\r\n        webgl.gl.attachShader(webgl.program, vertex_shader);\r\n        webgl.gl.attachShader(webgl.program, fragment_shader);\r\n\r\n        webgl.gl.linkProgram(webgl.program);\r\n        webgl.gl.useProgram(webgl.program);\r\n    }\r\n\r\n\r\n    /** ########################    DEPRECATED ZONE ######################## */\r\n    /**\r\n     * Creates the M1 Matrix. \r\n     * This matrix is used to convert the result pixel to a position between 0 and 1(2/width and 2/height scaling) \r\n     * and after that convert to a position between -1 and 1(-1 translation).\r\n     * @static\r\n     * @param {number} width - Width of the canvas.\r\n     * @param {number} height - Height of the canvas.\r\n     * @returns {Float32Array} The matrix M1 to be used to calculate each point/vertex position.\r\n     * @see Documentation of Rui's thesis. \r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createM1(width, height) {\r\n        let w = 2 / width;\r\n        let h = 2 / height;\r\n        return new Float32Array(\r\n            [\r\n                w, 0, -1,\r\n                0, h, -1,\r\n                0, 0, 1\r\n            ]\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Creates the M2 Matrix.\r\n     * This matrix is used to calculate the positions of the pixel using the Web Mercator projection.\r\n     * @static \r\n     * @param {number} scale \r\n     * @param {number} offsetX \r\n     * @param {number} offsetY \r\n     * @returns {Float32Array} The matrix M2 to be used to calculate each point/vertex position.\r\n     * @see https://bl.ocks.org/enjalot/fb7f3d696167e9b83a72#viewport.js\r\n     * @see Documentation of Rui's thesis. \r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createM2(scale, offsetX, offsetY) {\r\n        let s = scale;\r\n        let x = offsetX;\r\n        let y = offsetY;\r\n        return new Float32Array(\r\n            [\r\n                s, 0, x,\r\n                0, s, y,\r\n                0, 0, 1\r\n            ]\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Creates the M3 Matrix.\r\n     * This matrix is used to calculate the positions of the pixel using the Web Mercator projection.\r\n     * @static\r\n     * @returns {Float32Array}  The matrix M3 to be used to calculate each point/vertex position.\r\n     * @see Documentation of Rui's thesis.\r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static createM3() {\r\n        let p = Math.PI;\r\n        let q = p / 180;\r\n        return new Float32Array(\r\n            [\r\n                q, 0, p,\r\n                0, 1, 0,\r\n                0, 0, 1\r\n            ]\r\n        );\r\n    }\r\n\r\n    /**\r\n     * Performs Matrix multiplication between two matrices.\r\n     * @static\r\n     * @param {Float32Array} M1 - The M1 matrix. \r\n     * @param {Float32Array} M2 - The M2 matrix.\r\n     * @returns {Float32Array} a matrix which is the result of multiplying M1 by M2.\r\n     * @deprecated finalMatrix(..) method is used instead.\r\n     * @memberOf WebGLUtils\r\n     */\r\n    static matrixMultiplication(M1, M2) {\r\n        let res = new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0]);\r\n        res[0] = M1[0] * M2[0] + M1[1] * M2[3] + M1[2] * M2[6];\r\n        res[1] = M1[0] * M2[1] + M1[1] * M2[4] + M1[2] * M2[7];\r\n        res[2] = M1[0] * M2[2] + M1[1] * M2[5] + M1[2] * M2[8];\r\n\r\n        res[3] = M1[3] * M2[0] + M1[4] * M2[3] + M1[5] * M2[6];\r\n        res[4] = M1[3] * M2[1] + M1[4] * M2[4] + M1[5] * M2[7];\r\n        res[5] = M1[3] * M2[2] + M1[4] * M2[5] + M1[5] * M2[8];\r\n\r\n        res[6] = M1[6] * M2[0] + M1[7] * M2[3] + M1[8] * M2[6];\r\n        res[7] = M1[6] * M2[1] + M1[7] * M2[4] + M1[8] * M2[7];\r\n        res[8] = M1[6] * M2[2] + M1[7] * M2[5] + M1[8] * M2[8];\r\n        return res;\r\n    }\r\n\r\n    /**\r\n     * M28) Scale matrix with the given x(scaleX) and y(scaleY) values.\r\n     * Scaling x and y, which is just scaling first two rows of matrix\r\n     * @param {Float32Array} matrix \r\n     * @param {number} scaleX - Scale in X axis.\r\n     * @param {number} scaleY - Scale in Y axis.\r\n     * @see http://www.c-jump.com/bcc/common/Talk3/Math/Matrices/const_images/applying_scaling.png\r\n     * @see http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg Remember WebGL is Column major\r\n     * @see http://prntscr.com/eononb\r\n     * @memberOf WebGLUtils\r\n     */\r\n    scaleProjection(matrix, scaleX, scaleY) {\r\n        for (let i = 0; i < 8; i++)\r\n            i < 4 ? (matrix[i] *= scaleX) : (matrix[i] *= scaleY);\r\n    }\r\n\r\n    /**\r\n     * M29) The translation is performed in the last row of the matrix. \r\n     * @param {Float32Array} matrix - The matrix to hold the result.\r\n     * @param {number} tx - Translation in X axis.  \r\n     * @param {number} ty - Translation in Y axis.\r\n     * @see http://polymathprogrammer.com/images/blog/200809/translationmatrix.png\r\n     * @see http://prntscr.com/eononb\r\n     * @memberOf WebGLUtils\r\n     */\r\n    translateProjection(matrix, tx, ty) {\r\n        for (let i = 0; i < 4; i++)\r\n            matrix[i + 12] += (matrix[i] * tx) + (matrix[i + 4] * ty);\r\n    }\r\n}",
     "static": true,
     "longname": "src/Gisplay/Maps/WebglUtils.js",
     "access": null,
@@ -7853,7 +7742,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 264,
+    "__docId__": 262,
     "kind": "class",
     "name": "WebGLUtils",
     "memberof": "src/Gisplay/Maps/WebglUtils.js",
@@ -7877,7 +7766,7 @@
     "interface": false
   },
   {
-    "__docId__": 265,
+    "__docId__": 263,
     "kind": "method",
     "name": "webMercatorProjection",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -7974,7 +7863,7 @@
     }
   },
   {
-    "__docId__": 266,
+    "__docId__": 264,
     "kind": "method",
     "name": "finalMatrix",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -7983,7 +7872,7 @@
     "static": true,
     "longname": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils.finalMatrix",
     "access": null,
-    "description": "This is the result matrix from multiplication M1*M2*M3",
+    "description": "This is the result matrix from the multiplication of M1*M2*M3",
     "see": [
       "Rui's thesis"
     ],
@@ -7991,7 +7880,7 @@
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{Float32Array} The resulting matrix (M1*M2*M3) in a single matrix."
+        "tagValue": "{Float32Array} The resulting matrix (M1*M2*M3) in a single matrix to send to WebGL in order to calculate the resulting position."
       },
       {
         "tagName": "@memberOf",
@@ -8056,11 +7945,11 @@
         "Float32Array"
       ],
       "spread": false,
-      "description": "The resulting matrix (M1*M2*M3) in a single matrix."
+      "description": "The resulting matrix (M1*M2*M3) in a single matrix to send to WebGL in order to calculate the resulting position."
     }
   },
   {
-    "__docId__": 267,
+    "__docId__": 265,
     "kind": "method",
     "name": "generateShadersSourceCode",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8092,7 +7981,7 @@
     }
   },
   {
-    "__docId__": 268,
+    "__docId__": 266,
     "kind": "method",
     "name": "createAndCompileShader",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8155,7 +8044,7 @@
     }
   },
   {
-    "__docId__": 269,
+    "__docId__": 267,
     "kind": "method",
     "name": "createWebGLProgram",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8198,7 +8087,7 @@
     }
   },
   {
-    "__docId__": 270,
+    "__docId__": 268,
     "kind": "method",
     "name": "createM1",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8255,7 +8144,7 @@
     }
   },
   {
-    "__docId__": 271,
+    "__docId__": 269,
     "kind": "method",
     "name": "createM2",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8323,7 +8212,7 @@
     }
   },
   {
-    "__docId__": 272,
+    "__docId__": 270,
     "kind": "method",
     "name": "createM3",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8359,7 +8248,7 @@
     }
   },
   {
-    "__docId__": 273,
+    "__docId__": 271,
     "kind": "method",
     "name": "matrixMultiplication",
     "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
@@ -8411,6 +8300,117 @@
       "spread": false,
       "description": "a matrix which is the result of multiplying M1 by M2."
     }
+  },
+  {
+    "__docId__": 272,
+    "kind": "method",
+    "name": "scaleProjection",
+    "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils#scaleProjection",
+    "access": null,
+    "description": "M28) Scale matrix with the given x(scaleX) and y(scaleY) values.\nScaling x and y, which is just scaling first two rows of matrix",
+    "see": [
+      "http://www.c-jump.com/bcc/common/Talk3/Math/Matrices/const_images/applying_scaling.png",
+      "http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg Remember WebGL is Column major",
+      "http://prntscr.com/eononb"
+    ],
+    "lineNumber": 270,
+    "unknown": [
+      {
+        "tagName": "@memberOf",
+        "tagValue": "WebGLUtils"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Float32Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrix",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "scaleX",
+        "description": "Scale in X axis."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "scaleY",
+        "description": "Scale in Y axis."
+      }
+    ]
+  },
+  {
+    "__docId__": 273,
+    "kind": "method",
+    "name": "translateProjection",
+    "memberof": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Gisplay/Maps/WebglUtils.js~WebGLUtils#translateProjection",
+    "access": null,
+    "description": "M29) The translation is performed in the last row of the matrix. ",
+    "see": [
+      "http://polymathprogrammer.com/images/blog/200809/translationmatrix.png",
+      "http://prntscr.com/eononb"
+    ],
+    "lineNumber": 284,
+    "unknown": [
+      {
+        "tagName": "@memberOf",
+        "tagValue": "WebGLUtils"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Float32Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrix",
+        "description": "The matrix to hold the result."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "tx",
+        "description": "Translation in X axis."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "ty",
+        "description": "Translation in Y axis."
+      }
+    ]
   },
   {
     "__docId__": 274,

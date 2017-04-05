@@ -97,14 +97,14 @@ export class WebGLUtils {
     }
 
     /**
-     * This is the result matrix from multiplication M1*M2*M3
+     * This is the result matrix from the multiplication of M1*M2*M3
      * @static
      * @param {number} scale - The scale calculated with WebMercator projection.
      * @param {number} width - The width of the canvas.
      * @param {number} height - The height of the canvas.
      * @param {number} offsetX - The offsetX calculated with WebMercator projection.
      * @param {number} offsetY - The offsetY calculated with WebMercator projection.
-     * @returns {Float32Array} The resulting matrix (M1*M2*M3) in a single matrix.
+     * @returns {Float32Array} The resulting matrix (M1*M2*M3) in a single matrix to send to WebGL in order to calculate the resulting position.
      * @see Rui&apos;s thesis
      * @memberOf WebGLUtils
      */
@@ -313,6 +313,36 @@ export class WebGLUtils {
         res[7] = M1[6] * M2[1] + M1[7] * M2[4] + M1[8] * M2[7];
         res[8] = M1[6] * M2[2] + M1[7] * M2[5] + M1[8] * M2[8];
         return res;
+    }
+
+    /**
+     * M28) Scale matrix with the given x(scaleX) and y(scaleY) values.
+     * Scaling x and y, which is just scaling first two rows of matrix
+     * @param {Float32Array} matrix 
+     * @param {number} scaleX - Scale in X axis.
+     * @param {number} scaleY - Scale in Y axis.
+     * @see http://www.c-jump.com/bcc/common/Talk3/Math/Matrices/const_images/applying_scaling.png
+     * @see http://ptgmedia.pearsoncmg.com/images/chap3_9780321902924/elementLinks/03fig27.jpg Remember WebGL is Column major
+     * @see http://prntscr.com/eononb
+     * @memberOf WebGLUtils
+     */
+    scaleProjection(matrix, scaleX, scaleY) {
+        for (let i = 0; i &lt; 8; i++)
+            i &lt; 4 ? (matrix[i] *= scaleX) : (matrix[i] *= scaleY);
+    }
+
+    /**
+     * M29) The translation is performed in the last row of the matrix. 
+     * @param {Float32Array} matrix - The matrix to hold the result.
+     * @param {number} tx - Translation in X axis.  
+     * @param {number} ty - Translation in Y axis.
+     * @see http://polymathprogrammer.com/images/blog/200809/translationmatrix.png
+     * @see http://prntscr.com/eononb
+     * @memberOf WebGLUtils
+     */
+    translateProjection(matrix, tx, ty) {
+        for (let i = 0; i &lt; 4; i++)
+            matrix[i + 12] += (matrix[i] * tx) + (matrix[i + 4] * ty);
     }
 }</code></pre>
 

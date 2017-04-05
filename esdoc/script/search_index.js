@@ -1692,12 +1692,6 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/gisplay/maps/map.js~map#scaleprojection",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-scaleProjection",
-    "src/Gisplay/Maps/Map.js~Map#scaleProjection",
-    "method"
-  ],
-  [
     "src/gisplay/maps/map.js~map#searchkdtree",
     "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-searchKdTree",
     "src/Gisplay/Maps/Map.js~Map#searchKdTree",
@@ -1732,12 +1726,6 @@ window.esdocSearchIndex = [
     "class/src/Gisplay/Maps/Map.js~Map.html#instance-member-tempAestheticPoints",
     "src/Gisplay/Maps/Map.js~Map#tempAestheticPoints",
     "member"
-  ],
-  [
-    "src/gisplay/maps/map.js~map#translateprojection",
-    "class/src/Gisplay/Maps/Map.js~Map.html#instance-method-translateProjection",
-    "src/Gisplay/Maps/Map.js~Map#translateProjection",
-    "method"
   ],
   [
     "src/gisplay/maps/map.js~map#treepoints",
@@ -1942,6 +1930,18 @@ window.esdocSearchIndex = [
     "file/src/Gisplay/Maps/WebglUtils.js.html",
     "src/Gisplay/Maps/WebglUtils.js",
     "file"
+  ],
+  [
+    "src/gisplay/maps/webglutils.js~webglutils#scaleprojection",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#instance-method-scaleProjection",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils#scaleProjection",
+    "method"
+  ],
+  [
+    "src/gisplay/maps/webglutils.js~webglutils#translateprojection",
+    "class/src/Gisplay/Maps/WebglUtils.js~WebGLUtils.html#instance-method-translateProjection",
+    "src/Gisplay/Maps/WebglUtils.js~WebGLUtils#translateProjection",
+    "method"
   ],
   [
     "src/gisplay/maps/webglutils.js~webglutils.createandcompileshader",

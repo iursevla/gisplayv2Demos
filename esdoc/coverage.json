@@ -92,8 +92,8 @@
       "undocumentLines": []
     },
     "src/Gisplay/Maps/Map.js": {
-      "expectCount": 46,
-      "actualCount": 46,
+      "expectCount": 44,
+      "actualCount": 44,
       "undocumentLines": []
     },
     "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js": {
@@ -102,8 +102,8 @@
       "undocumentLines": []
     },
     "src/Gisplay/Maps/WebglUtils.js": {
-      "expectCount": 10,
-      "actualCount": 10,
+      "expectCount": 12,
+      "actualCount": 12,
       "undocumentLines": []
     }
   }
