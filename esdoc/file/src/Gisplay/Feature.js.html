@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/Gisplay/Feature.js | Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Helpers</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Helpers/ColorBrewer.js~ColorBrewer.html">ColorBrewer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Helpers/WebglUtils.js~WebGLUtils.html">WebGLUtils</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Background Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapBingMaps.js~BGMapBingMaps.html">BGMapBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapGoogleMaps.js~BGMapGoogleMaps.html">BGMapGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapHereMaps.js~BGMapHereMaps.html">BGMapHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapMapBox.js~BGMapMapBox.html">BGMapMapBox</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Gisplay/Feature.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">//Intermediate API
+
+/**
+ * This class represents a Feature. Each feature belongs to one Aesthetic element.
+ * @exports Feature
+ * @class Feature
+ */
+export class Feature {
+    /**
+     * Creates an instance of Feature.
+     * @example 1-&gt; {&quot;id&quot;:0,&quot;properties&quot;:{&quot;f1&quot;:&quot;Alabama&quot;,&quot;f2&quot;:&quot;Autauga&quot;,&quot;f3&quot;:150,&quot;_gisplayid&quot;:0},
+                     &quot;triangles&quot;:[{&quot;itemSize&quot;:2,&quot;numItems&quot;:417}],&quot;borders&quot;:[{&quot;itemSize&quot;:2,&quot;numItems&quot;:141}],&quot;points&quot;:[]}
+     * @param {number} id - This Feature id.
+     * @param {{fx: string, _gisplayid:number}} properties - Properties associated with this Feature.  
+     * @param {{itemSize: number, numItems: number}} triangles - Number of triangles associated with this Feature. 
+     * @param {{itemSize: number, numItems: number}} borders - Number of borders associated with this Feature.
+     * @param {number[]} points - The points that belong to this Feature.
+     * 
+     * @memberOf Feature
+     */
+    constructor(id, properties, triangles, borders, points) {
+        /**
+         * This Feature id.
+         * @type {number} 
+         */
+        this._id = id;
+        /**
+         * Properties associated with this Feature.
+         * @type {{fx: string, _gisplayid:number}}  
+         */
+        this._properties = properties;
+        /**
+         * Number of triangles associated with this Feature. The Object that contains the itemSize and numItems is a WebGLBuffer.
+         * @type {{itemSize: number, numItems: number}}
+         */
+        this._triangles = triangles;
+        /**
+         * Number of borders associated with this Feature. The Object that contains the itemSize and numItems is a WebGLBuffer.
+         * @type {{itemSize: number, numItems: number}}
+         */
+        this._borders = borders;
+        /**
+         * The points that belong to this Feature.  The Object that contains the itemSize and numItems is a WebGLBuffer.
+         * @type {{itemSize: number, numItems: number}}
+         */
+        this._points = points;
+    }
+
+    /**
+     * Returns all triangles that belong to the Feature.
+     * @returns {Feature._triangles} - All triangles that belong to the Feature.
+     * @memberOf Feature
+     */
+    getTriangles(){
+        return this._triangles;
+    }
+
+     /**
+      * Returns all borders that belong to the Feature.
+      * @returns {Feature._borders} - All borders that belong to the Feature.
+      * @memberOf Feature
+      */
+    getBorders(){
+        return this._borders;
+    }
+
+     /**
+      * Returns all points that belong to the Feature.
+      * @returns {Feature._points} - All points that belong to the Feature.
+      * @memberOf Feature
+      */
+    getPoints(){
+        return this._points;
+    }
+
+    /**
+     * Returns all properties that belong to the Feature.
+     * @returns {Feature._properties}
+     * @memberOf Feature
+     */
+    getProperties(){
+        return this._properties;
+    }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

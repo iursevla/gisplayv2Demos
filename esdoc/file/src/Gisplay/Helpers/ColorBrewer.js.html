@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/Gisplay/Helpers/ColorBrewer.js | Gisplay API Documentation API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Aesthetic.js~Aesthetic.html">Aesthetic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Feature.js~Feature.html">Feature</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Gisplay.js~Gisplay.html">Gisplay</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/GisplayOptions.js~GisplayOptions.html">GisplayOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Legend.js~Legend.html">Legend</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Helpers</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Helpers/ColorBrewer.js~ColorBrewer.html">ColorBrewer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Helpers/WebglUtils.js~WebGLUtils.html">WebGLUtils</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/ChangeMap.js~ChangeMap.html">ChangeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Choropleth.js~Choropleth.html">Choropleth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/DotMap.js~DotMap.html">DotMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/ProportionalSymbolsMap.js~ProportionalSymbolsMap.html">ProportionalSymbolsMap</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Gisplay/Maps/Background Maps</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapBingMaps.js~BGMapBingMaps.html">BGMapBingMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapGoogleMaps.js~BGMapGoogleMaps.html">BGMapGoogleMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapHereMaps.js~BGMapHereMaps.html">BGMapHereMaps</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapMapBox.js~BGMapMapBox.html">BGMapMapBox</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Gisplay/Maps/Background Maps/BGMapWrapper.js~BGMapWrapper.html">BGMapWrapper</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Gisplay/Helpers/ColorBrewer.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">
+/*
+ * This product includes color specifications and designs developed by Cynthia
+ * Brewer (http://colorbrewer.org/).
+ https://groups.google.com/forum/?fromgroups=#!topic/d3-js/iyXFgJR1JY0
+ */
+
+/**
+ * This class will contain all ColorBrewer color schemes and methods to query said color schemes.
+ * These queries can be: by their type(Diverging, Qualitative and Sequential), name(Spectral, RdYlGn, etc etc) and number of classes(3,4...). 
+ * @class ColorBrewerHelper
+ * @see https://github.com/axismaps/colorbrewer/blob/master/colorbrewer_schemes.js
+ * @see  https://colorbrewer2.org/
+ */
+export class ColorBrewer {
+
+    /**
+     * Returns an array with numOfClasses elements that are the colors for the given type of color scheme and it&apos;s name.
+     * @static
+     * @param {string} type - The type of color scheme (Options are: Sequential, Diverging and Qualitative).
+     * @param {string} name - Name of the color scheme to search.
+     * @param {number} numOfClasses - Number of classes to search.
+     * @returns {Array&lt;RGB&gt;} - Array with the colors given by Color Brewer.
+     * @memberOf ColorBrewer
+     */
+    static getColorScheme(type, name, numOfClasses) {
+        let colorBrewer = this.getColorBrewerVariable();
+        return colorBrewer[type][name][numOfClasses];
+    }
+
+    /**
+     * Returns all the ColorBrewer diverging color schemes. 
+     * @static
+     * @returns {Object} - all the ColorBrewer diverging color schemes. 
+     * @memberOf ColorBrewer
+     */
+    static getDivergingColorSchemes() {
+        return this.getColorBrewerVariable().Diverging;
+    }
+
+    /**
+     * Returns all the ColorBrewer qualitative color schemes.
+     * @static
+     * @returns {Object} - all the ColorBrewer qualitative color schemes.
+     * @memberOf ColorBrewer
+     */
+    static getQualitativeColorSchemes() {
+        return this.getColorBrewerVariable().Qualitative;
+    }
+
+    /**
+     * Returns all the ColorBrewer the sequential color schemes.
+     * @static
+     * @returns {Object} - all the ColorBrewer sequential color schemes.
+     * @memberOf ColorBrewer
+     */
+    static getSequentialColorSchemes() {
+        return this.getColorBrewerVariable().Sequential;
+    }
+
+    /**
+     * This is just an alias for the method getColorSchemesByName(name).
+     * @static
+     * @param {string} name 
+     * @returns {Object} an object with multiple color schemes for each number of classes associated with the color scheme given as input.
+     * @memberOf ColorBrewer
+     */
+    static byName(name) {
+        return this.getColorSchemesByName(name);
+    }
+
+    /**
+     * Return an object with multiple color schemes for each number of classes associated with the color scheme given as input.
+     * @static
+     * @param {string} name 
+     * @returns {Object} an object with multiple color schemes for each number of classes associated with the color scheme given as input.
+     * @memberOf ColorBrewer
+     */
+    static getColorSchemesByName(name) {
+        let colorSchemes = this.getColorBrewerVariable();
+        for (const key of Object.keys(colorSchemes))
+            if (colorSchemes[key][name])
+                return colorSchemes[key][name];
+        throw new Error(&quot;Name of Color Scheme not found on ColorBrewer list of available colors schemes.&quot;);
+    }
+
+    /**
+     * Returns all ColorSchemes that contain the number of class given as input.
+     * @static
+     * @param {number} numberOfClasses - number of classes to search for.
+     * @returns {Object} - Object with 
+     * @memberOf ColorBrewer
+     */
+    static byNumber(numberOfClasses) {
+        return this.getAllColorSchemesByNumberOfClasses(numberOfClasses);
+    }
+
+    /**
+     * Returns an object of color schemes with only those the objects for the specified number of classes.
+     * @static
+     * @param {number} numberOfClasses 
+     * @returns {Object} - an object of color schemes with only those the objects for the specified number of classes.
+     * @memberOf ColorBrewer
+     */
+    static getAllColorSchemesByNumberOfClasses(numberOfClasses) {
+        let colorSchemes = this.getColorBrewerVariable();
+        let res = {};
+        for (const cs of Object.keys(colorSchemes)) //Create {Diverging: {}, Qualitative: ...}
+            res[cs] = {};
+        for (const cs of Object.keys(colorSchemes))
+            for (const name of Object.keys(colorSchemes[cs]))
+                if (colorSchemes[cs][name][numberOfClasses] !== undefined)
+                    res[cs][name] = colorSchemes[cs][name][numberOfClasses];//(colorSchemes[cs][name][numberOfClasses]);
+        return res;
+    }
+
+    /**
+     * For the given color scheme name and number of classes returns the RGB colors associated with them.
+     * @static 
+     * @param {string} name 
+     * @param {number} numberOfClasses 
+     * @returns {Array&lt;RGB&gt;} Array of colors associated with color scheme name and number of classes.
+     * @memberOf ColorBrewer
+     */
+    static byNameAndNumber(name, numberOfClasses) {
+        let res = this.byName(name)[numberOfClasses];
+        if (res === undefined)
+            throw new Error(&quot;Illegal number of classes provided.&quot;);
+        return res;
+    }
+
+    /**
+     * @static
+     * @param {number} numberOfClasses 
+     * @returns {Array&lt;Object&gt;}
+     * @deprecated Use byNumber(n) or getAllColorSchemesByNumberOfClasses(n) instead.
+     * @memberOf ColorBrewer
+     */
+    static getAllColorSchemesByNumberOfClassesAsArray(numberOfClasses) {
+        let colorSchemes = this.getColorBrewerVariable();
+        let res = [];
+        for (const cs of Object.keys(colorSchemes))
+            for (const name of Object.keys(colorSchemes[cs]))
+                if (colorSchemes[cs][name][numberOfClasses] !== undefined)
+                    res.push(colorSchemes[cs][name][numberOfClasses]);
+        if (res.length === 0)
+            throw new Error(&quot;Number of classes provided:&quot;, numberOfClasses, &quot;does not exist in ColorBrewer.&quot;);
+        return res;
+    }
+
+    /**
+     * Given the color scheme name and the number of classes returns an Array of colors associated with the given name and number of classes. 
+     * @static
+     * @param {string} name - color name
+     * @param {number} numberOfClasses - number of classes
+     * @returns {Array&lt;Array&lt;number&gt;&gt;} Colors of the color scheme. As many as number of classes given.  
+     * @see http://stackoverflow.com/a/10971090/
+     * @memberOf ColorBrewer
+     */
+    static getColors(name, numberOfClasses) {
+        let res = new Array();
+        let allColors = ColorBrewer.byNameAndNumber(name, numberOfClasses);
+        for (const color of allColors)
+            res.push(color.replace(/[^\d,]/g, &apos;&apos;).split(&apos;,&apos;));
+        return res;
+    }
+
+       /**
+     * Given the color scheme name and the number of classes returns an Array of colors associated with the given name and number of classes. 
+     * @static
+     * @param {string} name - color name
+     * @param {number} numberOfClasses - number of classes
+     * @returns {Array&lt;Array&lt;string&gt;&gt;} Colors of the color scheme in hexacedimal format.  
+     * @see http://stackoverflow.com/a/57805/5869289
+     * @memberOf ColorBrewer
+     */
+    static getColorsHex(name, numberOfClasses) {
+        let res = new Array();
+        let allColors = ColorBrewer.byNameAndNumber(name, numberOfClasses);
+        for (const color of allColors)
+            res.push(color.replace(/[^\d,]/g, &apos;&apos;).split(&apos;,&apos;));
+        
+        let hexColors = new Array();
+        for(let color of res){
+            let [r, g, b] = color;
+            let hexColor = &apos;#&apos; + (r &lt;&lt; 16 | g &lt;&lt; 8 | b).toString(16);
+            hexColors.push(hexColor);
+        }
+        return hexColors;
+    }
+
+    /** ########################     DEFAULTS       ####################################### */
+    static getDefautls(mapName, numClasses, dataNature) {
+        let seq = [&apos;Sequential&apos;, &apos;Seq&apos;, &apos;S&apos;];
+        const div = [&apos;Divergent&apos;, &apos;Div&apos;, &apos;D&apos;];
+        const qua = [&apos;Qualitative&apos;, &apos;Qua&apos;, &apos;Q&apos;];
+        if (numClasses &gt; 12)
+            throw new Error(&quot;Number of classes is higher than 12. It is not recommended to use more than 12 classes in any map visualization.&quot;);
+        else if (numClasses &gt;= 10 &amp;&amp; seq.indexOf(dataNature) &gt; -1)
+            throw new Error(`Number of classes is ${numClasses}. Sequential data types only allow a maximum of 9 data classes.`);
+        else if (numClasses === 12 &amp;&amp; div.indexOf(dataNature) &gt; -1)
+            throw new Error(&quot;Number of classes is 12. Divergent data types only allow a maximum of 11 data classes.&quot;);
+
+        switch (mapName) {
+            case &apos;Choropleth&apos;:
+                if (seq.indexOf(dataNature) &gt; -1)
+                    return this.getChoroplethDefaults(dataNature, numClasses);
+                else //if (div.indexOf(dataNature) &gt; -1 || qua.indexOf(dataNature) &gt; -1)
+                    throw new Error(&quot;Choropleth Map defaults for Divergent or Qualitative data are currently not set.&quot;);
+            case &apos;Chorochromatic&apos;:
+                if (qua.indexOf(dataNature) &gt; -1)
+                    return this.getChorochromaticDefaults(dataNature, numClasses);
+                else //if (seq.indexOf(dataNature) &gt; -1 || div.indexOf(dataNature) &gt; -1)
+                    throw new Error(&quot;Chorochromatic Map defaults for Sequential or Divergent data are currently not set.&quot;);
+            case &apos;ChangeMap&apos;:
+                if (div.indexOf(dataNature) &gt; -1)
+                    return this.getChangeMapDefaults(dataNature, numClasses);
+                else //if (seq.indexOf(dataNature) &gt; -1 || qua.indexOf(dataNature) &gt; -1)
+                    throw new Error(&quot;Change Map defaults for Sequential or Qualitative data are currently not set.&quot;);
+            case &apos;DotMap&apos;:
+                if (seq.indexOf(dataNature) &gt; -1 || qua.indexOf(dataNature) &gt; -1)
+                    return this.getDotMapDefaults(dataNature, numClasses);
+                else //if (div.indexOf(dataNature) &gt; -1)
+                    throw new Error(&quot;Dot Map defaults for Divergent data are currently not set.&quot;);
+            case &apos;ProportionalSymbols&apos;:
+                if (seq.indexOf(dataNature) &gt; -1)
+                    return this.getProportionalSymbolsDefaults(dataNature, numClasses);
+                else //if (div.indexOf(dataNature) &gt; -1 || qua.indexOf(dataNature) &gt; -1)
+                    throw new Error(&quot;ProportionalSymbols defaults for Divergent or Qualitative data are currently not set.&quot;);
+        }
+    }
+
+    /**
+     * Returns the default color for Choropleth Maps taking in consideration the given number of classes and nature of data currently being used.
+     * @static
+     * @param { string } dataNature - The type of data.
+     * @param { number } numClasses - The number of classes.
+     * @returns { Array&lt;number&gt;} the default color for the given number of classes and nature of data currently being used.
+     * @memberOf ColorBrewer
+     */
+    static getChoroplethDefaults(dataNature, numClasses) {
+        let res = [];
+        switch (dataNature) {
+            case &apos;Sequential&apos;:
+                switch (numClasses) {
+                    case 2: {
+                        let colors = ColorBrewer.getColors(&apos;YlOrRd&apos;, 3);
+                        res[0] = colors[0];
+                        res[1] = colors[2];
+                        break;
+                    }
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        res = ColorBrewer.getColors(&apos;YlOrRd&apos;, numClasses);
+                        break;
+                    case 7:
+                    case 8:
+                        res = ColorBrewer.getColors(&apos;YlGnBu&apos;, numClasses);
+                        break;
+                    case 9:
+                        res = ColorBrewer.getColors(&apos;GnBu&apos;, numClasses);
+                        break;
+                }
+                break;
+        }
+        return res;
+    }
+
+    /**
+     * Returns the default color for Chorocromatic Maps taking in consideration the given number of classes and nature of data currently being used.
+     * @static
+     * @param { string } dataNature - The type of data.
+     * @param { number } numClasses - The number of classes.
+     * @returns { Array&lt;number&gt;} the default color for the given number of classes and nature of data currently being used.
+     * @memberOf ColorBrewer
+     */
+    static getChorochromaticDefaults(dataNature, numClasses) {
+        let res = [];
+        switch (dataNature) {
+            case &apos;Qualitative&apos;:
+                switch (numClasses) {
+                    case 2: {
+                        let colors = ColorBrewer.getColors(&apos;Set1&apos;, 3);
+                        res[0] = colors[0];
+                        res[1] = colors[2];
+                        break;
+                    }
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                        res = ColorBrewer.getColors(&apos;Set1&apos;, numClasses);
+                        break;
+                    default:
+                        res = ColorBrewer.getColors(&apos;Paired&apos;, numClasses);
+                        break;
+                }
+                break;
+        }
+        return res;
+    }
+
+    /**
+     * Returns the default color for Change Maps taking in consideration the given number of classes and nature of data currently being used.
+     * @static
+     * @param { string } dataNature - The type of data.
+     * @param { number } numClasses - The number of classes.
+     * @returns { Array&lt;number&gt;} the default color for the given number of classes and nature of data currently being used.
+     * @memberOf ColorBrewer
+     */
+    static getChangeMapDefaults(dataNature, numClasses) {
+        let res = [];
+        switch (dataNature) {
+            case &apos;Divergent&apos;:
+                switch (numClasses) {
+                    case 2: {
+                        let colors = ColorBrewer.getColors(&apos;Spectral&apos;, 4);
+                        res[0] = colors[2];
+                        res[1] = colors[0];
+                        break;
+                    }
+                    default:
+                        res = ColorBrewer.getColors(&apos;RdYlGn&apos;, numClasses);
+                        res = res.reverse(); //Start with lower color to higher color
+                        break;
+                }
+                break;
+        }
+        return res;
+    }
+
+    /**
+     * Returns the default color for Dot Maps taking in consideration the given number of classes and nature of data currently being used.
+     * @static
+     * @param { string } dataNature - The type of data.
+     * @param { number } numClasses - The number of classes.
+     * @returns { Array&lt;number&gt;} the default color for the given number of classes and nature of data currently being used.
+     * @memberOf ColorBrewer
+     */
+    static getDotMapDefaults(dataNature, numClasses) {
+        let res = [];
+
+        switch (dataNature) {
+            case &apos;Sequential&apos;:
+                switch (numClasses) {
+                    case 2: {
+                        let colors = ColorBrewer.getColors(&apos;Reds&apos;, 3);
+                        res[0] = colors[0];
+                        res[1] = colors[2];
+                        break;
+                    }
+                    default:
+                        res = ColorBrewer.getColors(&apos;GnBu&apos;, numClasses);
+                        break;
+                }
+                break;
+            case &apos;Qualitative&apos;:
+                switch (numClasses) {
+                    case 2: {
+                        let colors = ColorBrewer.getColors(&apos;Set1&apos;, 3);
+                        res[0] = colors[0];
+                        res[1] = colors[2];
+                        break;
+                    }
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                        res = ColorBrewer.getColors(&apos;Set1&apos;, numClasses);
+                        break;
+                    default:
+                        res = ColorBrewer.getColors(&apos;Paired&apos;, numClasses);
+                        break;
+                }
+                break;
+        }
+        return res;
+    }
+
+    /**
+     * Returns the default color for Proportional Symbols Maps taking in consideration the given number of classes and nature of data currently being used.
+     * @static
+     * @param { string } dataNature - The type of data.
+     * @param { number } numClasses - The number of classes.
+     * @returns { Array&lt;number&gt;} the default color for the given number of classes and nature of data currently being used.
+     * @memberOf ColorBrewer
+     */
+    static getProportionalSymbolsDefaults(dataNature, numClasses) {
+        let res = [];
+        switch (dataNature) {
+            case &apos;Sequential&apos;:
+                switch (numClasses) {
+                    case 1:
+                    case 2: {
+                        let colors = ColorBrewer.getColors(&apos;YlOrRd&apos;, 3);
+                        res[0] = colors[2];
+                        res[1] = colors[2];
+                        break;
+                    }
+                    default:
+                        res = ColorBrewer.getColors(&apos;YlOrRd&apos;, numClasses);
+                        break;
+                }
+                break;
+        }
+        return res;
+    }
+
+    /**
+     * Returns the ColorBrewer object of type of color schemes. 
+     * @static
+     * @returns {Object} - the ColorBrewer object of type of color schemes. 
+     * @see https://github.com/axismaps/colorbrewer/blob/master/colorbrewer_schemes.js
+     * @memberOf ColorBrewer
+     */
+    static getColorBrewerVariable() {
+        return {
+            Diverging: { /*** Diverging ***/
+                Spectral: {
+                    3: [&apos;rgb(252,141,89)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(153,213,148)&apos;],
+                    4: [&apos;rgb(215,25,28)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(171,221,164)&apos;, &apos;rgb(43,131,186)&apos;],
+                    5: [&apos;rgb(215,25,28)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(171,221,164)&apos;, &apos;rgb(43,131,186)&apos;],
+                    6: [&apos;rgb(213,62,79)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(230,245,152)&apos;, &apos;rgb(153,213,148)&apos;, &apos;rgb(50,136,189)&apos;],
+                    7: [&apos;rgb(213,62,79)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(230,245,152)&apos;, &apos;rgb(153,213,148)&apos;, &apos;rgb(50,136,189)&apos;],
+                    8: [&apos;rgb(213,62,79)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(230,245,152)&apos;, &apos;rgb(171,221,164)&apos;, &apos;rgb(102,194,165)&apos;, &apos;rgb(50,136,189)&apos;],
+                    9: [&apos;rgb(213,62,79)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(230,245,152)&apos;, &apos;rgb(171,221,164)&apos;, &apos;rgb(102,194,165)&apos;, &apos;rgb(50,136,189)&apos;],
+                    10: [&apos;rgb(158,1,66)&apos;, &apos;rgb(213,62,79)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(230,245,152)&apos;, &apos;rgb(171,221,164)&apos;, &apos;rgb(102,194,165)&apos;, &apos;rgb(50,136,189)&apos;, &apos;rgb(94,79,162)&apos;],
+                    11: [&apos;rgb(158,1,66)&apos;, &apos;rgb(213,62,79)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(230,245,152)&apos;, &apos;rgb(171,221,164)&apos;, &apos;rgb(102,194,165)&apos;, &apos;rgb(50,136,189)&apos;, &apos;rgb(94,79,162)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [2, 2, 2, 0, 0, 0, 0, 0, 0],
+                        &apos;print&apos;: [1, 1, 1, 0, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 1, 1, 0, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0, 0, 0]
+                    }
+                },
+                RdYlGn: {
+                    3: [&apos;rgb(252,141,89)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(145,207,96)&apos;],
+                    4: [&apos;rgb(215,25,28)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(166,217,106)&apos;, &apos;rgb(26,150,65)&apos;],
+                    5: [&apos;rgb(215,25,28)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(166,217,106)&apos;, &apos;rgb(26,150,65)&apos;],
+                    6: [&apos;rgb(215,48,39)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(217,239,139)&apos;, &apos;rgb(145,207,96)&apos;, &apos;rgb(26,152,80)&apos;],
+                    7: [&apos;rgb(215,48,39)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(217,239,139)&apos;, &apos;rgb(145,207,96)&apos;, &apos;rgb(26,152,80)&apos;],
+                    8: [&apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(217,239,139)&apos;, &apos;rgb(166,217,106)&apos;, &apos;rgb(102,189,99)&apos;, &apos;rgb(26,152,80)&apos;],
+                    9: [&apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(217,239,139)&apos;, &apos;rgb(166,217,106)&apos;, &apos;rgb(102,189,99)&apos;, &apos;rgb(26,152,80)&apos;],
+                    10: [&apos;rgb(165,0,38)&apos;, &apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(217,239,139)&apos;, &apos;rgb(166,217,106)&apos;, &apos;rgb(102,189,99)&apos;, &apos;rgb(26,152,80)&apos;, &apos;rgb(0,104,55)&apos;],
+                    11: [&apos;rgb(165,0,38)&apos;, &apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,139)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(217,239,139)&apos;, &apos;rgb(166,217,106)&apos;, &apos;rgb(102,189,99)&apos;, &apos;rgb(26,152,80)&apos;, &apos;rgb(0,104,55)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [2, 2, 2, 0, 0, 0, 0, 0, 0],
+                        &apos;print&apos;: [1, 1, 1, 2, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0, 0, 0]
+                    }
+                },
+                RdBu: {
+                    3: [&apos;rgb(239,138,98)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(103,169,207)&apos;],
+                    4: [&apos;rgb(202,0,32)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(146,197,222)&apos;, &apos;rgb(5,113,176)&apos;],
+                    5: [&apos;rgb(202,0,32)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(146,197,222)&apos;, &apos;rgb(5,113,176)&apos;],
+                    6: [&apos;rgb(178,24,43)&apos;, &apos;rgb(239,138,98)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(209,229,240)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(33,102,172)&apos;],
+                    7: [&apos;rgb(178,24,43)&apos;, &apos;rgb(239,138,98)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(209,229,240)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(33,102,172)&apos;],
+                    8: [&apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(209,229,240)&apos;, &apos;rgb(146,197,222)&apos;, &apos;rgb(67,147,195)&apos;, &apos;rgb(33,102,172)&apos;],
+                    9: [&apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(209,229,240)&apos;, &apos;rgb(146,197,222)&apos;, &apos;rgb(67,147,195)&apos;, &apos;rgb(33,102,172)&apos;],
+                    10: [&apos;rgb(103,0,31)&apos;, &apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(209,229,240)&apos;, &apos;rgb(146,197,222)&apos;, &apos;rgb(67,147,195)&apos;, &apos;rgb(33,102,172)&apos;, &apos;rgb(5,48,97)&apos;],
+                    11: [&apos;rgb(103,0,31)&apos;, &apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(209,229,240)&apos;, &apos;rgb(146,197,222)&apos;, &apos;rgb(67,147,195)&apos;, &apos;rgb(33,102,172)&apos;, &apos;rgb(5,48,97)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 1, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0, 0, 0]
+                    }
+                },
+                PiYG: {
+                    3: [&apos;rgb(233,163,201)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(161,215,106)&apos;],
+                    4: [&apos;rgb(208,28,139)&apos;, &apos;rgb(241,182,218)&apos;, &apos;rgb(184,225,134)&apos;, &apos;rgb(77,172,38)&apos;],
+                    5: [&apos;rgb(208,28,139)&apos;, &apos;rgb(241,182,218)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(184,225,134)&apos;, &apos;rgb(77,172,38)&apos;],
+                    6: [&apos;rgb(197,27,125)&apos;, &apos;rgb(233,163,201)&apos;, &apos;rgb(253,224,239)&apos;, &apos;rgb(230,245,208)&apos;, &apos;rgb(161,215,106)&apos;, &apos;rgb(77,146,33)&apos;],
+                    7: [&apos;rgb(197,27,125)&apos;, &apos;rgb(233,163,201)&apos;, &apos;rgb(253,224,239)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(230,245,208)&apos;, &apos;rgb(161,215,106)&apos;, &apos;rgb(77,146,33)&apos;],
+                    8: [&apos;rgb(197,27,125)&apos;, &apos;rgb(222,119,174)&apos;, &apos;rgb(241,182,218)&apos;, &apos;rgb(253,224,239)&apos;, &apos;rgb(230,245,208)&apos;, &apos;rgb(184,225,134)&apos;, &apos;rgb(127,188,65)&apos;, &apos;rgb(77,146,33)&apos;],
+                    9: [&apos;rgb(197,27,125)&apos;, &apos;rgb(222,119,174)&apos;, &apos;rgb(241,182,218)&apos;, &apos;rgb(253,224,239)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(230,245,208)&apos;, &apos;rgb(184,225,134)&apos;, &apos;rgb(127,188,65)&apos;, &apos;rgb(77,146,33)&apos;],
+                    10: [&apos;rgb(142,1,82)&apos;, &apos;rgb(197,27,125)&apos;, &apos;rgb(222,119,174)&apos;, &apos;rgb(241,182,218)&apos;, &apos;rgb(253,224,239)&apos;, &apos;rgb(230,245,208)&apos;, &apos;rgb(184,225,134)&apos;, &apos;rgb(127,188,65)&apos;, &apos;rgb(77,146,33)&apos;, &apos;rgb(39,100,25)&apos;],
+                    11: [&apos;rgb(142,1,82)&apos;, &apos;rgb(197,27,125)&apos;, &apos;rgb(222,119,174)&apos;, &apos;rgb(241,182,218)&apos;, &apos;rgb(253,224,239)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(230,245,208)&apos;, &apos;rgb(184,225,134)&apos;, &apos;rgb(127,188,65)&apos;, &apos;rgb(77,146,33)&apos;, &apos;rgb(39,100,25)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 0, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0, 0, 0]
+                    }
+                },
+                PRGn: {
+                    3: [&apos;rgb(175,141,195)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(127,191,123)&apos;],
+                    4: [&apos;rgb(123,50,148)&apos;, &apos;rgb(194,165,207)&apos;, &apos;rgb(166,219,160)&apos;, &apos;rgb(0,136,55)&apos;],
+                    5: [&apos;rgb(123,50,148)&apos;, &apos;rgb(194,165,207)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(166,219,160)&apos;, &apos;rgb(0,136,55)&apos;],
+                    6: [&apos;rgb(118,42,131)&apos;, &apos;rgb(175,141,195)&apos;, &apos;rgb(231,212,232)&apos;, &apos;rgb(217,240,211)&apos;, &apos;rgb(127,191,123)&apos;, &apos;rgb(27,120,55)&apos;],
+                    7: [&apos;rgb(118,42,131)&apos;, &apos;rgb(175,141,195)&apos;, &apos;rgb(231,212,232)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(217,240,211)&apos;, &apos;rgb(127,191,123)&apos;, &apos;rgb(27,120,55)&apos;],
+                    8: [&apos;rgb(118,42,131)&apos;, &apos;rgb(153,112,171)&apos;, &apos;rgb(194,165,207)&apos;, &apos;rgb(231,212,232)&apos;, &apos;rgb(217,240,211)&apos;, &apos;rgb(166,219,160)&apos;, &apos;rgb(90,174,97)&apos;, &apos;rgb(27,120,55)&apos;],
+                    9: [&apos;rgb(118,42,131)&apos;, &apos;rgb(153,112,171)&apos;, &apos;rgb(194,165,207)&apos;, &apos;rgb(231,212,232)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(217,240,211)&apos;, &apos;rgb(166,219,160)&apos;, &apos;rgb(90,174,97)&apos;, &apos;rgb(27,120,55)&apos;],
+                    10: [&apos;rgb(64,0,75)&apos;, &apos;rgb(118,42,131)&apos;, &apos;rgb(153,112,171)&apos;, &apos;rgb(194,165,207)&apos;, &apos;rgb(231,212,232)&apos;, &apos;rgb(217,240,211)&apos;, &apos;rgb(166,219,160)&apos;, &apos;rgb(90,174,97)&apos;, &apos;rgb(27,120,55)&apos;, &apos;rgb(0,68,27)&apos;],
+                    11: [&apos;rgb(64,0,75)&apos;, &apos;rgb(118,42,131)&apos;, &apos;rgb(153,112,171)&apos;, &apos;rgb(194,165,207)&apos;, &apos;rgb(231,212,232)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(217,240,211)&apos;, &apos;rgb(166,219,160)&apos;, &apos;rgb(90,174,97)&apos;, &apos;rgb(27,120,55)&apos;, &apos;rgb(0,68,27)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 1, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 2, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                RdYlBu: {
+                    3: [&apos;rgb(252,141,89)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(145,191,219)&apos;],
+                    4: [&apos;rgb(215,25,28)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(171,217,233)&apos;, &apos;rgb(44,123,182)&apos;],
+                    5: [&apos;rgb(215,25,28)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(171,217,233)&apos;, &apos;rgb(44,123,182)&apos;],
+                    6: [&apos;rgb(215,48,39)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(254,224,144)&apos;, &apos;rgb(224,243,248)&apos;, &apos;rgb(145,191,219)&apos;, &apos;rgb(69,117,180)&apos;],
+                    7: [&apos;rgb(215,48,39)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(254,224,144)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(224,243,248)&apos;, &apos;rgb(145,191,219)&apos;, &apos;rgb(69,117,180)&apos;],
+                    8: [&apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,144)&apos;, &apos;rgb(224,243,248)&apos;, &apos;rgb(171,217,233)&apos;, &apos;rgb(116,173,209)&apos;, &apos;rgb(69,117,180)&apos;],
+                    9: [&apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,144)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(224,243,248)&apos;, &apos;rgb(171,217,233)&apos;, &apos;rgb(116,173,209)&apos;, &apos;rgb(69,117,180)&apos;],
+                    10: [&apos;rgb(165,0,38)&apos;, &apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,144)&apos;, &apos;rgb(224,243,248)&apos;, &apos;rgb(171,217,233)&apos;, &apos;rgb(116,173,209)&apos;, &apos;rgb(69,117,180)&apos;, &apos;rgb(49,54,149)&apos;],
+                    11: [&apos;rgb(165,0,38)&apos;, &apos;rgb(215,48,39)&apos;, &apos;rgb(244,109,67)&apos;, &apos;rgb(253,174,97)&apos;, &apos;rgb(254,224,144)&apos;, &apos;rgb(255,255,191)&apos;, &apos;rgb(224,243,248)&apos;, &apos;rgb(171,217,233)&apos;, &apos;rgb(116,173,209)&apos;, &apos;rgb(69,117,180)&apos;, &apos;rgb(49,54,149)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 1, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                BrBG: {
+                    3: [&apos;rgb(216,179,101)&apos;, &apos;rgb(245,245,245)&apos;, &apos;rgb(90,180,172)&apos;],
+                    4: [&apos;rgb(166,97,26)&apos;, &apos;rgb(223,194,125)&apos;, &apos;rgb(128,205,193)&apos;, &apos;rgb(1,133,113)&apos;],
+                    5: [&apos;rgb(166,97,26)&apos;, &apos;rgb(223,194,125)&apos;, &apos;rgb(245,245,245)&apos;, &apos;rgb(128,205,193)&apos;, &apos;rgb(1,133,113)&apos;],
+                    6: [&apos;rgb(140,81,10)&apos;, &apos;rgb(216,179,101)&apos;, &apos;rgb(246,232,195)&apos;, &apos;rgb(199,234,229)&apos;, &apos;rgb(90,180,172)&apos;, &apos;rgb(1,102,94)&apos;],
+                    7: [&apos;rgb(140,81,10)&apos;, &apos;rgb(216,179,101)&apos;, &apos;rgb(246,232,195)&apos;, &apos;rgb(245,245,245)&apos;, &apos;rgb(199,234,229)&apos;, &apos;rgb(90,180,172)&apos;, &apos;rgb(1,102,94)&apos;],
+                    8: [&apos;rgb(140,81,10)&apos;, &apos;rgb(191,129,45)&apos;, &apos;rgb(223,194,125)&apos;, &apos;rgb(246,232,195)&apos;, &apos;rgb(199,234,229)&apos;, &apos;rgb(128,205,193)&apos;, &apos;rgb(53,151,143)&apos;, &apos;rgb(1,102,94)&apos;],
+                    9: [&apos;rgb(140,81,10)&apos;, &apos;rgb(191,129,45)&apos;, &apos;rgb(223,194,125)&apos;, &apos;rgb(246,232,195)&apos;, &apos;rgb(245,245,245)&apos;, &apos;rgb(199,234,229)&apos;, &apos;rgb(128,205,193)&apos;, &apos;rgb(53,151,143)&apos;, &apos;rgb(1,102,94)&apos;],
+                    10: [&apos;rgb(84,48,5)&apos;, &apos;rgb(140,81,10)&apos;, &apos;rgb(191,129,45)&apos;, &apos;rgb(223,194,125)&apos;, &apos;rgb(246,232,195)&apos;, &apos;rgb(199,234,229)&apos;, &apos;rgb(128,205,193)&apos;, &apos;rgb(53,151,143)&apos;, &apos;rgb(1,102,94)&apos;, &apos;rgb(0,60,48)&apos;],
+                    11: [&apos;rgb(84,48,5)&apos;, &apos;rgb(140,81,10)&apos;, &apos;rgb(191,129,45)&apos;, &apos;rgb(223,194,125)&apos;, &apos;rgb(246,232,195)&apos;, &apos;rgb(245,245,245)&apos;, &apos;rgb(199,234,229)&apos;, &apos;rgb(128,205,193)&apos;, &apos;rgb(53,151,143)&apos;, &apos;rgb(1,102,94)&apos;, &apos;rgb(0,60,48)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 1, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 1, 1, 0, 0, 0, 0, 0]
+                    }
+                },
+                RdGy: {
+                    3: [&apos;rgb(239,138,98)&apos;, &apos;rgb(255,255,255)&apos;, &apos;rgb(153,153,153)&apos;],
+                    4: [&apos;rgb(202,0,32)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(186,186,186)&apos;, &apos;rgb(64,64,64)&apos;],
+                    5: [&apos;rgb(202,0,32)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(255,255,255)&apos;, &apos;rgb(186,186,186)&apos;, &apos;rgb(64,64,64)&apos;],
+                    6: [&apos;rgb(178,24,43)&apos;, &apos;rgb(239,138,98)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(224,224,224)&apos;, &apos;rgb(153,153,153)&apos;, &apos;rgb(77,77,77)&apos;],
+                    7: [&apos;rgb(178,24,43)&apos;, &apos;rgb(239,138,98)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(255,255,255)&apos;, &apos;rgb(224,224,224)&apos;, &apos;rgb(153,153,153)&apos;, &apos;rgb(77,77,77)&apos;],
+                    8: [&apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(224,224,224)&apos;, &apos;rgb(186,186,186)&apos;, &apos;rgb(135,135,135)&apos;, &apos;rgb(77,77,77)&apos;],
+                    9: [&apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(255,255,255)&apos;, &apos;rgb(224,224,224)&apos;, &apos;rgb(186,186,186)&apos;, &apos;rgb(135,135,135)&apos;, &apos;rgb(77,77,77)&apos;],
+                    10: [&apos;rgb(103,0,31)&apos;, &apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(224,224,224)&apos;, &apos;rgb(186,186,186)&apos;, &apos;rgb(135,135,135)&apos;, &apos;rgb(77,77,77)&apos;, &apos;rgb(26,26,26)&apos;],
+                    11: [&apos;rgb(103,0,31)&apos;, &apos;rgb(178,24,43)&apos;, &apos;rgb(214,96,77)&apos;, &apos;rgb(244,165,130)&apos;, &apos;rgb(253,219,199)&apos;, &apos;rgb(255,255,255)&apos;, &apos;rgb(224,224,224)&apos;, &apos;rgb(186,186,186)&apos;, &apos;rgb(135,135,135)&apos;, &apos;rgb(77,77,77)&apos;, &apos;rgb(26,26,26)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [2],
+                        &apos;print&apos;: [1, 1, 1, 2, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0, 0, 0]
+                    }
+                },
+                PuOr: {
+                    3: [&apos;rgb(241,163,64)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(153,142,195)&apos;],
+                    4: [&apos;rgb(230,97,1)&apos;, &apos;rgb(253,184,99)&apos;, &apos;rgb(178,171,210)&apos;, &apos;rgb(94,60,153)&apos;],
+                    5: [&apos;rgb(230,97,1)&apos;, &apos;rgb(253,184,99)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(178,171,210)&apos;, &apos;rgb(94,60,153)&apos;],
+                    6: [&apos;rgb(179,88,6)&apos;, &apos;rgb(241,163,64)&apos;, &apos;rgb(254,224,182)&apos;, &apos;rgb(216,218,235)&apos;, &apos;rgb(153,142,195)&apos;, &apos;rgb(84,39,136)&apos;],
+                    7: [&apos;rgb(179,88,6)&apos;, &apos;rgb(241,163,64)&apos;, &apos;rgb(254,224,182)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(216,218,235)&apos;, &apos;rgb(153,142,195)&apos;, &apos;rgb(84,39,136)&apos;],
+                    8: [&apos;rgb(179,88,6)&apos;, &apos;rgb(224,130,20)&apos;, &apos;rgb(253,184,99)&apos;, &apos;rgb(254,224,182)&apos;, &apos;rgb(216,218,235)&apos;, &apos;rgb(178,171,210)&apos;, &apos;rgb(128,115,172)&apos;, &apos;rgb(84,39,136)&apos;],
+                    9: [&apos;rgb(179,88,6)&apos;, &apos;rgb(224,130,20)&apos;, &apos;rgb(253,184,99)&apos;, &apos;rgb(254,224,182)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(216,218,235)&apos;, &apos;rgb(178,171,210)&apos;, &apos;rgb(128,115,172)&apos;, &apos;rgb(84,39,136)&apos;],
+                    10: [&apos;rgb(127,59,8)&apos;, &apos;rgb(179,88,6)&apos;, &apos;rgb(224,130,20)&apos;, &apos;rgb(253,184,99)&apos;, &apos;rgb(254,224,182)&apos;, &apos;rgb(216,218,235)&apos;, &apos;rgb(178,171,210)&apos;, &apos;rgb(128,115,172)&apos;, &apos;rgb(84,39,136)&apos;, &apos;rgb(45,0,75)&apos;],
+                    11: [&apos;rgb(127,59,8)&apos;, &apos;rgb(179,88,6)&apos;, &apos;rgb(224,130,20)&apos;, &apos;rgb(253,184,99)&apos;, &apos;rgb(254,224,182)&apos;, &apos;rgb(247,247,247)&apos;, &apos;rgb(216,218,235)&apos;, &apos;rgb(178,171,210)&apos;, &apos;rgb(128,115,172)&apos;, &apos;rgb(84,39,136)&apos;, &apos;rgb(45,0,75)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;div&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 2, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 1, 0, 0, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 1, 0, 0, 0, 0, 0]
+                    }
+                }
+            },
+
+            Qualitative: { /*** Qualitative ***/
+                Set2: {
+                    3: [&apos;rgb(102,194,165)&apos;, &apos;rgb(252,141,98)&apos;, &apos;rgb(141,160,203)&apos;],
+                    4: [&apos;rgb(102,194,165)&apos;, &apos;rgb(252,141,98)&apos;, &apos;rgb(141,160,203)&apos;, &apos;rgb(231,138,195)&apos;],
+                    5: [&apos;rgb(102,194,165)&apos;, &apos;rgb(252,141,98)&apos;, &apos;rgb(141,160,203)&apos;, &apos;rgb(231,138,195)&apos;, &apos;rgb(166,216,84)&apos;],
+                    6: [&apos;rgb(102,194,165)&apos;, &apos;rgb(252,141,98)&apos;, &apos;rgb(141,160,203)&apos;, &apos;rgb(231,138,195)&apos;, &apos;rgb(166,216,84)&apos;, &apos;rgb(255,217,47)&apos;],
+                    7: [&apos;rgb(102,194,165)&apos;, &apos;rgb(252,141,98)&apos;, &apos;rgb(141,160,203)&apos;, &apos;rgb(231,138,195)&apos;, &apos;rgb(166,216,84)&apos;, &apos;rgb(255,217,47)&apos;, &apos;rgb(229,196,148)&apos;],
+                    8: [&apos;rgb(102,194,165)&apos;, &apos;rgb(252,141,98)&apos;, &apos;rgb(141,160,203)&apos;, &apos;rgb(231,138,195)&apos;, &apos;rgb(166,216,84)&apos;, &apos;rgb(255,217,47)&apos;, &apos;rgb(229,196,148)&apos;, &apos;rgb(179,179,179)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [1, 2, 2, 2, 0, 0, 0],
+                        &apos;print&apos;: [1, 1, 1, 2, 2, 2],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 2, 2, 2, 2]
+                    }
+                },
+                Accent: {
+                    3: [&apos;rgb(127,201,127)&apos;, &apos;rgb(190,174,212)&apos;, &apos;rgb(253,192,134)&apos;],
+                    4: [&apos;rgb(127,201,127)&apos;, &apos;rgb(190,174,212)&apos;, &apos;rgb(253,192,134)&apos;, &apos;rgb(255,255,153)&apos;],
+                    5: [&apos;rgb(127,201,127)&apos;, &apos;rgb(190,174,212)&apos;, &apos;rgb(253,192,134)&apos;, &apos;rgb(255,255,153)&apos;, &apos;rgb(56,108,176)&apos;],
+                    6: [&apos;rgb(127,201,127)&apos;, &apos;rgb(190,174,212)&apos;, &apos;rgb(253,192,134)&apos;, &apos;rgb(255,255,153)&apos;, &apos;rgb(56,108,176)&apos;, &apos;rgb(240,2,127)&apos;],
+                    7: [&apos;rgb(127,201,127)&apos;, &apos;rgb(190,174,212)&apos;, &apos;rgb(253,192,134)&apos;, &apos;rgb(255,255,153)&apos;, &apos;rgb(56,108,176)&apos;, &apos;rgb(240,2,127)&apos;, &apos;rgb(191,91,23)&apos;],
+                    8: [&apos;rgb(127,201,127)&apos;, &apos;rgb(190,174,212)&apos;, &apos;rgb(253,192,134)&apos;, &apos;rgb(255,255,153)&apos;, &apos;rgb(56,108,176)&apos;, &apos;rgb(240,2,127)&apos;, &apos;rgb(191,91,23)&apos;, &apos;rgb(102,102,102)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [2, 0, 0, 0, 0, 0, 0],
+                        &apos;print&apos;: [1, 1, 2, 2, 2, 2],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 1, 2, 2, 2]
+                    }
+                },
+                Set1: {
+                    3: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;],
+                    4: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;, &apos;rgb(152,78,163)&apos;],
+                    5: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;, &apos;rgb(152,78,163)&apos;, &apos;rgb(255,127,0)&apos;],
+                    6: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;, &apos;rgb(152,78,163)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(255,255,51)&apos;],
+                    7: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;, &apos;rgb(152,78,163)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(255,255,51)&apos;, &apos;rgb(166,86,40)&apos;],
+                    8: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;, &apos;rgb(152,78,163)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(255,255,51)&apos;, &apos;rgb(166,86,40)&apos;, &apos;rgb(247,129,191)&apos;],
+                    9: [&apos;rgb(228,26,28)&apos;, &apos;rgb(55,126,184)&apos;, &apos;rgb(77,175,74)&apos;, &apos;rgb(152,78,163)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(255,255,51)&apos;, &apos;rgb(166,86,40)&apos;, &apos;rgb(247,129,191)&apos;, &apos;rgb(153,153,153)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [2],
+                        &apos;print&apos;: [1],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1]
+                    }
+                },
+                Set3: {
+                    3: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;],
+                    4: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;],
+                    5: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;],
+                    6: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;],
+                    7: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;, &apos;rgb(179,222,105)&apos;],
+                    8: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;, &apos;rgb(179,222,105)&apos;, &apos;rgb(252,205,229)&apos;],
+                    9: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;, &apos;rgb(179,222,105)&apos;, &apos;rgb(252,205,229)&apos;, &apos;rgb(217,217,217)&apos;],
+                    10: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;, &apos;rgb(179,222,105)&apos;, &apos;rgb(252,205,229)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(188,128,189)&apos;],
+                    11: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;, &apos;rgb(179,222,105)&apos;, &apos;rgb(252,205,229)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(188,128,189)&apos;, &apos;rgb(204,235,197)&apos;],
+                    12: [&apos;rgb(141,211,199)&apos;, &apos;rgb(255,255,179)&apos;, &apos;rgb(190,186,218)&apos;, &apos;rgb(251,128,114)&apos;, &apos;rgb(128,177,211)&apos;, &apos;rgb(253,180,98)&apos;, &apos;rgb(179,222,105)&apos;, &apos;rgb(252,205,229)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(188,128,189)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(255,237,111)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+                        &apos;print&apos;: [1, 1, 1, 1, 1, 1, 2, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 2, 2, 2, 2, 2, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 2, 2, 2, 0, 0, 0, 0]
+                    }
+                },
+                Dark2: {
+                    3: [&apos;rgb(27,158,119)&apos;, &apos;rgb(217,95,2)&apos;, &apos;rgb(117,112,179)&apos;],
+                    4: [&apos;rgb(27,158,119)&apos;, &apos;rgb(217,95,2)&apos;, &apos;rgb(117,112,179)&apos;, &apos;rgb(231,41,138)&apos;],
+                    5: [&apos;rgb(27,158,119)&apos;, &apos;rgb(217,95,2)&apos;, &apos;rgb(117,112,179)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(102,166,30)&apos;],
+                    6: [&apos;rgb(27,158,119)&apos;, &apos;rgb(217,95,2)&apos;, &apos;rgb(117,112,179)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(102,166,30)&apos;, &apos;rgb(230,171,2)&apos;],
+                    7: [&apos;rgb(27,158,119)&apos;, &apos;rgb(217,95,2)&apos;, &apos;rgb(117,112,179)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(102,166,30)&apos;, &apos;rgb(230,171,2)&apos;, &apos;rgb(166,118,29)&apos;],
+                    8: [&apos;rgb(27,158,119)&apos;, &apos;rgb(217,95,2)&apos;, &apos;rgb(117,112,179)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(102,166,30)&apos;, &apos;rgb(230,171,2)&apos;, &apos;rgb(166,118,29)&apos;, &apos;rgb(102,102,102)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [1, 2, 2, 2, 0, 0],
+                        &apos;print&apos;: [1],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1]
+                    }
+                },
+                Paired: {
+                    3: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;],
+                    4: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;],
+                    5: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;],
+                    6: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;],
+                    7: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(253,191,111)&apos;],
+                    8: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(253,191,111)&apos;, &apos;rgb(255,127,0)&apos;],
+                    9: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(253,191,111)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(202,178,214)&apos;],
+                    10: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(253,191,111)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(202,178,214)&apos;, &apos;rgb(106,61,154)&apos;],
+                    11: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(253,191,111)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(202,178,214)&apos;, &apos;rgb(106,61,154)&apos;, &apos;rgb(255,255,153)&apos;],
+                    12: [&apos;rgb(166,206,227)&apos;, &apos;rgb(31,120,180)&apos;, &apos;rgb(178,223,138)&apos;, &apos;rgb(51,160,44)&apos;, &apos;rgb(251,154,153)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(253,191,111)&apos;, &apos;rgb(255,127,0)&apos;, &apos;rgb(202,178,214)&apos;, &apos;rgb(106,61,154)&apos;, &apos;rgb(255,255,153)&apos;, &apos;rgb(177,89,40)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [1, 1, 2, 2, 2, 2, 0, 0, 0],
+                        &apos;print&apos;: [1, 1, 1, 1, 1, 2, 2, 2, 2],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [1, 1, 1, 1, 1, 1, 1, 1, 2]
+                    }
+                },
+                Pastel2: {
+                    3: [&apos;rgb(179,226,205)&apos;, &apos;rgb(253,205,172)&apos;, &apos;rgb(203,213,232)&apos;],
+                    4: [&apos;rgb(179,226,205)&apos;, &apos;rgb(253,205,172)&apos;, &apos;rgb(203,213,232)&apos;, &apos;rgb(244,202,228)&apos;],
+                    5: [&apos;rgb(179,226,205)&apos;, &apos;rgb(253,205,172)&apos;, &apos;rgb(203,213,232)&apos;, &apos;rgb(244,202,228)&apos;, &apos;rgb(230,245,201)&apos;],
+                    6: [&apos;rgb(179,226,205)&apos;, &apos;rgb(253,205,172)&apos;, &apos;rgb(203,213,232)&apos;, &apos;rgb(244,202,228)&apos;, &apos;rgb(230,245,201)&apos;, &apos;rgb(255,242,174)&apos;],
+                    7: [&apos;rgb(179,226,205)&apos;, &apos;rgb(253,205,172)&apos;, &apos;rgb(203,213,232)&apos;, &apos;rgb(244,202,228)&apos;, &apos;rgb(230,245,201)&apos;, &apos;rgb(255,242,174)&apos;, &apos;rgb(241,226,204)&apos;],
+                    8: [&apos;rgb(179,226,205)&apos;, &apos;rgb(253,205,172)&apos;, &apos;rgb(203,213,232)&apos;, &apos;rgb(244,202,228)&apos;, &apos;rgb(230,245,201)&apos;, &apos;rgb(255,242,174)&apos;, &apos;rgb(241,226,204)&apos;, &apos;rgb(204,204,204)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [2, 0, 0, 0, 0, 0],
+                        &apos;print&apos;: [2, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [2, 2, 0, 0, 0, 0]
+                    }
+                },
+                Pastel1: {
+                    3: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;],
+                    4: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(222,203,228)&apos;],
+                    5: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(222,203,228)&apos;, &apos;rgb(254,217,166)&apos;],
+                    6: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(222,203,228)&apos;, &apos;rgb(254,217,166)&apos;, &apos;rgb(255,255,204)&apos;],
+                    7: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(222,203,228)&apos;, &apos;rgb(254,217,166)&apos;, &apos;rgb(255,255,204)&apos;, &apos;rgb(229,216,189)&apos;],
+                    8: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(222,203,228)&apos;, &apos;rgb(254,217,166)&apos;, &apos;rgb(255,255,204)&apos;, &apos;rgb(229,216,189)&apos;, &apos;rgb(253,218,236)&apos;],
+                    9: [&apos;rgb(251,180,174)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(222,203,228)&apos;, &apos;rgb(254,217,166)&apos;, &apos;rgb(255,255,204)&apos;, &apos;rgb(229,216,189)&apos;, &apos;rgb(253,218,236)&apos;, &apos;rgb(242,242,242)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;qual&apos;,
+                        &apos;blind&apos;: [2, 0, 0, 0, 0, 0, 0],
+                        &apos;print&apos;: [2, 2, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [0],
+                        &apos;screen&apos;: [2, 2, 2, 2, 0, 0, 0]
+                    }
+                }
+            },
+
+            Sequential: {/*** Sequential ***/
+                OrRd: {
+                    3: [&apos;rgb(254,232,200)&apos;, &apos;rgb(253,187,132)&apos;, &apos;rgb(227,74,51)&apos;],
+                    4: [&apos;rgb(254,240,217)&apos;, &apos;rgb(253,204,138)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(215,48,31)&apos;],
+                    5: [&apos;rgb(254,240,217)&apos;, &apos;rgb(253,204,138)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(227,74,51)&apos;, &apos;rgb(179,0,0)&apos;],
+                    6: [&apos;rgb(254,240,217)&apos;, &apos;rgb(253,212,158)&apos;, &apos;rgb(253,187,132)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(227,74,51)&apos;, &apos;rgb(179,0,0)&apos;],
+                    7: [&apos;rgb(254,240,217)&apos;, &apos;rgb(253,212,158)&apos;, &apos;rgb(253,187,132)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(239,101,72)&apos;, &apos;rgb(215,48,31)&apos;, &apos;rgb(153,0,0)&apos;],
+                    8: [&apos;rgb(255,247,236)&apos;, &apos;rgb(254,232,200)&apos;, &apos;rgb(253,212,158)&apos;, &apos;rgb(253,187,132)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(239,101,72)&apos;, &apos;rgb(215,48,31)&apos;, &apos;rgb(153,0,0)&apos;],
+                    9: [&apos;rgb(255,247,236)&apos;, &apos;rgb(254,232,200)&apos;, &apos;rgb(253,212,158)&apos;, &apos;rgb(253,187,132)&apos;, &apos;rgb(252,141,89)&apos;, &apos;rgb(239,101,72)&apos;, &apos;rgb(215,48,31)&apos;, &apos;rgb(179,0,0)&apos;, &apos;rgb(127,0,0)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 1, 2, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0]
+                    }
+                },
+                PuBu: {
+                    3: [&apos;rgb(236,231,242)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(43,140,190)&apos;],
+                    4: [&apos;rgb(241,238,246)&apos;, &apos;rgb(189,201,225)&apos;, &apos;rgb(116,169,207)&apos;, &apos;rgb(5,112,176)&apos;],
+                    5: [&apos;rgb(241,238,246)&apos;, &apos;rgb(189,201,225)&apos;, &apos;rgb(116,169,207)&apos;, &apos;rgb(43,140,190)&apos;, &apos;rgb(4,90,141)&apos;],
+                    6: [&apos;rgb(241,238,246)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(116,169,207)&apos;, &apos;rgb(43,140,190)&apos;, &apos;rgb(4,90,141)&apos;],
+                    7: [&apos;rgb(241,238,246)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(116,169,207)&apos;, &apos;rgb(54,144,192)&apos;, &apos;rgb(5,112,176)&apos;, &apos;rgb(3,78,123)&apos;],
+                    8: [&apos;rgb(255,247,251)&apos;, &apos;rgb(236,231,242)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(116,169,207)&apos;, &apos;rgb(54,144,192)&apos;, &apos;rgb(5,112,176)&apos;, &apos;rgb(3,78,123)&apos;],
+                    9: [&apos;rgb(255,247,251)&apos;, &apos;rgb(236,231,242)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(116,169,207)&apos;, &apos;rgb(54,144,192)&apos;, &apos;rgb(5,112,176)&apos;, &apos;rgb(4,90,141)&apos;, &apos;rgb(2,56,88)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 2, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0]
+                    }
+                },
+                BuPu: {
+                    3: [&apos;rgb(224,236,244)&apos;, &apos;rgb(158,188,218)&apos;, &apos;rgb(136,86,167)&apos;],
+                    4: [&apos;rgb(237,248,251)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(140,150,198)&apos;, &apos;rgb(136,65,157)&apos;],
+                    5: [&apos;rgb(237,248,251)&apos;, &apos;rgb(179,205,227)&apos;, &apos;rgb(140,150,198)&apos;, &apos;rgb(136,86,167)&apos;, &apos;rgb(129,15,124)&apos;],
+                    6: [&apos;rgb(237,248,251)&apos;, &apos;rgb(191,211,230)&apos;, &apos;rgb(158,188,218)&apos;, &apos;rgb(140,150,198)&apos;, &apos;rgb(136,86,167)&apos;, &apos;rgb(129,15,124)&apos;],
+                    7: [&apos;rgb(237,248,251)&apos;, &apos;rgb(191,211,230)&apos;, &apos;rgb(158,188,218)&apos;, &apos;rgb(140,150,198)&apos;, &apos;rgb(140,107,177)&apos;, &apos;rgb(136,65,157)&apos;, &apos;rgb(110,1,107)&apos;],
+                    8: [&apos;rgb(247,252,253)&apos;, &apos;rgb(224,236,244)&apos;, &apos;rgb(191,211,230)&apos;, &apos;rgb(158,188,218)&apos;, &apos;rgb(140,150,198)&apos;, &apos;rgb(140,107,177)&apos;, &apos;rgb(136,65,157)&apos;, &apos;rgb(110,1,107)&apos;],
+                    9: [&apos;rgb(247,252,253)&apos;, &apos;rgb(224,236,244)&apos;, &apos;rgb(191,211,230)&apos;, &apos;rgb(158,188,218)&apos;, &apos;rgb(140,150,198)&apos;, &apos;rgb(140,107,177)&apos;, &apos;rgb(136,65,157)&apos;, &apos;rgb(129,15,124)&apos;, &apos;rgb(77,0,75)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 2, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0]
+                    }
+                },
+                Oranges: {
+                    3: [&apos;rgb(254,230,206)&apos;, &apos;rgb(253,174,107)&apos;, &apos;rgb(230,85,13)&apos;],
+                    4: [&apos;rgb(254,237,222)&apos;, &apos;rgb(253,190,133)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(217,71,1)&apos;],
+                    5: [&apos;rgb(254,237,222)&apos;, &apos;rgb(253,190,133)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(230,85,13)&apos;, &apos;rgb(166,54,3)&apos;],
+                    6: [&apos;rgb(254,237,222)&apos;, &apos;rgb(253,208,162)&apos;, &apos;rgb(253,174,107)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(230,85,13)&apos;, &apos;rgb(166,54,3)&apos;],
+                    7: [&apos;rgb(254,237,222)&apos;, &apos;rgb(253,208,162)&apos;, &apos;rgb(253,174,107)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(241,105,19)&apos;, &apos;rgb(217,72,1)&apos;, &apos;rgb(140,45,4)&apos;],
+                    8: [&apos;rgb(255,245,235)&apos;, &apos;rgb(254,230,206)&apos;, &apos;rgb(253,208,162)&apos;, &apos;rgb(253,174,107)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(241,105,19)&apos;, &apos;rgb(217,72,1)&apos;, &apos;rgb(140,45,4)&apos;],
+                    9: [&apos;rgb(255,245,235)&apos;, &apos;rgb(254,230,206)&apos;, &apos;rgb(253,208,162)&apos;, &apos;rgb(253,174,107)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(241,105,19)&apos;, &apos;rgb(217,72,1)&apos;, &apos;rgb(166,54,3)&apos;, &apos;rgb(127,39,4)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 2, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0]
+                    }
+                },
+                BuGn: {
+                    3: [&apos;rgb(229,245,249)&apos;, &apos;rgb(153,216,201)&apos;, &apos;rgb(44,162,95)&apos;],
+                    4: [&apos;rgb(237,248,251)&apos;, &apos;rgb(178,226,226)&apos;, &apos;rgb(102,194,164)&apos;, &apos;rgb(35,139,69)&apos;],
+                    5: [&apos;rgb(237,248,251)&apos;, &apos;rgb(178,226,226)&apos;, &apos;rgb(102,194,164)&apos;, &apos;rgb(44,162,95)&apos;, &apos;rgb(0,109,44)&apos;],
+                    6: [&apos;rgb(237,248,251)&apos;, &apos;rgb(204,236,230)&apos;, &apos;rgb(153,216,201)&apos;, &apos;rgb(102,194,164)&apos;, &apos;rgb(44,162,95)&apos;, &apos;rgb(0,109,44)&apos;],
+                    7: [&apos;rgb(237,248,251)&apos;, &apos;rgb(204,236,230)&apos;, &apos;rgb(153,216,201)&apos;, &apos;rgb(102,194,164)&apos;, &apos;rgb(65,174,118)&apos;, &apos;rgb(35,139,69)&apos;, &apos;rgb(0,88,36)&apos;],
+                    8: [&apos;rgb(247,252,253)&apos;, &apos;rgb(229,245,249)&apos;, &apos;rgb(204,236,230)&apos;, &apos;rgb(153,216,201)&apos;, &apos;rgb(102,194,164)&apos;, &apos;rgb(65,174,118)&apos;, &apos;rgb(35,139,69)&apos;, &apos;rgb(0,88,36)&apos;],
+                    9: [&apos;rgb(247,252,253)&apos;, &apos;rgb(229,245,249)&apos;, &apos;rgb(204,236,230)&apos;, &apos;rgb(153,216,201)&apos;, &apos;rgb(102,194,164)&apos;, &apos;rgb(65,174,118)&apos;, &apos;rgb(35,139,69)&apos;, &apos;rgb(0,109,44)&apos;, &apos;rgb(0,68,27)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                YlOrBr: {
+                    3: [&apos;rgb(255,247,188)&apos;, &apos;rgb(254,196,79)&apos;, &apos;rgb(217,95,14)&apos;],
+                    4: [&apos;rgb(255,255,212)&apos;, &apos;rgb(254,217,142)&apos;, &apos;rgb(254,153,41)&apos;, &apos;rgb(204,76,2)&apos;],
+                    5: [&apos;rgb(255,255,212)&apos;, &apos;rgb(254,217,142)&apos;, &apos;rgb(254,153,41)&apos;, &apos;rgb(217,95,14)&apos;, &apos;rgb(153,52,4)&apos;],
+                    6: [&apos;rgb(255,255,212)&apos;, &apos;rgb(254,227,145)&apos;, &apos;rgb(254,196,79)&apos;, &apos;rgb(254,153,41)&apos;, &apos;rgb(217,95,14)&apos;, &apos;rgb(153,52,4)&apos;],
+                    7: [&apos;rgb(255,255,212)&apos;, &apos;rgb(254,227,145)&apos;, &apos;rgb(254,196,79)&apos;, &apos;rgb(254,153,41)&apos;, &apos;rgb(236,112,20)&apos;, &apos;rgb(204,76,2)&apos;, &apos;rgb(140,45,4)&apos;],
+                    8: [&apos;rgb(255,255,229)&apos;, &apos;rgb(255,247,188)&apos;, &apos;rgb(254,227,145)&apos;, &apos;rgb(254,196,79)&apos;, &apos;rgb(254,153,41)&apos;, &apos;rgb(236,112,20)&apos;, &apos;rgb(204,76,2)&apos;, &apos;rgb(140,45,4)&apos;],
+                    9: [&apos;rgb(255,255,229)&apos;, &apos;rgb(255,247,188)&apos;, &apos;rgb(254,227,145)&apos;, &apos;rgb(254,196,79)&apos;, &apos;rgb(254,153,41)&apos;, &apos;rgb(236,112,20)&apos;, &apos;rgb(204,76,2)&apos;, &apos;rgb(153,52,4)&apos;, &apos;rgb(102,37,6)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 2, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                YlGn: {
+                    3: [&apos;rgb(247,252,185)&apos;, &apos;rgb(173,221,142)&apos;, &apos;rgb(49,163,84)&apos;],
+                    4: [&apos;rgb(255,255,204)&apos;, &apos;rgb(194,230,153)&apos;, &apos;rgb(120,198,121)&apos;, &apos;rgb(35,132,67)&apos;],
+                    5: [&apos;rgb(255,255,204)&apos;, &apos;rgb(194,230,153)&apos;, &apos;rgb(120,198,121)&apos;, &apos;rgb(49,163,84)&apos;, &apos;rgb(0,104,55)&apos;],
+                    6: [&apos;rgb(255,255,204)&apos;, &apos;rgb(217,240,163)&apos;, &apos;rgb(173,221,142)&apos;, &apos;rgb(120,198,121)&apos;, &apos;rgb(49,163,84)&apos;, &apos;rgb(0,104,55)&apos;],
+                    7: [&apos;rgb(255,255,204)&apos;, &apos;rgb(217,240,163)&apos;, &apos;rgb(173,221,142)&apos;, &apos;rgb(120,198,121)&apos;, &apos;rgb(65,171,93)&apos;, &apos;rgb(35,132,67)&apos;, &apos;rgb(0,90,50)&apos;],
+                    8: [&apos;rgb(255,255,229)&apos;, &apos;rgb(247,252,185)&apos;, &apos;rgb(217,240,163)&apos;, &apos;rgb(173,221,142)&apos;, &apos;rgb(120,198,121)&apos;, &apos;rgb(65,171,93)&apos;, &apos;rgb(35,132,67)&apos;, &apos;rgb(0,90,50)&apos;],
+                    9: [&apos;rgb(255,255,229)&apos;, &apos;rgb(247,252,185)&apos;, &apos;rgb(217,240,163)&apos;, &apos;rgb(173,221,142)&apos;, &apos;rgb(120,198,121)&apos;, &apos;rgb(65,171,93)&apos;, &apos;rgb(35,132,67)&apos;, &apos;rgb(0,104,55)&apos;, &apos;rgb(0,69,41)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0]
+                    }
+                },
+                Reds: {
+                    3: [&apos;rgb(254,224,210)&apos;, &apos;rgb(252,146,114)&apos;, &apos;rgb(222,45,38)&apos;],
+                    4: [&apos;rgb(254,229,217)&apos;, &apos;rgb(252,174,145)&apos;, &apos;rgb(251,106,74)&apos;, &apos;rgb(203,24,29)&apos;],
+                    5: [&apos;rgb(254,229,217)&apos;, &apos;rgb(252,174,145)&apos;, &apos;rgb(251,106,74)&apos;, &apos;rgb(222,45,38)&apos;, &apos;rgb(165,15,21)&apos;],
+                    6: [&apos;rgb(254,229,217)&apos;, &apos;rgb(252,187,161)&apos;, &apos;rgb(252,146,114)&apos;, &apos;rgb(251,106,74)&apos;, &apos;rgb(222,45,38)&apos;, &apos;rgb(165,15,21)&apos;],
+                    7: [&apos;rgb(254,229,217)&apos;, &apos;rgb(252,187,161)&apos;, &apos;rgb(252,146,114)&apos;, &apos;rgb(251,106,74)&apos;, &apos;rgb(239,59,44)&apos;, &apos;rgb(203,24,29)&apos;, &apos;rgb(153,0,13)&apos;],
+                    8: [&apos;rgb(255,245,240)&apos;, &apos;rgb(254,224,210)&apos;, &apos;rgb(252,187,161)&apos;, &apos;rgb(252,146,114)&apos;, &apos;rgb(251,106,74)&apos;, &apos;rgb(239,59,44)&apos;, &apos;rgb(203,24,29)&apos;, &apos;rgb(153,0,13)&apos;],
+                    9: [&apos;rgb(255,245,240)&apos;, &apos;rgb(254,224,210)&apos;, &apos;rgb(252,187,161)&apos;, &apos;rgb(252,146,114)&apos;, &apos;rgb(251,106,74)&apos;, &apos;rgb(239,59,44)&apos;, &apos;rgb(203,24,29)&apos;, &apos;rgb(165,15,21)&apos;, &apos;rgb(103,0,13)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 2, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                RdPu: {
+                    3: [&apos;rgb(253,224,221)&apos;, &apos;rgb(250,159,181)&apos;, &apos;rgb(197,27,138)&apos;],
+                    4: [&apos;rgb(254,235,226)&apos;, &apos;rgb(251,180,185)&apos;, &apos;rgb(247,104,161)&apos;, &apos;rgb(174,1,126)&apos;],
+                    5: [&apos;rgb(254,235,226)&apos;, &apos;rgb(251,180,185)&apos;, &apos;rgb(247,104,161)&apos;, &apos;rgb(197,27,138)&apos;, &apos;rgb(122,1,119)&apos;],
+                    6: [&apos;rgb(254,235,226)&apos;, &apos;rgb(252,197,192)&apos;, &apos;rgb(250,159,181)&apos;, &apos;rgb(247,104,161)&apos;, &apos;rgb(197,27,138)&apos;, &apos;rgb(122,1,119)&apos;],
+                    7: [&apos;rgb(254,235,226)&apos;, &apos;rgb(252,197,192)&apos;, &apos;rgb(250,159,181)&apos;, &apos;rgb(247,104,161)&apos;, &apos;rgb(221,52,151)&apos;, &apos;rgb(174,1,126)&apos;, &apos;rgb(122,1,119)&apos;],
+                    8: [&apos;rgb(255,247,243)&apos;, &apos;rgb(253,224,221)&apos;, &apos;rgb(252,197,192)&apos;, &apos;rgb(250,159,181)&apos;, &apos;rgb(247,104,161)&apos;, &apos;rgb(221,52,151)&apos;, &apos;rgb(174,1,126)&apos;, &apos;rgb(122,1,119)&apos;],
+                    9: [&apos;rgb(255,247,243)&apos;, &apos;rgb(253,224,221)&apos;, &apos;rgb(252,197,192)&apos;, &apos;rgb(250,159,181)&apos;, &apos;rgb(247,104,161)&apos;, &apos;rgb(221,52,151)&apos;, &apos;rgb(174,1,126)&apos;, &apos;rgb(122,1,119)&apos;, &apos;rgb(73,0,106)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 2, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0]
+                    }
+                },
+                Greens: {
+                    3: [&apos;rgb(229,245,224)&apos;, &apos;rgb(161,217,155)&apos;, &apos;rgb(49,163,84)&apos;],
+                    4: [&apos;rgb(237,248,233)&apos;, &apos;rgb(186,228,179)&apos;, &apos;rgb(116,196,118)&apos;, &apos;rgb(35,139,69)&apos;],
+                    5: [&apos;rgb(237,248,233)&apos;, &apos;rgb(186,228,179)&apos;, &apos;rgb(116,196,118)&apos;, &apos;rgb(49,163,84)&apos;, &apos;rgb(0,109,44)&apos;],
+                    6: [&apos;rgb(237,248,233)&apos;, &apos;rgb(199,233,192)&apos;, &apos;rgb(161,217,155)&apos;, &apos;rgb(116,196,118)&apos;, &apos;rgb(49,163,84)&apos;, &apos;rgb(0,109,44)&apos;],
+                    7: [&apos;rgb(237,248,233)&apos;, &apos;rgb(199,233,192)&apos;, &apos;rgb(161,217,155)&apos;, &apos;rgb(116,196,118)&apos;, &apos;rgb(65,171,93)&apos;, &apos;rgb(35,139,69)&apos;, &apos;rgb(0,90,50)&apos;],
+                    8: [&apos;rgb(247,252,245)&apos;, &apos;rgb(229,245,224)&apos;, &apos;rgb(199,233,192)&apos;, &apos;rgb(161,217,155)&apos;, &apos;rgb(116,196,118)&apos;, &apos;rgb(65,171,93)&apos;, &apos;rgb(35,139,69)&apos;, &apos;rgb(0,90,50)&apos;],
+                    9: [&apos;rgb(247,252,245)&apos;, &apos;rgb(229,245,224)&apos;, &apos;rgb(199,233,192)&apos;, &apos;rgb(161,217,155)&apos;, &apos;rgb(116,196,118)&apos;, &apos;rgb(65,171,93)&apos;, &apos;rgb(35,139,69)&apos;, &apos;rgb(0,109,44)&apos;, &apos;rgb(0,68,27)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 0, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                YlGnBu: {
+                    3: [&apos;rgb(237,248,177)&apos;, &apos;rgb(127,205,187)&apos;, &apos;rgb(44,127,184)&apos;],
+                    4: [&apos;rgb(255,255,204)&apos;, &apos;rgb(161,218,180)&apos;, &apos;rgb(65,182,196)&apos;, &apos;rgb(34,94,168)&apos;],
+                    5: [&apos;rgb(255,255,204)&apos;, &apos;rgb(161,218,180)&apos;, &apos;rgb(65,182,196)&apos;, &apos;rgb(44,127,184)&apos;, &apos;rgb(37,52,148)&apos;],
+                    6: [&apos;rgb(255,255,204)&apos;, &apos;rgb(199,233,180)&apos;, &apos;rgb(127,205,187)&apos;, &apos;rgb(65,182,196)&apos;, &apos;rgb(44,127,184)&apos;, &apos;rgb(37,52,148)&apos;],
+                    7: [&apos;rgb(255,255,204)&apos;, &apos;rgb(199,233,180)&apos;, &apos;rgb(127,205,187)&apos;, &apos;rgb(65,182,196)&apos;, &apos;rgb(29,145,192)&apos;, &apos;rgb(34,94,168)&apos;, &apos;rgb(12,44,132)&apos;],
+                    8: [&apos;rgb(255,255,217)&apos;, &apos;rgb(237,248,177)&apos;, &apos;rgb(199,233,180)&apos;, &apos;rgb(127,205,187)&apos;, &apos;rgb(65,182,196)&apos;, &apos;rgb(29,145,192)&apos;, &apos;rgb(34,94,168)&apos;, &apos;rgb(12,44,132)&apos;],
+                    9: [&apos;rgb(255,255,217)&apos;, &apos;rgb(237,248,177)&apos;, &apos;rgb(199,233,180)&apos;, &apos;rgb(127,205,187)&apos;, &apos;rgb(65,182,196)&apos;, &apos;rgb(29,145,192)&apos;, &apos;rgb(34,94,168)&apos;, &apos;rgb(37,52,148)&apos;, &apos;rgb(8,29,88)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 2, 2, 2, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0]
+                    }
+                },
+                Purples: {
+                    3: [&apos;rgb(239,237,245)&apos;, &apos;rgb(188,189,220)&apos;, &apos;rgb(117,107,177)&apos;],
+                    4: [&apos;rgb(242,240,247)&apos;, &apos;rgb(203,201,226)&apos;, &apos;rgb(158,154,200)&apos;, &apos;rgb(106,81,163)&apos;],
+                    5: [&apos;rgb(242,240,247)&apos;, &apos;rgb(203,201,226)&apos;, &apos;rgb(158,154,200)&apos;, &apos;rgb(117,107,177)&apos;, &apos;rgb(84,39,143)&apos;],
+                    6: [&apos;rgb(242,240,247)&apos;, &apos;rgb(218,218,235)&apos;, &apos;rgb(188,189,220)&apos;, &apos;rgb(158,154,200)&apos;, &apos;rgb(117,107,177)&apos;, &apos;rgb(84,39,143)&apos;],
+                    7: [&apos;rgb(242,240,247)&apos;, &apos;rgb(218,218,235)&apos;, &apos;rgb(188,189,220)&apos;, &apos;rgb(158,154,200)&apos;, &apos;rgb(128,125,186)&apos;, &apos;rgb(106,81,163)&apos;, &apos;rgb(74,20,134)&apos;],
+                    8: [&apos;rgb(252,251,253)&apos;, &apos;rgb(239,237,245)&apos;, &apos;rgb(218,218,235)&apos;, &apos;rgb(188,189,220)&apos;, &apos;rgb(158,154,200)&apos;, &apos;rgb(128,125,186)&apos;, &apos;rgb(106,81,163)&apos;, &apos;rgb(74,20,134)&apos;],
+                    9: [&apos;rgb(252,251,253)&apos;, &apos;rgb(239,237,245)&apos;, &apos;rgb(218,218,235)&apos;, &apos;rgb(188,189,220)&apos;, &apos;rgb(158,154,200)&apos;, &apos;rgb(128,125,186)&apos;, &apos;rgb(106,81,163)&apos;, &apos;rgb(84,39,143)&apos;, &apos;rgb(63,0,125)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 0, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 0, 0, 0, 0, 0, 0]
+                    }
+                },
+                GnBu: {
+                    3: [&apos;rgb(224,243,219)&apos;, &apos;rgb(168,221,181)&apos;, &apos;rgb(67,162,202)&apos;],
+                    4: [&apos;rgb(240,249,232)&apos;, &apos;rgb(186,228,188)&apos;, &apos;rgb(123,204,196)&apos;, &apos;rgb(43,140,190)&apos;],
+                    5: [&apos;rgb(240,249,232)&apos;, &apos;rgb(186,228,188)&apos;, &apos;rgb(123,204,196)&apos;, &apos;rgb(67,162,202)&apos;, &apos;rgb(8,104,172)&apos;],
+                    6: [&apos;rgb(240,249,232)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(168,221,181)&apos;, &apos;rgb(123,204,196)&apos;, &apos;rgb(67,162,202)&apos;, &apos;rgb(8,104,172)&apos;],
+                    7: [&apos;rgb(240,249,232)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(168,221,181)&apos;, &apos;rgb(123,204,196)&apos;, &apos;rgb(78,179,211)&apos;, &apos;rgb(43,140,190)&apos;, &apos;rgb(8,88,158)&apos;],
+                    8: [&apos;rgb(247,252,240)&apos;, &apos;rgb(224,243,219)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(168,221,181)&apos;, &apos;rgb(123,204,196)&apos;, &apos;rgb(78,179,211)&apos;, &apos;rgb(43,140,190)&apos;, &apos;rgb(8,88,158)&apos;],
+                    9: [&apos;rgb(247,252,240)&apos;, &apos;rgb(224,243,219)&apos;, &apos;rgb(204,235,197)&apos;, &apos;rgb(168,221,181)&apos;, &apos;rgb(123,204,196)&apos;, &apos;rgb(78,179,211)&apos;, &apos;rgb(43,140,190)&apos;, &apos;rgb(8,104,172)&apos;, &apos;rgb(8,64,129)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 2, 2, 2, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0]
+                    }
+                },
+                Greys: {
+                    3: [&apos;rgb(240,240,240)&apos;, &apos;rgb(189,189,189)&apos;, &apos;rgb(99,99,99)&apos;],
+                    4: [&apos;rgb(247,247,247)&apos;, &apos;rgb(204,204,204)&apos;, &apos;rgb(150,150,150)&apos;, &apos;rgb(82,82,82)&apos;],
+                    5: [&apos;rgb(247,247,247)&apos;, &apos;rgb(204,204,204)&apos;, &apos;rgb(150,150,150)&apos;, &apos;rgb(99,99,99)&apos;, &apos;rgb(37,37,37)&apos;],
+                    6: [&apos;rgb(247,247,247)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(189,189,189)&apos;, &apos;rgb(150,150,150)&apos;, &apos;rgb(99,99,99)&apos;, &apos;rgb(37,37,37)&apos;],
+                    7: [&apos;rgb(247,247,247)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(189,189,189)&apos;, &apos;rgb(150,150,150)&apos;, &apos;rgb(115,115,115)&apos;, &apos;rgb(82,82,82)&apos;, &apos;rgb(37,37,37)&apos;],
+                    8: [&apos;rgb(255,255,255)&apos;, &apos;rgb(240,240,240)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(189,189,189)&apos;, &apos;rgb(150,150,150)&apos;, &apos;rgb(115,115,115)&apos;, &apos;rgb(82,82,82)&apos;, &apos;rgb(37,37,37)&apos;],
+                    9: [&apos;rgb(255,255,255)&apos;, &apos;rgb(240,240,240)&apos;, &apos;rgb(217,217,217)&apos;, &apos;rgb(189,189,189)&apos;, &apos;rgb(150,150,150)&apos;, &apos;rgb(115,115,115)&apos;, &apos;rgb(82,82,82)&apos;, &apos;rgb(37,37,37)&apos;, &apos;rgb(0,0,0)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 0, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                YlOrRd: {
+                    3: [&apos;rgb(255,237,160)&apos;, &apos;rgb(254,178,76)&apos;, &apos;rgb(240,59,32)&apos;],
+                    4: [&apos;rgb(255,255,178)&apos;, &apos;rgb(254,204,92)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(227,26,28)&apos;],
+                    5: [&apos;rgb(255,255,178)&apos;, &apos;rgb(254,204,92)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(240,59,32)&apos;, &apos;rgb(189,0,38)&apos;],
+                    6: [&apos;rgb(255,255,178)&apos;, &apos;rgb(254,217,118)&apos;, &apos;rgb(254,178,76)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(240,59,32)&apos;, &apos;rgb(189,0,38)&apos;],
+                    7: [&apos;rgb(255,255,178)&apos;, &apos;rgb(254,217,118)&apos;, &apos;rgb(254,178,76)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(252,78,42)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(177,0,38)&apos;],
+                    8: [&apos;rgb(255,255,204)&apos;, &apos;rgb(255,237,160)&apos;, &apos;rgb(254,217,118)&apos;, &apos;rgb(254,178,76)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(252,78,42)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(177,0,38)&apos;],
+                    9: [&apos;rgb(255,255,204)&apos;, &apos;rgb(255,237,160)&apos;, &apos;rgb(254,217,118)&apos;, &apos;rgb(254,178,76)&apos;, &apos;rgb(253,141,60)&apos;, &apos;rgb(252,78,42)&apos;, &apos;rgb(227,26,28)&apos;, &apos;rgb(189,0,38)&apos;, &apos;rgb(128,0,38)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 2, 2, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 2, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 2, 0, 0, 0, 0]
+                    }
+                },
+                PuRd: {
+                    3: [&apos;rgb(231,225,239)&apos;, &apos;rgb(201,148,199)&apos;, &apos;rgb(221,28,119)&apos;],
+                    4: [&apos;rgb(241,238,246)&apos;, &apos;rgb(215,181,216)&apos;, &apos;rgb(223,101,176)&apos;, &apos;rgb(206,18,86)&apos;],
+                    5: [&apos;rgb(241,238,246)&apos;, &apos;rgb(215,181,216)&apos;, &apos;rgb(223,101,176)&apos;, &apos;rgb(221,28,119)&apos;, &apos;rgb(152,0,67)&apos;],
+                    6: [&apos;rgb(241,238,246)&apos;, &apos;rgb(212,185,218)&apos;, &apos;rgb(201,148,199)&apos;, &apos;rgb(223,101,176)&apos;, &apos;rgb(221,28,119)&apos;, &apos;rgb(152,0,67)&apos;],
+                    7: [&apos;rgb(241,238,246)&apos;, &apos;rgb(212,185,218)&apos;, &apos;rgb(201,148,199)&apos;, &apos;rgb(223,101,176)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(206,18,86)&apos;, &apos;rgb(145,0,63)&apos;],
+                    8: [&apos;rgb(247,244,249)&apos;, &apos;rgb(231,225,239)&apos;, &apos;rgb(212,185,218)&apos;, &apos;rgb(201,148,199)&apos;, &apos;rgb(223,101,176)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(206,18,86)&apos;, &apos;rgb(145,0,63)&apos;],
+                    9: [&apos;rgb(247,244,249)&apos;, &apos;rgb(231,225,239)&apos;, &apos;rgb(212,185,218)&apos;, &apos;rgb(201,148,199)&apos;, &apos;rgb(223,101,176)&apos;, &apos;rgb(231,41,138)&apos;, &apos;rgb(206,18,86)&apos;, &apos;rgb(152,0,67)&apos;, &apos;rgb(103,0,31)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 1, 1, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 1, 0, 0, 0, 0]
+                    }
+                },
+                Blues: {
+                    3: [&apos;rgb(222,235,247)&apos;, &apos;rgb(158,202,225)&apos;, &apos;rgb(49,130,189)&apos;],
+                    4: [&apos;rgb(239,243,255)&apos;, &apos;rgb(189,215,231)&apos;, &apos;rgb(107,174,214)&apos;, &apos;rgb(33,113,181)&apos;],
+                    5: [&apos;rgb(239,243,255)&apos;, &apos;rgb(189,215,231)&apos;, &apos;rgb(107,174,214)&apos;, &apos;rgb(49,130,189)&apos;, &apos;rgb(8,81,156)&apos;],
+                    6: [&apos;rgb(239,243,255)&apos;, &apos;rgb(198,219,239)&apos;, &apos;rgb(158,202,225)&apos;, &apos;rgb(107,174,214)&apos;, &apos;rgb(49,130,189)&apos;, &apos;rgb(8,81,156)&apos;],
+                    7: [&apos;rgb(239,243,255)&apos;, &apos;rgb(198,219,239)&apos;, &apos;rgb(158,202,225)&apos;, &apos;rgb(107,174,214)&apos;, &apos;rgb(66,146,198)&apos;, &apos;rgb(33,113,181)&apos;, &apos;rgb(8,69,148)&apos;],
+                    8: [&apos;rgb(247,251,255)&apos;, &apos;rgb(222,235,247)&apos;, &apos;rgb(198,219,239)&apos;, &apos;rgb(158,202,225)&apos;, &apos;rgb(107,174,214)&apos;, &apos;rgb(66,146,198)&apos;, &apos;rgb(33,113,181)&apos;, &apos;rgb(8,69,148)&apos;],
+                    9: [&apos;rgb(247,251,255)&apos;, &apos;rgb(222,235,247)&apos;, &apos;rgb(198,219,239)&apos;, &apos;rgb(158,202,225)&apos;, &apos;rgb(107,174,214)&apos;, &apos;rgb(66,146,198)&apos;, &apos;rgb(33,113,181)&apos;, &apos;rgb(8,81,156)&apos;, &apos;rgb(8,48,107)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 0, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 2, 0, 0, 0, 0, 0]
+                    }
+                },
+                PuBuGn: {
+                    3: [&apos;rgb(236,226,240)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(28,144,153)&apos;],
+                    4: [&apos;rgb(246,239,247)&apos;, &apos;rgb(189,201,225)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(2,129,138)&apos;],
+                    5: [&apos;rgb(246,239,247)&apos;, &apos;rgb(189,201,225)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(28,144,153)&apos;, &apos;rgb(1,108,89)&apos;],
+                    6: [&apos;rgb(246,239,247)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(28,144,153)&apos;, &apos;rgb(1,108,89)&apos;],
+                    7: [&apos;rgb(246,239,247)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(54,144,192)&apos;, &apos;rgb(2,129,138)&apos;, &apos;rgb(1,100,80)&apos;],
+                    8: [&apos;rgb(255,247,251)&apos;, &apos;rgb(236,226,240)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(54,144,192)&apos;, &apos;rgb(2,129,138)&apos;, &apos;rgb(1,100,80)&apos;],
+                    9: [&apos;rgb(255,247,251)&apos;, &apos;rgb(236,226,240)&apos;, &apos;rgb(208,209,230)&apos;, &apos;rgb(166,189,219)&apos;, &apos;rgb(103,169,207)&apos;, &apos;rgb(54,144,192)&apos;, &apos;rgb(2,129,138)&apos;, &apos;rgb(1,108,89)&apos;, &apos;rgb(1,70,54)&apos;],
+                    &apos;properties&apos;: {
+                        &apos;type&apos;: &apos;seq&apos;,
+                        &apos;blind&apos;: [1],
+                        &apos;print&apos;: [1, 2, 2, 0, 0, 0, 0],
+                        &apos;copy&apos;: [1, 2, 0, 0, 0, 0, 0],
+                        &apos;screen&apos;: [1, 1, 2, 0, 0, 0, 0]
+                    }
+                }
+            }
+        };
+    }
+}
+
+/*console.log(ColorBrewer.getDivergingColorSchemes());
+console.log(ColorBrewer.getSequentialColorSchemes());
+console.log(ColorBrewer.getQualitativeColorSchemes());*/
+//console.log(ColorBrewer.getColorSchemesByName(&apos;Spectral&apos;));
+//console.log(ColorBrewer.byNameAndNumber(&apos;Spectral&apos;, 9));
+//console.log(ColorBrewer.byNameAndNumber(&apos;Spectral&apos;, 3)[0]);
+// console.log(ColorBrewer.getColors(&apos;Spectral&apos;, 7));
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

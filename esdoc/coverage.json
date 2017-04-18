@@ -1,92 +1,77 @@
 {
-  "coverage": "99.15%",
-  "expectCount": 237,
-  "actualCount": 235,
+  "coverage": "99.22%",
+  "expectCount": 257,
+  "actualCount": 255,
   "files": {
-    "src/Gisplay/Maps/Aesthetic.js": {
+    "src/Gisplay/Aesthetic.js": {
       "expectCount": 24,
       "actualCount": 24,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapBingMaps.js": {
+    "src/Gisplay/Maps/Background Maps/BGMapBingMaps.js": {
+      "expectCount": 10,
+      "actualCount": 10,
+      "undocumentLines": []
+    },
+    "src/Gisplay/Maps/Background Maps/BGMapGoogleMaps.js": {
+      "expectCount": 11,
+      "actualCount": 11,
+      "undocumentLines": []
+    },
+    "src/Gisplay/Maps/Background Maps/BGMapHereMaps.js": {
+      "expectCount": 11,
+      "actualCount": 11,
+      "undocumentLines": []
+    },
+    "src/Gisplay/Maps/Background Maps/BGMapMapBox.js": {
+      "expectCount": 14,
+      "actualCount": 14,
+      "undocumentLines": []
+    },
+    "src/Gisplay/Maps/Background Maps/BGMapWrapper.js": {
+      "expectCount": 18,
+      "actualCount": 18,
+      "undocumentLines": []
+    },
+    "src/Gisplay/Maps/ChangeMap.js": {
+      "expectCount": 11,
+      "actualCount": 9,
+      "undocumentLines": [
+        56,
+        57
+      ]
+    },
+    "src/Gisplay/Maps/Choropleth.js": {
       "expectCount": 7,
       "actualCount": 7,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapGoogleMaps.js": {
-      "expectCount": 8,
-      "actualCount": 8,
+    "src/Gisplay/Helpers/ColorBrewer.js": {
+      "expectCount": 20,
+      "actualCount": 20,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/BGMapHereMaps.js": {
-      "expectCount": 8,
-      "actualCount": 8,
+    "src/Gisplay/Maps/DotMap.js": {
+      "expectCount": 7,
+      "actualCount": 7,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/BGMapWrapper.js": {
-      "expectCount": 17,
-      "actualCount": 17,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/Types/ChangeMap.js": {
-      "expectCount": 11,
-      "actualCount": 9,
-      "undocumentLines": [
-        55,
-        56
-      ]
-    },
-    "src/Gisplay/Maps/Types/ChorochromaticMap.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/Types/Choropleth.js": {
-      "expectCount": 6,
-      "actualCount": 6,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethBingMaps.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethGoogleMaps.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/ChoroplethHereMaps.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/Types/DotMap.js": {
-      "expectCount": 6,
-      "actualCount": 6,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/v11/1_BackgroundMaps/DotMapGoogleMaps.js": {
-      "expectCount": 3,
-      "actualCount": 3,
-      "undocumentLines": []
-    },
-    "src/Gisplay/Maps/Feature.js": {
+    "src/Gisplay/Feature.js": {
       "expectCount": 11,
       "actualCount": 11,
       "undocumentLines": []
     },
     "src/Gisplay/Gisplay.js": {
-      "expectCount": 12,
-      "actualCount": 12,
+      "expectCount": 7,
+      "actualCount": 7,
       "undocumentLines": []
     },
     "src/Gisplay/GisplayOptions.js": {
-      "expectCount": 33,
-      "actualCount": 33,
+      "expectCount": 32,
+      "actualCount": 32,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/Legend.js": {
+    "src/Gisplay/Legend.js": {
       "expectCount": 17,
       "actualCount": 17,
       "undocumentLines": []
@@ -96,14 +81,14 @@
       "actualCount": 44,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/Types/ProportionalSymbolsMap.js": {
-      "expectCount": 6,
-      "actualCount": 6,
+    "src/Gisplay/Maps/ProportionalSymbolsMap.js": {
+      "expectCount": 7,
+      "actualCount": 7,
       "undocumentLines": []
     },
-    "src/Gisplay/Maps/WebglUtils.js": {
-      "expectCount": 12,
-      "actualCount": 12,
+    "src/Gisplay/Helpers/WebglUtils.js": {
+      "expectCount": 6,
+      "actualCount": 6,
       "undocumentLines": []
     }
   }
